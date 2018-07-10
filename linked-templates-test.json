@@ -1,0 +1,30 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "storageLocation": {
+        "type": "string"
+      }
+    },
+    "variables": {
+        "templateBaseUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/postgresql-on-ubuntu/"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "linkedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "incremental",
+              "templateLink": {
+                 "uri":"[variables('templateUrl')]",
+                 "contentVersion":"1.0.0.0"
+              },
+              "parameters": {
+                 "StorageAccountName":{"value": "[parameters('StorageAccountName')]"}
+               }
+            }
+         }
+    ],
+    "outputs": {  }
+  }

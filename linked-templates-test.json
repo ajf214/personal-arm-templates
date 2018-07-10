@@ -7,7 +7,7 @@
       }
     },
     "variables": {
-        "templateBaseUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/postgresql-on-ubuntu/"
+        "templateBaseUrl": "https://raw.githubusercontent.com/ajf214/personal-arm-templates/master/linked-templates-test.json"
     },
     "resources": [
         {

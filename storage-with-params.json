@@ -17,7 +17,7 @@
         "name": "Standard_LRS"
       },
       "kind": "Storage",
-      "location": "parameters('storageLocation')",
+      "location": "[parameters('storageLocation')]",
       "tags": {},
       "properties": {}
     }

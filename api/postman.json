@@ -1,0 +1,650 @@
+{
+	"info": {
+		"_postman_id": "e4e07803-131e-4c1b-a206-2e3cae65af80",
+		"name": "Blueprints REST API Docs test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"_postman_id": "09c806a1-e07e-49f1-9e70-8d73ae0fc4bd",
+			"name": "Create initial Blueprint",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AzureAuthorizationToken}}",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"properties\": {\r\n        \"description\": \"This blueprint sets tag policy and role assignment on the subscription, creates a ResourceGroup, and deploys a resource template and role assignment to that ResourceGroup.\",\r\n        \"targetScope\": \"subscription\",\r\n        \"parameters\": {\r\n            \"storageAccountType\": {\r\n                \"type\": \"string\",\r\n                \"metadata\": {\r\n                    \"displayName\": \"storage account type.\",\r\n                    \"description\": null\r\n                }\r\n            },\r\n            \"tagName\": {\r\n                \"type\": \"string\",\r\n                \"metadata\": {\r\n                    \"displayName\": \"The name of the tag to provide the policy assignment.\",\r\n                    \"description\": null\r\n                }\r\n            },\r\n            \"tagValue\": {\r\n                \"type\": \"string\",\r\n                \"metadata\": {\r\n                    \"displayName\": \"The value of the tag to provide the policy assignment.\",\r\n                    \"description\": null\r\n                }\r\n            },\r\n            \"contributors\": {\r\n                \"type\": \"array\",\r\n                \"metadata\": {\r\n                    \"description\": \"List of AAD object IDs that will be assigned Contributor role at the subscription\"\r\n                }\r\n            },\r\n            \"owners\": {\r\n                \"type\": \"array\",\r\n                \"metadata\": {\r\n                    \"description\": \"List of AAD object IDs that will be assigned Owner role at the resource group\"\r\n                }\r\n            }\r\n        },\r\n        \"resourceGroups\": {\r\n            \"storageRG\": {\r\n                \"description\": \"Contains the resource template deployment and a role assignment.\"\r\n            }\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://management.azure.com/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}?api-version=2017-11-11-preview",
+					"protocol": "https",
+					"host": [
+						"management",
+						"azure",
+						"com"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "8a279e62-e93b-4d60-ab32-1bfdcd3ffe3b",
+			"name": "Add RBAC role",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AzureAuthorizationToken}}",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"kind\": \"roleAssignment\",\r\n    \"properties\": {\r\n        \"roleDefinitionId\": \"/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c\",\r\n        \"principalIds\": \"[parameters('contributors')]\"\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://management.azure.com/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/artifacts/roleContributor?api-version=2017-11-11-preview",
+					"protocol": "https",
+					"host": [
+						"management",
+						"azure",
+						"com"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"artifacts",
+						"roleContributor"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "f9ff4e9f-20a4-4b1b-83cf-634f4d8ecd2c",
+			"name": "Add Policy Artifact at Subscription",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AzureAuthorizationToken}}",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"kind\": \"policyAssignment\",\r\n    \"properties\": {\r\n        \"description\": \"Apply tag and its default value to resource groups\",\r\n        \"policyDefinitionId\": \"/providers/Microsoft.Authorization/policyDefinitions/49c88fc8-6fd1-46fd-a676-f12d1d3a4c71\",\r\n        \"parameters\": {\r\n            \"tagName\": {\r\n                \"value\": \"[parameters('tagName')]\"\r\n            },\r\n            \"tagValue\": {\r\n                \"value\": \"[parameters('tagValue')]\"\r\n            }\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://management.azure.com/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/artifacts/policyTags?api-version=2017-11-11-preview",
+					"protocol": "https",
+					"host": [
+						"management",
+						"azure",
+						"com"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"artifacts",
+						"policyTags"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "f623c293-676f-4870-be6e-3b76f8020e57",
+			"name": "Add second policy at sub using parameter",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Author",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"kind\": \"policyAssignment\",\r\n    \"properties\": {\r\n        \"description\": \"Apply storage tag and the parameter also used by the template to resource groups\",\r\n        \"policyDefinitionId\": \"/providers/Microsoft.Authorization/policyDefinitions/49c88fc8-6fd1-46fd-a676-f12d1d3a4c71\",\r\n        \"parameters\": {\r\n            \"tagName\": {\r\n                \"value\": \"StorageType\"\r\n            },\r\n            \"tagValue\": {\r\n                \"value\": \"[parameters('storageAccountType')]\"\r\n            }\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/artifacts/policyStorageTags?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"artifacts",
+						"policyStorageTags"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "83519e3e-0a6a-40e1-88e4-5e0b262f26d4",
+			"name": "Add template with BP parameters to RG",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"kind\": \"template\",\r\n    \"properties\": {\r\n        \"template\": {\r\n            \"$schema\": \"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#\",\r\n            \"contentVersion\": \"1.0.0.0\",\r\n            \"parameters\": {\r\n                \"storageAccountTypeFromBP\": {\r\n                    \"type\": \"string\",\r\n                    \"defaultValue\": \"Standard_LRS\",\r\n                    \"allowedValues\": [\r\n                        \"Standard_LRS\",\r\n                        \"Standard_GRS\",\r\n                        \"Standard_ZRS\",\r\n                        \"Premium_LRS\"\r\n                    ],\r\n                    \"metadata\": {\r\n                        \"description\": \"Storage Account type\"\r\n                    }\r\n                },\r\n                \"tagNameFromBP\": {\r\n                    \"type\": \"string\",\r\n                    \"defaultValue\": \"NotSet\",\r\n                    \"metadata\": {\r\n                        \"description\": \"Tag name from blueprint\"\r\n                    }\r\n                },\r\n                \"tagValueFromBP\": {\r\n                    \"type\": \"string\",\r\n                    \"defaultValue\": \"NotSet\",\r\n                    \"metadata\": {\r\n                        \"description\": \"Tag value from blueprint\"\r\n                    }\r\n                }\r\n            },\r\n            \"variables\": {\r\n                \"storageAccountName\": \"[concat(uniquestring(resourceGroup().id), 'standardsa')]\"\r\n            },\r\n            \"resources\": [{\r\n                \"type\": \"Microsoft.Storage/storageAccounts\",\r\n                \"name\": \"[variables('storageAccountName')]\",\r\n                \"apiVersion\": \"2016-01-01\",\r\n                \"tags\": {\r\n                   \"[parameters('tagNameFromBP')]\": \"[parameters('tagValueFromBP')]\"\r\n                },\r\n                \"location\": \"[resourceGroup().location]\",\r\n                \"sku\": {\r\n                    \"name\": \"[parameters('storageAccountTypeFromBP')]\"\r\n                },\r\n                \"kind\": \"Storage\",\r\n                \"properties\": {}\r\n            }],\r\n            \"outputs\": {\r\n                \"storageAccountSku\": {\r\n                    \"type\": \"string\",\r\n                    \"value\": \"[variables('storageAccountName')]\"\r\n                }\r\n            }\r\n        },\r\n        \"resourceGroup\": \"storageRG\",\r\n        \"parameters\": {\r\n            \"storageAccountTypeFromBP\": {\r\n                \"value\": \"[parameters('storageAccountType')]\"\r\n            },\r\n            \"tagNameFromBP\": {\r\n                \"value\": \"[parameters('tagName')]\"\r\n            },\r\n            \"tagValueFromBP\": {\r\n                \"value\": \"[parameters('tagValue')]\"\r\n            }\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/artifacts/storageWithParams?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"artifacts",
+						"storageWithParams"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "467eee37-f52e-4b82-b99c-1a7c7e43a7e2",
+			"name": "Add owner assignment to RG",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"kind\": \"roleAssignment\",\r\n    \"properties\": {\r\n        \"resourceGroup\": \"storageRG\",\r\n        \"roleDefinitionId\": \"/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635\",\r\n        \"principalIds\": \"[parameters('owners')]\"\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/artifacts/roleOwner?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"artifacts",
+						"roleOwner"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "3a0eb2d9-1c92-4b1f-9f6d-71ef5354ecd9",
+			"name": "Publish blueprint",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/versions/v20180625-951AM?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"versions",
+						"v20180625-951AM"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				},
+				"description": "version name is specified in the URL"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "db47b4a8-ace8-43cd-a4d1-31f74e854c9c",
+			"name": "Get versions for a single Blueprint",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/versions?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"versions"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "534eb75c-d6cd-4fd0-b756-c03e36ebe3ac",
+			"name": "Assign Blueprint",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"properties\": {\r\n        \"blueprintId\": \"/providers/Microsoft.Management/managementGroups/AzBlueprint/providers/Microsoft.Blueprint/blueprints/alexTestingApi\",\r\n        \"resourceGroups\": {\r\n            \"storageRG\": {\r\n                \"name\": \"StorageAccount\",\r\n                \"location\": \"eastus2\"\r\n            }\r\n        },\r\n        \"parameters\": {\r\n            \"storageAccountType\": {\r\n                \"value\": \"Standard_GRS\"\r\n            },\r\n            \"tagName\": {\r\n                \"value\": \"CostCenter\"\r\n            },\r\n            \"tagValue\": {\r\n                \"value\": \"ContosoIT\"\r\n            },\r\n            \"contributors\": {\r\n                \"value\": [\r\n                    \"7be2f100-3af5-4c15-bcb7-27ee43784a1f\",\r\n                    \"38833b56-194d-420b-90ce-cff578296714\"\r\n                ]\r\n            },\r\n            \"owners\": {\r\n                \"value\": [\r\n                    \"44254d2b-a0c7-405f-959c-f829ee31c2e7\",\r\n                    \"316deb5f-7187-4512-9dd4-21e7798b0ef9\"\r\n                ]\r\n            }\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/subscriptions/{{Subscription}}/providers/Microsoft.Blueprint/blueprintAssignments/assignMyBlueprint?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"subscriptions",
+						"{{Subscription}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprintAssignments",
+						"assignMyBlueprint"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				},
+				"description": "blueprint location is specified in request body, as are all parameter values"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "8632d964-6b5f-49d6-9e7b-754d8b70595f",
+			"name": "Get all assignments at specific sub",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/subscriptions/{{Subscription}}/providers/Microsoft.Blueprint/blueprintAssignments?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"subscriptions",
+						"{{Subscription}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprintAssignments"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "dcaf339f-a48b-4cea-b491-8379990cacff",
+			"name": "Get single Blueprint",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "8378c6bf-a690-46a7-a1b9-f2883f5cd778",
+			"name": "Get artifacts of Blueprint",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/providers/Microsoft.Management/managementGroups/{{ManagementGroup}}/providers/Microsoft.Blueprint/blueprints/{{BlueprintName}}/artifacts?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"providers",
+						"Microsoft.Management",
+						"managementGroups",
+						"{{ManagementGroup}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprints",
+						"{{BlueprintName}}",
+						"artifacts"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "f418ba32-a9f4-4eb8-bd68-ae0dba570798",
+			"name": "Get Operations of Assignment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{AzureResourceManagerUri}}/subscriptions/{{Subscription}}/providers/Microsoft.Blueprint/blueprintAssignments/{{AssignmentName}}/operations?api-version=2017-11-11-preview",
+					"host": [
+						"{{AzureResourceManagerUri}}"
+					],
+					"path": [
+						"subscriptions",
+						"{{Subscription}}",
+						"providers",
+						"Microsoft.Blueprint",
+						"blueprintAssignments",
+						"{{AssignmentName}}",
+						"operations"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2017-11-11-preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "a941e1f9-1d76-424c-a7bd-573807a4ee57",
+			"name": "Get AAD Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "14d7c6ce-a719-4a14-a91e-98869d7bd3cf",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(pm.info.requestName, () => {",
+							"    pm.response.to.not.be.error;",
+							"    pm.response.to.not.have.jsonBody('error');",
+							"});",
+							"",
+							"postman.setEnvironmentVariable(\"bearerToken\", pm.response.json().access_token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientId}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{clientSecret}}",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "{{AzureResourceManagerUri}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{tenantId}}/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{tenantId}}",
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "47f4e287-868e-4392-a94c-742d4881b023",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "fe6e386a-519c-4eb8-9e22-853a9d5448ee",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

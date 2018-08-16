@@ -69,5 +69,6 @@
                 "value": "[parameters('tagValue')]"
             }
         }
-    }
+    },
+    "id": "/providers/Microsoft.Management/managementGroups/AzBlueprint/providers/Microsoft.Blueprint/blueprints/TestBlueprintScript/artifacts/storageTemplate"
 }

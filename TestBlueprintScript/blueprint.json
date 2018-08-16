@@ -42,5 +42,6 @@
                 "description": "Contains the resource template deployment and a role assignment."
             }
         }
-    }
+    },
+    "id": "/providers/Microsoft.Management/managementGroups/AzBlueprint/providers/Microsoft.Blueprint/blueprints/TestBlueprintScript"
 }

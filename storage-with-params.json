@@ -3,7 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "storageLocation": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "test"
+      }
     }
   },
   "variables": {

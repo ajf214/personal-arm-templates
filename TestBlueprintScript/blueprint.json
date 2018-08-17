@@ -40,6 +40,9 @@
         "resourceGroups": {
             "storageRG": {
                 "description": "Contains the resource template deployment and a role assignment."
+            },
+            "networkRg": {
+                "description": "my description"
             }
         }
     },

@@ -1,0 +1,53 @@
+{
+    "properties": {
+        "description": "Deploys foundational resources including Secret Management (Key Vault), Networking (App Gateway, Express Route, Virtual Network), and Management (Log Analytics)",
+        "targetScope": "subscription",
+        "parameters": { 
+            "owners": {
+                "type": "array",
+                "metadata": {
+                    "displayName": "storage account type.",
+                    "description": "separate principals by comma"
+                }
+            },
+            "listOfAllowedLocations": {
+                "type": "array",
+                "metadata": {
+                    "displayName": "Separate locations by comma"
+                }
+            },
+            "workspaceName": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Log analytics workspace name",
+                    "description": null
+                }
+            },
+            "keyVaultName": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Key vault name.",
+                    "description": null
+                }
+            },
+            "costCenter": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Cost Center"
+                }
+            }
+        },
+        "resourceGroups": {
+            "Management": {
+                "description": "Log Analytics workspace."
+            },
+            "Networking": {
+                "description": "App Gateway, Express Route, Virtual Network"
+            },
+            "Security": {
+                "description": "Includes Key Vault"
+            }
+        }
+    },
+    "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint"
+}

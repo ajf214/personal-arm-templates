@@ -4,18 +4,11 @@
         "template": {
             "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
             "contentVersion": "1.0.0.0",
-            "parameters": {
-                "workspaceName": {
-                    "type": "String",
-                    "metadata": {
-                      "description": "Specifies the name of the workspace."
-                    }
-                }
-            },
+            "parameters": {},
             "resources": [
                 {
                     "type": "Microsoft.OperationalInsights/workspaces",
-                    "name": "[parameters('workspaceName')]",
+                    "name": "log-analytics-sh360-01",
                     "apiVersion": "2017-03-15-preview",
                     "location": "eastus",
                     "properties": {
@@ -29,12 +22,9 @@
                 }
             ]    
         },
+        "displayName": "Central Log Analytics Workspace",
         "resourceGroup": "Management",
-        "parameters": {
-            "workspaceName": {
-                "value": "[parameters('workspaceName')]"
-            }
-        }
+        "parameters": {}
     },
     "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint/artifacts/la-workspace",
     "type": "Microsoft.Blueprint/blueprints/artifacts"

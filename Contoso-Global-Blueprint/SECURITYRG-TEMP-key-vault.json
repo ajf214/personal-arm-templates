@@ -4,17 +4,10 @@
         "template": {
             "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
             "contentVersion": "1.0.0.0",
-            "parameters": {
-                "keyVaultName": {
-                    "type": "string",
-                    "metadata": {
-                        "description": "Name of the Vault"
-                    }
-                }
-            },
+            "parameters": {},
             "resources": [{
                 "type": "Microsoft.KeyVault/vaults",
-                "name": "[parameters('keyVaultName')]",
+                "name": "sh360-vault-01",
                 "apiVersion": "2016-10-01",
                 "location": "[resourceGroup().location]",
                 "properties": {
@@ -37,12 +30,9 @@
                 }
             }]
         },
+        "displayName": "Key Vault",
         "resourceGroup": "Security",
-        "parameters": {
-            "keyVaultName": {
-                "value": "[parameters('keyVaultName')]"
-            }
-        }
+        "parameters": {}
     },
     "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint/artifacts/key-vault",
     "type": "Microsoft.Blueprint/blueprints/artifacts"

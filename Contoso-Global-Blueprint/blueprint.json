@@ -3,31 +3,10 @@
         "description": "Deploys foundational resources including Secret Management (Key Vault), Networking (App Gateway, Express Route, Virtual Network), and Management (Log Analytics)",
         "targetScope": "subscription",
         "parameters": { 
-            "owners": {
-                "type": "array",
-                "metadata": {
-                    "displayName": "storage account type.",
-                    "description": "separate principals by comma"
-                }
-            },
             "listOfAllowedLocations": {
                 "type": "array",
                 "metadata": {
-                    "displayName": "Separate locations by comma"
-                }
-            },
-            "workspaceName": {
-                "type": "string",
-                "metadata": {
-                    "displayName": "Log analytics workspace name",
-                    "description": null
-                }
-            },
-            "keyVaultName": {
-                "type": "string",
-                "metadata": {
-                    "displayName": "Key vault name.",
-                    "description": null
+                    "displayName": "Allowed Locations"
                 }
             },
             "costCenter": {
@@ -39,13 +18,24 @@
         },
         "resourceGroups": {
             "Management": {
-                "description": "Log Analytics workspace."
+                "description": "Log Analytics workspace",
+                "location": "eastus",
+                "name":"management-01"
             },
             "Networking": {
-                "description": "App Gateway, Express Route, Virtual Network"
+                "description": "App Gateway, Express Route, Virtual Network",
+                "location": "eastus",
+                "name":"networking-01"
             },
             "Security": {
-                "description": "Includes Key Vault"
+                "description": "Includes Key Vault",
+                "location": "eastus",
+                "name":"security-01"
+            },
+            "Application": {
+                "description": "App team resources",
+                "location": "eastus",
+                "name":"application-01"
             }
         }
     },

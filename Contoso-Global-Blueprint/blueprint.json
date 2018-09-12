@@ -3,12 +3,6 @@
         "description": "Deploys foundational resources including Secret Management (Key Vault), Networking (App Gateway, Express Route, Virtual Network), and Management (Log Analytics)",
         "targetScope": "subscription",
         "parameters": { 
-            "listOfAllowedLocations": {
-                "type": "array",
-                "metadata": {
-                    "displayName": "Allowed Locations"
-                }
-            },
             "costCenter": {
                 "type": "string",
                 "metadata": {
@@ -20,22 +14,22 @@
             "Management": {
                 "description": "Log Analytics workspace",
                 "location": "eastus",
-                "name":"management-01"
+                "name":"Management-resource-group"
             },
             "Networking": {
                 "description": "App Gateway, Express Route, Virtual Network",
                 "location": "eastus",
-                "name":"networking-01"
+                "name":"Networking-resource-group"
             },
             "Security": {
                 "description": "Includes Key Vault",
                 "location": "eastus",
-                "name":"security-01"
+                "name":"Security-resource-group"
             },
             "Application": {
                 "description": "App team resources",
                 "location": "eastus",
-                "name":"application-01"
+                "name":"Application-resource-group"
             }
         }
     },

@@ -7,7 +7,7 @@
             "parameters": {},
             "resources": [{
                 "type": "Microsoft.KeyVault/vaults",
-                "name": "sh360-vault-01",
+                "name": "[concat('sh360-vault-', substring( subscription().subscriptionId, 0, 5))]",
                 "apiVersion": "2016-10-01",
                 "location": "[resourceGroup().location]",
                 "properties": {

@@ -8,7 +8,7 @@
             "resources": [
                 {
                     "type": "Microsoft.OperationalInsights/workspaces",
-                    "name": "log-analytics-sh360-01",
+                    "name": "[concat('la-sh360-', substring( subscription().subscriptionId, 0, 5))]",
                     "apiVersion": "2017-03-15-preview",
                     "location": "eastus",
                     "properties": {

@@ -12,6 +12,7 @@
             },
             "tagName": {
                 "type": "string",
+                "defaultValue" : "defaultTagName",
                 "metadata": {
                     "displayName": "The name of the tag to provide the policy assignment.",
                     "description": null

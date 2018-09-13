@@ -5,6 +5,11 @@
         "parameters": { 
             "costCenter": {
                 "type": "string",
+                "allowedValues": [
+                    "sh360-app",
+                    "sh360-infra",
+                    "sh360-security"
+                ],
                 "metadata": {
                     "displayName": "Cost Center"
                 }

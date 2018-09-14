@@ -1,0 +1,27 @@
+{
+    "kind": "template",
+    "properties": {
+        "template": {
+            "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "resources": [
+                {
+                    "apiVersion": "2015-04-08",
+                    "type": "Microsoft.DocumentDb/databaseAccounts",
+                    "name": "[concat('sh360-app-dbaccount-', substring( subscription().subscriptionId, 0, 5))]", 
+                    "location": "eastus", 
+                    "properties": {
+                        "name": "SH360-App-Cosmos",
+                        "databaseAccountOfferType":  "Standard"
+                    }
+                }
+            ]
+        },
+        "displayName": "Cosmos DB",
+        "resourceGroup": "Application",
+        "parameters": {}
+    },
+    "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint/artifacts/cosmos-db",
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}

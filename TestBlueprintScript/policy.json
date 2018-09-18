@@ -3,7 +3,7 @@
   "id": "/providers/Microsoft.Management/managementGroups/AzBlueprint/providers/Microsoft.Blueprint/blueprints/TestBlueprintScript/artifacts/tagPolicy",
   "properties": {
     "description": "Apply tag and its default value to resource groups",
-    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/49c88fc8-6fd1-46fd-a676-f12d1d3a4c71",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2a0e14a6-b0a6-4fab-991a-187a4f81c498",
     "parameters": {
         "tagName": {
             "value": "[parameters('tagName')]"

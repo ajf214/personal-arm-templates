@@ -1,0 +1,11 @@
+{
+    "properties": {
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/24dde96d-f0b1-425e-884f-4a1421e2dcdc",
+        "parameters": {},
+        "dependsOn": [],
+        "displayName": "Audit Windows VM maximum password age 70 days"
+    },
+    "kind": "policyAssignment",
+    "id": "/providers/Microsoft.Management/managementGroups/NorthAmerica/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint/artifacts/in-guest-policy",
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}

@@ -9,4 +9,4 @@ Helpful resources for getting started with managing Blueprints as code:
 * [Blueprint documentation](https://aka.ms/whatareblueprints)
 
 # Troubleshooting
-There is no official support for this repo, but if you have problems, please open an issue or reach out to me at [alfran@microsoft.com](mailto:alfran@microsoft.com?subject=Blueprint GitHub Troubleshooting)
+There is no official support for this repo, but if you have problems, please open an issue or reach out to me at [alfran@microsoft.com](mailto:alfran@microsoft.com?subject=Blueprint%20GitHub%20Troubleshooting)

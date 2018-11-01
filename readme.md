@@ -1,4 +1,4 @@
-This repo is for collecting a variety of Blueprints and ARM templates that are used in Blueprints.
+This repo is for collecting a variety of Blueprints and ARM templates that are used in Blueprints-as-Code.
 
 
 # Getting started

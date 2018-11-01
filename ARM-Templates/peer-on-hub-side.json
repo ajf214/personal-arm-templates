@@ -1,0 +1,53 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vNet1Name": {
+            "type":"string",
+            "defaultValue": "vNet1",
+            "metadata": {
+                "description": "Name for vNet 1"
+            }
+        }
+    },
+    "variables": {
+        "vNet2tovNet1PeeringName": "[concat('hub', '-', parameters('vNet1Name'))]",
+        "hubSubscriptionId": "45f9252d-e27e-4ed8-ab4e-dc5054de13fa",
+        "hubResourceGroupName": "Networking-resource-group",
+        "hubVnetName": "vnet-sh360-45f92",
+        "currentSub": "[subscription().subscriptionId]",
+        "currentRg": "[resourceGroup().name]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "nestedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('hubResourceGroupName')]",
+            "subscriptionId": "[variables('hubSubscriptionId')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [{
+                        "apiVersion": "2016-06-01",
+                        "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                        "name": "[concat(variables('hubvNetName'),'/', variables('vNet2tovNet1PeeringName'))]",
+                        "location": "[resourceGroup().location]",
+                        "comments": "This is the peering from vNet 2 to vNet 1",
+                        "properties": {
+                            "allowVirtualNetworkAccess": "true",
+                            "allowForwardedTraffic": "false",
+                            "allowGatewayTransit": "false",
+                            "useRemoteGateways": "false",
+                            "remoteVirtualNetwork": {
+                                "id": "[resourceId(variables('currentSub'), variables('currentRg'), 'Microsoft.Network/virtualNetworks', parameters('vNet1Name'))]"
+                            }
+                        }
+                    }]
+                }
+            }
+        }
+    ]
+}

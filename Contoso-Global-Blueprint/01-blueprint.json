@@ -38,5 +38,6 @@
             }
         }
     },
-    "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint"
+    "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint",
+    "type": "Microsoft.Blueprint/blueprints" 
 }

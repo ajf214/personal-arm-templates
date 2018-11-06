@@ -28,5 +28,6 @@
             }
         }
     },
-    "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/deep-dive-02"
+    "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/deep-dive-02",
+    "type": "Microsoft.Blueprint/blueprints"
 }

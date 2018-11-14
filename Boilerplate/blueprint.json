@@ -1,0 +1,26 @@
+{
+    "properties": {
+        "description": "This will be displayed in the essentials, so make it good",
+        "targetScope": "subscription",
+        "parameters": { 
+            "principalIds": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Display Name for Blueprint parameter",
+                    "descripiton": "This is a blueprint parameter that any artifact can reference. We'll display these descriptions for you in the info bubble",
+                    "strongType": "PrincipalId"
+                }
+            },
+            "genericBlueprintParameter": {
+                "type": "string"
+            }
+        },
+        "resourceGroups": {
+            "SingleRG": {
+                "description": "An optional description for your RG artifact. FYI location and name properties can be left out and we will assume they are assignment-time parameters",
+                "location": "eastus"
+            }
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints" 
+}

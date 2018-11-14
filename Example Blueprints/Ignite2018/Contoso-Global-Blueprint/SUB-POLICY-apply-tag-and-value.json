@@ -10,7 +10,7 @@
             }
         },
         "dependsOn": [],
-        "displayName": "Apply tag and its default value (ISO27001 20.1)"
+        "displayName": "Apply tag and its default value"
     },
     "kind": "policyAssignment",
     "id": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/Contoso-Global-Blueprint/artifacts/apply-tag-and-default-value",

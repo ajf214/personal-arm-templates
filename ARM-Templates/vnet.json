@@ -16,12 +16,13 @@
           "description": "Subnet 1 Name"
         }
       },
-      "subnet2Name": {
+      "addressSpaceVnet": {
         "type": "string",
-        "defaultValue": "Subnet2",
-        "metadata": {
-          "description": "Subnet 2 Name"
-        }
+        "defaultValue": "10.0.0.0/16"
+      },
+      "addressSpaceSubnet": {
+        "type": "string",
+        "defaultValue": "10.0.0.0/24"
       }
     },
     "variables": {},
@@ -34,20 +35,14 @@
         "properties": {
           "addressSpace": {
             "addressPrefixes": [
-              "10.0.0.0/16"
+              "[parameters('addressSpaceVnet')]"
             ]
           },
           "subnets": [
             {
               "name": "[parameters('subnet1Name')]",
               "properties": {
-                "addressPrefix": "10.0.0.0/24"
-              }
-            },
-            {
-              "name": "[parameters('subnet2Name')]",
-              "properties": {
-                "addressPrefix": "10.0.1.0/24"
+                "addressPrefix": "[parameters('addressSpaceSubnet')]"
               }
             }
           ]

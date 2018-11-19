@@ -1,0 +1,35 @@
+{
+    "properties": {
+        "description": "This will be displayed in the essentials, so make it good",
+        "targetScope": "subscription",
+        "parameters": { 
+            "principalsProd": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Display Name for Blueprint parameter",
+                    "description": "This is a blueprint parameter that any artifact can reference. We'll display these descriptions for you in the info bubble",
+                    "strongType": "PrincipalId"
+                }
+            },
+            "principalsPreProd": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Display Name for Blueprint parameter",
+                    "description": "This is a blueprint parameter that any artifact can reference. We'll display these descriptions for you in the info bubble",
+                    "strongType": "PrincipalId"
+                }
+            }
+        },
+        "resourceGroups": {
+            "ProdRG": {
+                "description": "An optional description for your RG artifact",
+                "location": "eastus"
+            },
+            "PreProdRG": {
+                "description": "An optional description for your RG artifact",
+                "location": "eastus"
+            }
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints" 
+}

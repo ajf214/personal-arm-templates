@@ -1,0 +1,15 @@
+{
+    "properties": {
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Authorization/policyDefinitions/c78143b6-948c-44c5-9bc2-931e6cd77738",
+        "parameters": {},
+        "dependsOn": [],
+        "displayName": "Allowed resource types",
+        "metadata": {
+            "COMMENT": "specify the policy definition ID. Can be either custom or built-in"
+        }
+    },
+    "kind": "policyAssignment",
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}
+
+

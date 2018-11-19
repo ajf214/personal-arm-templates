@@ -22,5 +22,6 @@
           }
         }
     },
-    "type": "Microsoft.Blueprint/blueprints/artifacts"
+    "type": "Microsoft.Blueprint/blueprints/artifacts",
+    "name": "myTemplate"
 }

@@ -1,5 +1,4 @@
 *.zip
 puts.ps1
-Example Blueprints/PortalBlueprints
 Example Blueprints/Contoso-Global-Blueprint/*.txt
 ARM-Templates/MSIT

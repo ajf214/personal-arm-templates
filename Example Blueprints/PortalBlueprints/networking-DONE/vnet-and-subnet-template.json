@@ -1,0 +1,58 @@
+{
+    "kind": "template",
+    "properties": {
+        "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+                "localPrefix": {
+                    "type": "string",
+                    "metadata": {
+                        "displayName": "single template parameter"
+                    }
+                },
+                "addressSpaceVnet": {
+                    "type": "string",
+                    "defaultValue": "10.0.0.0/16"
+                },
+                "addressSpaceSubnet": {
+                    "type": "string",
+                    "defaultValue": "10.0.0.0/24"
+                }
+            },
+            "resources": [{
+                "apiVersion": "2015-06-15",
+                "type": "Microsoft.Network/virtualNetworks",
+                "name": "[concat(parameters('localPrefix'), 'vnet-blueprint')]",
+                "location": "eastus",
+                "properties": {
+                    "addressSpace": {
+                        "addressPrefixes": [
+                            "[parameters('addressSpaceVnet')]"
+                        ]
+                    },
+                    "subnets": [{
+                        "name": "[concat(parameters('localPrefix'), 'subnet-blueprint')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('addressSpaceSubnet')]"
+                        }
+                    }]
+                }
+            }]
+        },
+        "displayName": "Vnet and one subnet",
+        "parameters": {
+            "localPrefix": {
+                "value": "[parameters('resourceNamePrefix')]"
+            },
+            "addressSpaceVnet": {
+                "value": "[parameters('addressSpaceForVnet')]"
+            },
+            "addressSpaceSubnet": {
+                "value": "[parameters('addressSpaceForSubnet')]"
+            }
+        },
+        "resourceGroup": "SingleRG"
+    },
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}

@@ -1,0 +1,38 @@
+{
+    "properties": {
+        "description": "A set of popular policies added applied to the subscription and a boilerplate ",
+        "targetScope": "subscription",
+        "parameters": { 
+            "tagName": {
+                "type": "string",
+                "defaultValue": "costCenter",
+                "metadata": {
+                    "displayName": "Tag Name",
+                    "description": "Tag name for each resource that gets created"
+                }
+            },
+            "tagValue": {
+                "type": "string",
+                "defaultValue": "My Cost Center",
+                "metadata": {
+                    "displayName": "Tag Value",
+                    "description": "Tag value for each resource that gets created"
+                }
+            },
+            "blueprintAllowedLocations": {
+                "type": "array",
+                "metadata": {
+                    "displayName": "Allowed locations",
+                    "allowedValues": ["eastus","b","c"]
+                }
+            }
+        },
+        "resourceGroups": {
+            "SingleRG": {
+                "description": "An optional description for your RG artifact. FYI location and name properties can be left out and we will assume they are assignment-time parameters",
+                "location": "eastus"
+            }
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints" 
+}

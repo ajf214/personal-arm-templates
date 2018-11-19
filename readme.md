@@ -9,5 +9,20 @@ Helpful resources for getting started with managing Blueprints as code:
 * [Blueprint documentation](https://aka.ms/whatareblueprints)
 * [Boilerplate for blueprint and each artifact type](https://github.com/ajf214/personal-arm-templates/tree/master/Boilerplate)
 
+# Import these Blueprints with Powershell
+
+With [Manage-AzureRmBlueprint](https://www.powershellgallery.com/packages/Manage-AzureRMBlueprint)
+```
+Install-Script -Name Manage-AzureRMBlueprint
+".\Manage-AzureRmBlueprint" -mode Import -ImportDir ".\Example Blueprints\PortalBlueprints\networking" -ManagementGroupId "ManagementGroupId"
+```
+
+With [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/)
+```
+Install-Module -Name AxAzureBlueprint
+Connect-AzureBlueprint -ManagementGroupName "ManagementGroupId"
+Set-AzureBlueprint -BlueprintFolder ".\Example Blueprints\PortalBlueprints\networking"
+```
+
 # Troubleshooting
 There is no official support for this repo, but if you have problems, please open an issue or reach out to me at [alfran@microsoft.com](mailto:alfran@microsoft.com?subject=Blueprint%20GitHub%20Troubleshooting)

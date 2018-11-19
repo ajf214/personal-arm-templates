@@ -1,7 +1,11 @@
 {
     "properties": {
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Authorization/policyDefinitions/c78143b6-948c-44c5-9bc2-931e6cd77738",
-        "parameters": {},
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a08ec900-254a-4555-9bf5-e42af04b5c5c",
+        "parameters": {
+            "listOfResourceTypesAllowed": {
+                "value": "[parameters('blueprintAllowedResourceTypes')]"
+            }
+        },
         "dependsOn": [],
         "displayName": "Allowed resource types",
         "metadata": {

@@ -4,20 +4,22 @@ This repo is for collecting a variety of Blueprints and ARM templates that are u
 # Getting started
 Helpful resources for getting started with managing Blueprints as code:
 
-* [Powershell script for importing/exporting Blueprint files](https://www.powershellgallery.com/packages/Manage-AzureRMBlueprint/1.41)
+* [Manage-AzureRmBlueprint Powershell script for importing/exporting Blueprint files](https://www.powershellgallery.com/packages/Manage-AzureRMBlueprint)
 * [Video walking through usage of the above script](https://www.youtube.com/watch?v=SMORUIPhKd8)
 * [Blueprint documentation](https://aka.ms/whatareblueprints)
 * [Boilerplate for blueprint and each artifact type](https://github.com/ajf214/personal-arm-templates/tree/master/Boilerplate)
+* [AxAzureBlueprint Powershell Module](https://www.powershellgallery.com/packages/AxAzureBlueprint/)
+* [Walkthrough of AxAzureBlueprint usage](https://agazoth.github.io/blogpost/2018/11/11/Azure-Blueprint.html)
 
 # Import these Blueprints with Powershell
 
-With [Manage-AzureRmBlueprint](https://www.powershellgallery.com/packages/Manage-AzureRMBlueprint)
+With [Manage-AzureRmBlueprint script](https://www.powershellgallery.com/packages/Manage-AzureRMBlueprint)
 ```
 Install-Script -Name Manage-AzureRMBlueprint
 ".\Manage-AzureRmBlueprint" -mode Import -ImportDir ".\Example Blueprints\PortalBlueprints\networking" -ManagementGroupId "ManagementGroupId"
 ```
 
-With [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/)
+With [AxAzureBlueprint module](https://www.powershellgallery.com/packages/AxAzureBlueprint/)
 ```
 Install-Module -Name AxAzureBlueprint
 Connect-AzureBlueprint -ManagementGroupName "ManagementGroupId"

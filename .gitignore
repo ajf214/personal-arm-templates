@@ -2,3 +2,4 @@
 puts.ps1
 Example Blueprints/Contoso-Global-Blueprint/*.txt
 ARM-Templates/MSIT
+Example Blueprints/PortalBlueprints/ISO27001

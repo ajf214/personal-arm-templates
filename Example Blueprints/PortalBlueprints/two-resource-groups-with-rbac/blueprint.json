@@ -1,6 +1,6 @@
 {
     "properties": {
-        "description": "This will be displayed in the essentials, so make it good",
+        "description": "Sets up two resource groups. Each with a parameterized role assignment artifact that can be input when the blueprint is assigned",
         "targetScope": "subscription",
         "parameters": { 
             "principalsProd": {

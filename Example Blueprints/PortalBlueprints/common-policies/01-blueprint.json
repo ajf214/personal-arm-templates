@@ -1,6 +1,6 @@
 {
     "properties": {
-        "description": "A set of popular policies added applied to the subscription and a boilerplate ",
+        "description": "A set of popular policies added applied to the subscription to apply tags, limit regions and limit resource types",
         "targetScope": "subscription",
         "parameters": {
             "tagName": {

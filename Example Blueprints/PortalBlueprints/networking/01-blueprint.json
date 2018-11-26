@@ -1,6 +1,6 @@
 {
     "properties": {
-        "description": "A blueprint for some basic ",
+        "description": "A blueprint for some basic networking. Includes a Virtual Network with a subnet and a network security group",
         "targetScope": "subscription",
         "parameters": {
             "resourceNamePrefix": {

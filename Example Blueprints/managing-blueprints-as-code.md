@@ -68,16 +68,17 @@ Some key takeaways to note from this example:
 
 
 ### Resource Group properties
-You'll notice the **resource group artifacts are defined within the main blueprint json file**. This is confusing kind of, but it is what it is. Here we have a resource group that does the following: 
- * Hardcodes a location of ```eastus```
- * Sets a placeholder name ```SingleRG``` for the resource group. This means the resource group name will be determined at assignment time
+You'll notice the **resource group artifacts are defined within the main blueprint json file**. In this case, we've configured a resource group with these properties: 
+ * Hardcodes a location for the resource group of ```eastus```
+ * Sets a placeholder name ```SingleRG``` for the resource group. 
+     - This means the resource group name will be determined at assignment time. The placeholder is just to help you organize the definition and serves as a reference point for your artifacts.
      - optionally you could hardcode the resource group name by adding ```"name": "myRgName"``` 
 
 [Full spec of a blueprint](https://docs.microsoft.com/en-us/rest/api/blueprints/blueprints/createorupdate#blueprint)
 
 ### Artifacts
 
-Let’s look at a simple policy artifact here:
+Let’s look at a simple policy artifact:
 ```
 {
     "properties": {

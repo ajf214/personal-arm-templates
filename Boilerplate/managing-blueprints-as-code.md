@@ -17,6 +17,9 @@ Using the Blueprints in the Azure Portal is a great way to get started with Blue
 * Keeping blueprints in source control
 * Putting blueprints in a CI/CD or release pipeline
 
+## How to use this guide
+This guide references the files in this directory and deploys the Boilerplate blueprint.
+
 ## Structure of blueprint artifacts
 A blueprint consists of the main blueprint json file and a series of artifact json files. Simple 😊
 <img src="image of blueprint directory" />
@@ -33,7 +36,7 @@ At the time we support the following functions. They work [exactly like they do]
 This is your main Blueprint file. In order to be processed successfully, the blueprint must be created in Azure before any artifacts (policy, role, template) otherwise the calls to publish those artifacts will fail. That's because the **artifacts are child resources of a blueprint**. The Manage-AzureRmBlueprint script takes care of this for you automatically. Typically, you will name this 01-blueprint.json so that it is sorted alphabetically first, but this name is up to you and doesn't affect anything.
 
 
-Here’s a simple sample blueprint.json file:
+Let's look at our Boilerplate sample ```blueprint.json``` file:
 ```
 {
     "properties": {
@@ -72,13 +75,13 @@ You'll notice the **resource group artifacts are defined within the main bluepri
  * Hardcodes a location for the resource group of ```eastus```
  * Sets a placeholder name ```SingleRG``` for the resource group. 
      - This means the resource group name will be determined at assignment time. The placeholder is just to help you organize the definition and serves as a reference point for your artifacts.
-     - optionally you could hardcode the resource group name by adding ```"name": "myRgName"``` 
+     - Optionally you could hardcode the resource group name by adding ```"name": "myRgName"```.
 
 [Full spec of a blueprint](https://docs.microsoft.com/en-us/rest/api/blueprints/blueprints/createorupdate#blueprint)
 
 ### Artifacts
 
-Let’s look at a simple policy artifact:
+Let’s look at the Boilerplate ```policyAssignment.json``` artifact:
 ```
 {
     "properties": {
@@ -93,7 +96,7 @@ Let’s look at a simple policy artifact:
 ```
 
 All artifacts share common properties:
-* ```Kind``` – the artifact type. Can be:
+* The ```Kind``` can be:
     - ```template```
     - ```roleAssignment```
     - ```policyAssignment```
@@ -113,24 +116,47 @@ Full spec for each artifact type:
 Nearly everything can be parameterized. The only things that can't be parameterized are the ```roleDefinitionId``` and ```policyDefinitionId``` in the ```rbacAssignment``` and ```policyAssignment``` artifacts respectively. Some explanation for why this is, something about linked access checks.
 Parameters are set on the main blueprint file and can be referenced in any artifact. 
 
-You create a parameter like this in ```blueprint.json```
+Here's a simple parameter declaration which is a simplified version from ```blueprint.json```:
 ```
-{example}
+"parameters": { 
+    "genericBlueprintParameter": {
+        "type": "string"
+    }
+}
+```
+You can use the same properties you can in an ARM template like `defaultValue`, `allowedValues`, etc.
+
+And we reference a parameter in `rbacAssignment.json`:
+```
+"properties": {
+    "principalIds": ["[parameters('principalIds')]"],
+}
 ```
 
-And you reference a parameter like this in any artifact:
+This gets a little complicated when you want to pass those variables to an artifact that, itself, can also have parameters. 
+
+First, in `template.json` we need to map the *blueprint* parameter to the *artifact* parameter like this:
 ```
-{example}
+"properties": {
+    "parameters": {
+        "myTemplateParameter": {
+            "value": "[parameters('genericBlueprintParameter')]"
+        }
+    }
+}
 ```
 
-This gets a little complicated when you want to pass those variables to an artifact that, itself, can also have parameters. You first need to map the blueprint parameter to the artifact parameter like this:
+And then you can reference that parameter within the `template` section in `template.json` like this:
 ```
-{example}
-```
-
-And then you can reference that parameter in the artifact like this:
-```
-{example}
+"template": {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "myTemplateParameter": {
+        "type":"string"
+        }
+    },
+},
 ```
 
 The [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/1.0.0) script has a cmdlet called ```Import-AzureBlueprintArtifact``` that can automatically convert an ARM template into a blueprint template artifact and map all the parameter references for you. It's a good way to understand how everything works.

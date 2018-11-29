@@ -26,7 +26,7 @@ A blueprint consists of the main blueprint json file and a series of artifact js
 So you will always have something like the following:
 
 ```
-Blueprint directory (also the name)
+Blueprint directory (also the default blueprint name)
 * blueprint.json
 * artifact.json
 * ...
@@ -43,7 +43,7 @@ At the time we support the following functions. They work exactly like they do i
 * [concat()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-array#concat)
 
 ### Blueprint
-This is your main Blueprint file. In order to be processed successfully, the blueprint must be created in Azure before any artifacts (policy, role, template) otherwise the calls to publish those artifacts will fail. That's because the **artifacts are child resources of a blueprint**. The Manage-AzureRmBlueprint script takes care of this for you automatically. Typically, you will name this 01-blueprint.json so that it is sorted alphabetically first, but this name is up to you and doesn't affect anything.
+This is your main Blueprint file. In order to be processed successfully, the blueprint must be created in Azure before any artifacts (policy, role, template) otherwise the calls to push those artifacts will fail. That's because the **artifacts are child resources of a blueprint**. The `Manage-AzureRmBlueprint` script takes care of this for you automatically. Typically, you will name this 01-blueprint.json so that it is sorted alphabetically first, but this name is up to you and doesn't affect anything.
 
 
 Let's look at our Boilerplate sample ```blueprint.json``` file:
@@ -76,7 +76,9 @@ Let's look at our Boilerplate sample ```blueprint.json``` file:
 }
 ```
 Some key takeaways to note from this example:
-* There are two optional blueprint parameters: ```principalIds``` and ```genericBlueprintParameter```. These parameters can be referenced in any artifact.
+* There are two optional blueprint `parameters`:
+    - ```principalIds``` and ```genericBlueprintParameter```. 
+    - These parameters can be referenced in any artifact.
 * The ```resourceGroups``` artifacts are declared here, not in their own files.
 
 
@@ -113,7 +115,7 @@ All artifacts share common properties:
 * ```Type``` – this will always be: ```Microsoft.Bluprint/blueprints/artifacts```
 * ```properties``` – this is what defines the artifact itself. Some properties of ```properties``` are common while others are specific to each type.
     - Common properties
-        - ```dependsOn```
+        - ```dependsOn``` - optional. You can declare dependencies to other artifacts by referencing the artifact name (which by default is the filename w/o `.json`). More info [here](https://docs.microsoft.com/en-us/azure/governance/blueprints/concepts/sequencing-order#customizing-the-sequencing-order).
         - ```resourceGroup``` – optional. Use the resource group placeholder name to target this artifact to that resource group. If this property isn't specified it will target the subscription.
 
 Full spec for each artifact type:
@@ -146,7 +148,7 @@ And we reference a parameter in `rbacAssignment.json`:
 This gets a little complicated when you want to pass those variables to an artifact that, itself, can also have parameters. 
 
 First, in `template.json` we need to map the *blueprint* parameter to the *artifact* parameter like this:
-```
+```json
 "properties": {
     "parameters": {
         "myTemplateParameter": {
@@ -163,13 +165,13 @@ And then you can reference that parameter within the `template` section in `temp
     "contentVersion": "1.0.0.0",
     "parameters": {
         "myTemplateParameter": {
-        "type":"string"
+            "type":"string"
         }
     },
 },
 ```
 
-The [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/1.0.0) script has a cmdlet called ```Import-AzureBlueprintArtifact``` that can automatically convert an ARM template into a blueprint template artifact and map all the parameter references for you. It's a good way to understand how everything works.
+The [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/1.0.0) powershell module has a cmdlet called ```Import-AzureBlueprintArtifact``` that can automatically convert an ARM template into a blueprint template artifact and map all the parameter references for you. It's a good way to understand how everything works.
 
 ### Push the Blueprint definition to Azure
 Now we’ll take advantage of the [Manage-AzureRMBlueprint]() script and push it to Azure. We can do so by running the following command. You should be in the directory of where your blueprint artifacts are saved.
@@ -184,9 +186,9 @@ Now you should see a new blueprint definition in Azure. You can update the bluep
 That’s it!
 
 You might run into some issues. Here are some common ones:
-* Missing a required property – this will result in a 400 bad request. This could be a lot of things...
-* ```parameters``` in an artifact are not found in the main blueprint file.
-* ```policyDefinitionId``` or ```roleDefinitionId``` does not exist.
+* **Missing a required property** – this will result in a 400 bad request. This could be a lot of things. Make sure your blueprint and artifacts have all required properties.
+* **```parameters``` in an artifact are not found in the main blueprint file.** Make sure all parameter references are complete. If you are using a parameter in an artifact, make sure it is defined in the main `blueprint.json`
+* **```policyDefinitionId``` or ```roleDefinitionId``` does not exist.** If you are referencing a custom policy make sure that custom policy exists at or above the management group where the blueprint is saved. Custom role definitions are currently not supported for management groups.
 	
 ### Next steps
 From here you will need to [publish the blueprint](https://docs.microsoft.com/en-us/azure/governance/blueprints/create-blueprint-portal#publish-a-blueprint) and then [assign the blueprint](https://docs.microsoft.com/en-us/azure/governance/blueprints/create-blueprint-portal#assign-a-blueprint) which you can do with either the azure portal or the rest API.

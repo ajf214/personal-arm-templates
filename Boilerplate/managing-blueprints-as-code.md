@@ -5,7 +5,7 @@ Last edited: 11-26-18
 # Managing Blueprints as Code
 
 #### !! Disclaimer !!
-This doc is based on a powershell script that is managed by the community and is not officially supported by Microsoft. The Blueprints team is fast at work finishing official powershell cmdlets and azure cli commands.
+This doc is based on a powershell script that is managed by the community and is not officially supported by Microsoft. The Blueprints team is fast at work finishing official powershell cmdlets and azure cli commands. This doc will be updated once that happens.
 
 ## Prerequisites
 
@@ -18,10 +18,20 @@ Using the Blueprints in the Azure Portal is a great way to get started with Blue
 * Putting blueprints in a CI/CD or release pipeline
 
 ## How to use this guide
-This guide references the files in this directory and deploys the Boilerplate blueprint.
+This guide references the files in the Boilerplate directory and deploys the Boilerplate blueprint as a draft definition to Azure.
 
 ## Structure of blueprint artifacts
 A blueprint consists of the main blueprint json file and a series of artifact json files. Simple 😊
+
+So you will always have something like the following:
+
+```
+Blueprint directory (also the name)
+* blueprint.json
+* artifact.json
+* ...
+* more-artifacts.json
+```
 <!-- <img src="image of blueprint directory" /> -->
 
 ### Blueprint folder
@@ -85,7 +95,7 @@ Let’s look at the Boilerplate ```policyAssignment.json``` artifact:
 ```json
 {
     "properties": {
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a451c1ef-c6ca-483d-87ed-f49761e3ffb5",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a451c1ef-c6ca-483d-87d-f49761e3ffb5",
         "parameters": {},
         "dependsOn": [],
         "displayName": "My Policy Definition that will be assigned (Currently auditing usage of custome roles)"

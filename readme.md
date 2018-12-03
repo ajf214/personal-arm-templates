@@ -14,13 +14,13 @@ Helpful resources for getting started with managing Blueprints as code:
 # Import these Blueprints with Powershell
 
 With [Manage-AzureRmBlueprint script](https://www.powershellgallery.com/packages/Manage-AzureRMBlueprint)
-```
+```powershell
 Install-Script -Name Manage-AzureRMBlueprint
 ".\Manage-AzureRmBlueprint" -mode Import -ImportDir ".\Example Blueprints\PortalBlueprints\networking" -ManagementGroupId "ManagementGroupId"
 ```
 
 With [AxAzureBlueprint module](https://www.powershellgallery.com/packages/AxAzureBlueprint/)
-```
+```powershell
 Install-Module -Name AxAzureBlueprint
 Connect-AzureBlueprint -ManagementGroupName "ManagementGroupId"
 Set-AzureBlueprint -BlueprintFolder ".\Example Blueprints\PortalBlueprints\networking"

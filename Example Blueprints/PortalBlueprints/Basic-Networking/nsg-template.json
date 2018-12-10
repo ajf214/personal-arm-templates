@@ -8,7 +8,7 @@
                 "localPrefix": {
                     "type": "string",
                     "metadata": {
-                        "displayName": "single template parameter"
+                        "displayName": "Prefix for resource names in this template"
                     }
                 }
             },

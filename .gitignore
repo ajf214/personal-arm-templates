@@ -1,7 +1,6 @@
 *.zip
 puts.ps1
 Example Blueprints/Contoso-Global-Blueprint/*.txt
-ARM-Templates/MSIT
 Example Blueprints/PortalBlueprints/ISO27001
 ARM-Templates/linked-template-parameters.json
 ARM-Templates/tenant-level-deployment.json

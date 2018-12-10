@@ -2,7 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {},
-    "variables": {},
+    "variables": {
+       "baseUrl": "https://raw.githubusercontent.com/ajf214/personal-arm-templates/dev/ARM-Templates/"
+    },
     "resources": [
         {
             "apiVersion": "2017-05-10",
@@ -11,11 +13,11 @@
             "properties": {
               "mode": "Incremental",
               "templateLink": {
-                 "uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-key-vault-create/azuredeploy.json",
+                 "uri": "[uri(variables('baseUrl'), 'storage-and-params-file/template.json')]",
                  "contentVersion":"1.0.0.0"
               },
               "parametersLink": {
-                 "uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-key-vault-create/azuredeploy.parameters.json",
+                 "uri": "[uri(variables('baseUrl'), 'storage-and-params-file/parameters.json')]",
                  "contentVersion":"1.0.0.0"
               }
             }

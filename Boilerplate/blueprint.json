@@ -3,7 +3,7 @@
         "description": "This will be displayed in the essentials, so make it good",
         "targetScope": "subscription",
         "parameters": { 
-            "principalIds": {
+            "MyER_addressPrefixes": {
                 "type": "string",
                 "metadata": {
                     "displayName": "Display Name for Blueprint parameter",

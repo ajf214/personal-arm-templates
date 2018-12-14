@@ -22,3 +22,6 @@
     ],
     "outputs": {}
 }
+
+// look at this issue:
+// https://github.com/Microsoft/vscode-azurearmtools/issues/140

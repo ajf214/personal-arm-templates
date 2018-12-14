@@ -5,8 +5,12 @@
     "variables": {},
     "resources": [
       {
-        "apiVersion": "2015-06-15",
-        "type": "Microsoft.Auth
+        "apiVersion": "2016-09-01",
+        "type": "Microsoft.Authorization/locks",
+        "name": "myLock",
+        "properties": {
+          "level": "CanNotDelete"
+        }
       }
     ]
   }

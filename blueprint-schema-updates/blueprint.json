@@ -1,0 +1,31 @@
+{
+    "properties": {
+        "description": "MyER Blueprint",
+        "targetScope": "subscription",
+        "parameters": { 
+           
+        },
+        "resourceGroups": {
+            "MyER": {
+                "location": "westus"
+            }
+        },
+        "artifacts": [
+            {
+                "name": "artifact-name",
+                "resourceGroup": "MyER",
+                "dependsOn": ["other-artifact-or-resource-group"],
+                "parameters": {
+                    "param1": {
+                        "value": "paramValue"
+                    }
+                }
+            },
+            {
+                "name": "second-artifact",
+                "dependsOn": ["artifact-name"]
+            }
+        ]
+    },
+    "type": "Microsoft.Blueprint/blueprints" 
+}

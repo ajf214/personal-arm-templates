@@ -1,0 +1,216 @@
+{
+    "name": "string",
+    "type": "Microsoft.Network/connections",
+    "apiVersion": "2018-08-01",
+    "location": "string",
+    "tags": {},
+    "properties": {
+      "authorizationKey": "string",
+      "virtualNetworkGateway1": {
+        "id": "string",
+        "location": "string",
+        "tags": {},
+        "properties": {
+          "ipConfigurations": [
+            {
+              "id": "string",
+              "properties": {
+                "privateIPAllocationMethod": "string",
+                "subnet": {
+                  "id": "string"
+                },
+                "publicIPAddress": {
+                  "id": "string"
+                }
+              },
+              "name": "string"
+            }
+          ],
+          "gatewayType": "string",
+          "vpnType": "string",
+          "enableBgp": boolean,
+          "activeActive": boolean,
+          "gatewayDefaultSite": {
+            "id": "string"
+          },
+          "sku": {
+            "name": "string",
+            "tier": "string",
+            "capacity": "integer"
+          },
+          "vpnClientConfiguration": {
+            "vpnClientAddressPool": {
+              "addressPrefixes": [
+                "string"
+              ]
+            },
+            "vpnClientRootCertificates": [
+              {
+                "id": "string",
+                "properties": {
+                  "publicCertData": "string"
+                },
+                "name": "string"
+              }
+            ],
+            "vpnClientRevokedCertificates": [
+              {
+                "id": "string",
+                "properties": {
+                  "thumbprint": "string"
+                },
+                "name": "string"
+              }
+            ],
+            "vpnClientProtocols": [
+              "string"
+            ],
+            "vpnClientIpsecPolicies": [
+              {
+                "saLifeTimeSeconds": "integer",
+                "saDataSizeKilobytes": "integer",
+                "ipsecEncryption": "string",
+                "ipsecIntegrity": "string",
+                "ikeEncryption": "string",
+                "ikeIntegrity": "string",
+                "dhGroup": "string",
+                "pfsGroup": "string"
+              }
+            ],
+            "radiusServerAddress": "string",
+            "radiusServerSecret": "string"
+          },
+          "bgpSettings": {
+            "asn": "integer",
+            "bgpPeeringAddress": "string",
+            "peerWeight": "integer"
+          },
+          "resourceGuid": "string"
+        }
+      },
+      "virtualNetworkGateway2": {
+        "id": "string",
+        "location": "string",
+        "tags": {},
+        "properties": {
+          "ipConfigurations": [
+            {
+              "id": "string",
+              "properties": {
+                "privateIPAllocationMethod": "string",
+                "subnet": {
+                  "id": "string"
+                },
+                "publicIPAddress": {
+                  "id": "string"
+                }
+              },
+              "name": "string"
+            }
+          ],
+          "gatewayType": "string",
+          "vpnType": "string",
+          "enableBgp": boolean,
+          "activeActive": boolean,
+          "gatewayDefaultSite": {
+            "id": "string"
+          },
+          "sku": {
+            "name": "string",
+            "tier": "string",
+            "capacity": "integer"
+          },
+          "vpnClientConfiguration": {
+            "vpnClientAddressPool": {
+              "addressPrefixes": [
+                "string"
+              ]
+            },
+            "vpnClientRootCertificates": [
+              {
+                "id": "string",
+                "properties": {
+                  "publicCertData": "string"
+                },
+                "name": "string"
+              }
+            ],
+            "vpnClientRevokedCertificates": [
+              {
+                "id": "string",
+                "properties": {
+                  "thumbprint": "string"
+                },
+                "name": "string"
+              }
+            ],
+            "vpnClientProtocols": [
+              "string"
+            ],
+            "vpnClientIpsecPolicies": [
+              {
+                "saLifeTimeSeconds": "integer",
+                "saDataSizeKilobytes": "integer",
+                "ipsecEncryption": "string",
+                "ipsecIntegrity": "string",
+                "ikeEncryption": "string",
+                "ikeIntegrity": "string",
+                "dhGroup": "string",
+                "pfsGroup": "string"
+              }
+            ],
+            "radiusServerAddress": "string",
+            "radiusServerSecret": "string"
+          },
+          "bgpSettings": {
+            "asn": "integer",
+            "bgpPeeringAddress": "string",
+            "peerWeight": "integer"
+          },
+          "resourceGuid": "string"
+        }
+      },
+      "localNetworkGateway2": {
+        "id": "string",
+        "location": "string",
+        "tags": {},
+        "properties": {
+          "localNetworkAddressSpace": {
+            "addressPrefixes": [
+              "string"
+            ]
+          },
+          "gatewayIpAddress": "string",
+          "bgpSettings": {
+            "asn": "integer",
+            "bgpPeeringAddress": "string",
+            "peerWeight": "integer"
+          },
+          "resourceGuid": "string"
+        }
+      },
+      "connectionType": "string",
+      "connectionProtocol": "string",
+      "routingWeight": "integer",
+      "sharedKey": "string",
+      "peer": {
+        "id": "string"
+      },
+      "enableBgp": boolean,
+      "usePolicyBasedTrafficSelectors": boolean,
+      "ipsecPolicies": [
+        {
+          "saLifeTimeSeconds": "integer",
+          "saDataSizeKilobytes": "integer",
+          "ipsecEncryption": "string",
+          "ipsecIntegrity": "string",
+          "ikeEncryption": "string",
+          "ikeIntegrity": "string",
+          "dhGroup": "string",
+          "pfsGroup": "string"
+        }
+      ],
+      "resourceGuid": "string",
+      "expressRouteGatewayBypass": boolean
+    }
+  }

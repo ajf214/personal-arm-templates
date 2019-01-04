@@ -1,0 +1,13 @@
+{
+    "kind": "template",
+    "properties": {
+        "template": {
+            "parameters": {
+                "param1": {
+                    
+                }
+            },
+            "resources": []
+        }
+    }
+}

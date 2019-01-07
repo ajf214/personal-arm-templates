@@ -1,7 +1,7 @@
 {
     "properties": {
         "parameters": {
-            "principalsProdContributors": {
+            "ContributorsProd": {
                 "type": "string",
                 "metadata": {
                     "displayName": "Prod contributors - User or Group",
@@ -9,7 +9,7 @@
                     "strongType": "PrincipalId"
                 }
             },
-            "principalsPreProdOwners": {
+            "OwnersPreProd": {
                 "type": "string",
                 "metadata": {
                     "displayName": "Pre-Prod owners - User or Group",
@@ -17,23 +17,22 @@
                     "strongType": "PrincipalId"
                 }
             },
-            "principalsPreProdReaders": {
+            "ReadersPreProd": {
                 "type": "string",
                 "metadata": {
                     "displayName": "Pre-Prod readers - User or group",
-                    "description": "The user or group that will get reader access to the pre-prod rg"
+                    "description": "The user or group that will get reader access to the pre-prod rg",
+                    "strongType": "PrincipalId"
                 }
             }
         },
         "resourceGroups": {
             "ProdRG": {
-                "location": "eastus",
                 "dependsOn": [
 
                 ]
             },
             "PreProdRG": {
-                "location": "eastus",
                 "dependsOn": [
 
                 ]
@@ -43,7 +42,6 @@
         "displayName": "Resource Groups with RBAC",
         "description": "Sets up two resource groups and configures a role assignment for each."
     },
-    "id": "/providers/Microsoft.Management/managementGroups/AzBlueprintBuiltIns/providers/Microsoft.Blueprint/blueprints/two-resource-groups-with-rbac",
     "type": "Microsoft.Blueprint/blueprints",
     "name": "two-resource-groups-with-rbac"
 }

@@ -55,7 +55,9 @@ We also decoupling info from the artifact.json and moving it into the artifacts 
     "properties": {
         "template": {
             "parameters": {},
-            "resources": []
+            "resources": [
+                // need to reference a bp parameter directly here
+            ]
         }
     }
 }
@@ -87,7 +89,7 @@ The assignment json needs to be updated to support artifactParameters. blueprint
           ]
         }
       },
-      "artifactParameters":
+      "artifactParameters": // this is the part I am most unsure about, seems too verbose..
       [
           {
               "artifactName": "artifact", // I don't love that I need to explicitly declare the artifact i'm passing a param for

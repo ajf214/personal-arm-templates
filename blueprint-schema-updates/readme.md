@@ -17,7 +17,10 @@ The main change here is bringing the list of artifacts **into** the blueprint js
         "description": "My Blueprint As Code",
         "targetScope": "subscription",
         "parameters": { 
-           "param1": 
+           "blueprintLocation": {
+               "type": "string",
+               "defaultValue": "westus"
+           } 
         },
         "resourceGroups": {
             "RG1": {
@@ -30,7 +33,10 @@ The main change here is bringing the list of artifacts **into** the blueprint js
                 "resourceGroup": "RG1",
                 "parameters": {
                     "artifactParam1": {
-                        "value": "paramValue"
+                        "value": "paramValue" // hardcoded parameter value, easy to see from main bp file
+                    },
+                    "location": {
+                        "value": "[parameters('blueprintLocation')]"
                     }
                 }
             },
@@ -44,7 +50,7 @@ The main change here is bringing the list of artifacts **into** the blueprint js
 }
 ```
 
-### Artifact.json
+### Artifact1.json
 The change is to support “artifactParameters” separate from “blueprintParameters”. Ideally, artifactParameters can be implicitly defined. If a blueprint parameter doesn’t exist, it should be filled out only at assignment time.
 
 We also decoupling info from the artifact.json and moving it into the artifacts list in blueprint.json. This should make the artifacts more re-usable, more "drag & drop".
@@ -57,6 +63,18 @@ We also decoupling info from the artifact.json and moving it into the artifacts 
             "parameters": {},
             "resources": [
                 // need to reference a bp parameter directly here
+                {
+                    "name": "myStorageAccount",
+                    "type": "Microsoft.Storage/storageAccounts",
+                    "apiVersion": "2016-01-01",
+                    "sku": {
+                        "name": "Standard_LRS"
+                    },
+                    "kind": "Storage",
+                    "location": "[parameters('blueprintLocation')]", // direct reference of a bp parameter
+                    "tags": {},
+                    "properties": {}
+                }
             ]
         }
     }

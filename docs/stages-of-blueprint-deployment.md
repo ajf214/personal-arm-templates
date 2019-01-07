@@ -21,6 +21,7 @@ At a high level the steps are:
 
 * only used to create the managed identity
 * blueprints service also does **not** deploy the resources
+* this granting of rights is done automatically in the UI. If doing an assignment with the REST API, you need to do this yourself with a separate API call.
 
 ### 3. The blueprints service creates a new system-assigned managed identity with owner rights to the assigned subscription.
 

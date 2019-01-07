@@ -27,8 +27,37 @@
                     "location": "[variables(\u0027location\u0027)]",
                     "properties": {
                         "securityRules": [
-
                         ]
+                    }
+                },
+                {
+                    "apiVersion": "2018-02-01",
+                    "type": "Microsoft.Resources/deployments",
+                    "name": "associateNsg",
+                    "resourceGroup": "[resourceGroup().name]",
+                    "dependsOn": [
+                        "[variables(\u0027newNsgName\u0027)]"
+                    ],
+                    "properties": {
+                        "mode": "Incremental",
+                        "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                            "contentVersion": "1.0.0.0",
+                            "resources": [
+                                {
+                                    "apiVersion": "2018-04-01",
+                                    "type": "Microsoft.Network/virtualNetworks/subnets",
+                                    "name": "[concat(variables(\u0027existingVirtualNetworkName\u0027), \u0027/\u0027, variables(\u0027existingSubnetName\u0027))]",
+                                    "location": "[variables(\u0027location\u0027)]",
+                                    "properties": {
+                                        "addressPrefix": "[reference(variables(\u0027subnetId\u0027), \u00272018-04-01\u0027).addressPrefix]",
+                                        "networkSecurityGroup": {
+                                            "id": "[resourceId(\u0027Microsoft.Network/networkSecurityGroups\u0027, variables(\u0027newNsgName\u0027))]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 }
             ]
@@ -45,6 +74,7 @@
         "displayName": "NSG for new VNET"
     },
     "kind": "template",
+    "id": "/providers/Microsoft.Management/managementGroups/AzBlueprintBuiltIns/providers/Microsoft.Blueprint/blueprints/networking-vnet/artifacts/nsg-template",
     "type": "Microsoft.Blueprint/blueprints/artifacts",
     "name": "nsg-template"
 }

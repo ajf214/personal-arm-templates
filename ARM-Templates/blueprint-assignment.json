@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Blueprint/blueprintAssignments",
+            "name": "Assignment-MyER",
+            "apiVersion": "2017-11-11-preview",
+            "identity": {
+                "type": "systemAssigned",
+                "principalId": "74a2af75-186d-442a-b4a5-e5b8fa980502",
+                "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+            },
+            "location": "westus2",
+            "properties": {
+                "blueprintId": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/MyER/versions/0.10",
+                "parameters": {
+                    "MyER_nsgName": {
+                        "value": "MSIT-NSG"
+                    },
+                    "MyER_otherSubnetPrefix": {
+                        "value": "10.69.145.16/28"
+                    },
+                    "MyER_addressPrefixes": {
+                        "value": [
+                        "10.69.145.16/28",
+                        "10.69.159.176/28"
+                        ]
+                    },
+                    "MyER_gatewayAddressPrefix": {
+                        "value": "10.69.159.176/28"
+                    },
+                    "MyER_dnsServers": {
+                        "value": [
+                        "10.50.50.50",
+                        "10.50.10.50"
+                        ]
+                    },
+                    "MyER_requestId": {
+                        "value": "12345"
+                    },
+                    "MyER_gatewaySubnetName": {
+                        "value": "GatewaySubnet"
+                    },
+                    "MyER_pipName": {
+                        "value": "MSIT-PIP"
+                    },
+                    "MyER_subnetName": {
+                        "value": "MSIT-SUBNET"
+                    },
+                    "MyER_vnetName": {
+                        "value": "MSIT-VNET"
+                    },
+                    "MyER_expressRouteName": {
+                        "value": "express-route-across-subs"
+                    }
+                },
+                "resourceGroups": {
+                    "MyER": {
+                        "name": "My-ER-TEST03"
+                    }
+                },
+                "scope": "/subscriptions/0745e7d2-1e06-4d9e-9b9b-f42442b8b92f",
+                "locks": {
+                    "mode": "none"
+                }
+            }
+        }
+    ]
+}

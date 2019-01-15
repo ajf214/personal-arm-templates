@@ -1,7 +1,20 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "blueprintName": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        },
+        "blueprintParameters": {
+            "type": "array"
+        },
+        "subscriptionId": {
+            "type": "string"
+        }
+    },
     "variables": {},
     "resources": [
         {
@@ -9,13 +22,11 @@
             "name": "Assignment-MyER",
             "apiVersion": "2017-11-11-preview",
             "identity": {
-                "type": "systemAssigned",
-                "principalId": "74a2af75-186d-442a-b4a5-e5b8fa980502",
-                "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+                "type": "systemAssigned"
             },
             "location": "westus2",
             "properties": {
-                "blueprintId": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/MyER/versions/0.10",
+                "blueprintId": "[concat('/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/', parameters('blueprintName'), '/versions/', parameters('blueprintVersion'))]",
                 "parameters": {
                     "MyER_nsgName": {
                         "value": "MSIT-NSG"
@@ -62,7 +73,7 @@
                         "name": "My-ER-TEST03"
                     }
                 },
-                "scope": "/subscriptions/0745e7d2-1e06-4d9e-9b9b-f42442b8b92f",
+                "scope": "[concat('/subscriptions/', subscription().id]",
                 "locks": {
                     "mode": "none"
                 }

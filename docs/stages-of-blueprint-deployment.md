@@ -7,10 +7,10 @@ When a blueprint gets deployed, there are a series of actions the blueprints ser
 At a high level the steps are:
 
 1. The blueprints service is granted owner rights to the assigned subscription.
-1. A user, group, or service princiapl creates a new blueprint assignment object.
-1. The blueprints service creates a new system-assigned managed identity with owner rights to the assigned subscription.
-1. This new system assigned managed identity is used to call ARM to deploys the artifacts in the blueprint in the specified order.
-1. The managed idenity and blueprints service has their owner rights revoked.
+2. A user, group, or service principal assigns a blueprint to a subscription.
+3. The blueprints service creates a new system-assigned managed identity with owner rights to the assigned subscription.
+4. This new managed identity is used to call ARM to deploy the artifacts in the blueprint in the specified order.
+5. The managed idenity and blueprints service has their owner rights revoked.
 
 ### 1. The blueprints service is granted owner rights to the assigned subscription.
 
@@ -30,14 +30,15 @@ At a high level the steps are:
 
 ### 4. This new system assigned managed identity deploys the artifacts in the blueprint in a specified order.
 
-* need to understand that any access failures will relate to the access of this identity
-* talk about sequencing a little bit
-* link to deployment sequencing
+* users need to understand that any access failures are a result of the level of access granted to of this identity
+* talk about sequencing a little bit, but point them to the below doc
+* [Learn more about deployment sequencing](https://docs.microsoft.com/en-us/azure/governance/blueprints/concepts/sequencing-order)
 
 ### 5. The managed idenity and blueprints service has their owner rights revoked.
 * first the managed identity has their owner access revoked
 * then the blueprints service removes itself
     - in this way, we don't maintain permanent owner access to a subscription
+* *this will need to be updated when we add support for user assigned MSI in a few weeks because we won't do this revocation for user-assigned*
 
 ## Updating a blueprint assignment
 

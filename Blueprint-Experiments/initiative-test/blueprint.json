@@ -1,0 +1,11 @@
+{
+    "properties": {
+        "description": "It's the most ISO27001 blueprint you've ever seen",
+        "targetScope": "subscription",
+        "parameters": { 
+        },
+        "resourceGroups": {
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints" 
+}

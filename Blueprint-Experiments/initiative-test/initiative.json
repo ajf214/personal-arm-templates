@@ -1,0 +1,15 @@
+{
+    "properties": {
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97",
+        "parameters": {},
+        "dependsOn": [],
+        "displayName": "ISO27001",
+        "metadata": {
+            "COMMENT": "specify the policy definition ID. Can be either custom or built-in. This boilerplate example points to the built-in 'allowed locations' policy"
+        }
+    },
+    "kind": "policyAssignment",
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}
+
+

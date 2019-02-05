@@ -56,13 +56,13 @@
                         "value": "GatewaySubnet"
                     },
                     "MyER_pipName": {
-                        "value": "MSIT-PIP"
+                        "value": "MY-PIP"
                     },
                     "MyER_subnetName": {
-                        "value": "MSIT-SUBNET"
+                        "value": "MY-SUBNET"
                     },
                     "MyER_vnetName": {
-                        "value": "MSIT-VNET"
+                        "value": "MY-VNET"
                     },
                     "MyER_expressRouteName": {
                         "value": "express-route-across-subs"

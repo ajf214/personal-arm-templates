@@ -1,5 +1,8 @@
 {
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "metadata": {
+        "comment": "Creates a new vnet and peers it to a hub vnet that already exists, specified in the parameters"
+    },
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vNet1Name": {
@@ -8,6 +11,18 @@
             "metadata": {
                 "description": "Name for vNet 1"
             }
+        },
+        "hubSubscriptionId": {
+            "type": "string",
+            "defaultValue": "e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+        },
+        "hubResourceGroup": {
+            "type": "string",
+            "defaultValue": "Networking-resource-group"
+        },
+        "hubVnetName": {
+            "type": "string",
+            "defaultValue": "vnet-sh360-e93d3"
         }
     },
     "variables": {
@@ -18,9 +33,9 @@
         },
         "vNet1tovNet2PeeringName": "[concat(parameters('vNet1Name'), '-', 'hub')]",
         "vNet2tovNet1PeeringName": "[concat('hub', '-', parameters('vNet1Name'))]",
-        "hubSubscriptionId": "45f9252d-e27e-4ed8-ab4e-dc5054de13fa",
-        "hubResourceGroupName": "Networking-resource-group",
-        "hubVnetName": "vnet-sh360-45f92",
+        "hubSubscriptionId": "[parameters('hubSubscriptionId')]",
+        "hubResourceGroupName": "[parameters('hubResourceGroup')]",
+        "hubVnetName": "[parameters('hubVnetName')]",
         "currentSub": "[subscription().subscriptionId]",
         "currentRg": "[resourceGroup().name]"
     },

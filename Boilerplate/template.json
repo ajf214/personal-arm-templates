@@ -6,7 +6,7 @@
             "contentVersion": "1.0.0.0",
             "parameters": {
               "myTemplateParameter": {
-                "type":"string",
+                "type": "string",
                 "metadata": {
                   "displayName": "single template parameter"
                 }
@@ -15,6 +15,7 @@
             "variables": {},
             "resources": []
         },
+        "resourceGroup": "SingleRG",
         "displayName": "My ARM Template",
         "parameters": {
           "myTemplateParameter": {

@@ -3,16 +3,17 @@
         "description": "This will be displayed in the essentials, so make it good",
         "targetScope": "subscription",
         "parameters": { 
-            "MyER_addressPrefixes": {
-                "type": "string",
+            "principalIds": {
+                "type": "string", 
                 "metadata": {
-                    "displayName": "Display Name for Blueprint parameter",
-                    "descripiton": "This is a blueprint parameter that any artifact can reference. We'll display these descriptions for you in the info bubble",
+                    "displayName": "Principal IDs",
+                    "description": "This is a blueprint parameter that any artifact can reference. We'll display these descriptions for you in the info bubble. Supply principal IDs for the users, groups or service principals for the RBAC assignment",
                     "strongType": "PrincipalId"
                 }
             },
             "genericBlueprintParameter": {
-                "type": "string"
+                "type": "string",
+                "defaultValue": "MyDefaultParamValue"
             }
         },
         "resourceGroups": {

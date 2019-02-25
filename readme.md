@@ -127,8 +127,8 @@ Full spec for each artifact type:
 * [Template](https://docs.microsoft.com/en-us/rest/api/blueprints/artifacts/createorupdate#templateartifact)
 
 ### How Parameters work
-Nearly everything can be parameterized. The only things that can't be parameterized are the ```roleDefinitionId``` and ```policyDefinitionId``` in the ```rbacAssignment``` and ```policyAssignment``` artifacts respectively. Some explanation for why this is, something about linked access checks.
-Parameters are set on the main blueprint file and can be referenced in any artifact. 
+Nearly everything can be parameterized. The only things that can't be parameterized are the ```roleDefinitionId``` and ```policyDefinitionId``` in the ```rbacAssignment``` and ```policyAssignment``` artifacts respectively.
+Parameters are defined in the main blueprint file and can be referenced in any artifact. 
 
 Here's a simple parameter declaration which is a simplified version from ```blueprint.json```:
 ```json
@@ -160,6 +160,8 @@ First, in `template.json` we need to map the *blueprint* parameter to the *artif
 }
 ```
 
+This should look familiar if you've [passed parameters inline to a nested deployment](http://google.com). Instead of getting these parameter values from a file, we are getting them from the list of blueprint parameters.   
+
 And then you can reference that parameter within the `template` section in `template.json` like this:
 ```json
 "template": {
@@ -172,6 +174,8 @@ And then you can reference that parameter within the `template` section in `temp
     },
 },
 ```
+
+This shouldn't require any modification of your arm templates.
 
 The [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/1.0.0) powershell module has a cmdlet called ```Import-AzureBlueprintArtifact``` that can automatically convert an ARM template into a blueprint template artifact and map all the parameter references for you. It's a good way to understand how everything works.
 

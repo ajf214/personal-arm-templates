@@ -43,6 +43,8 @@ Create a folder or directory on your computer to store all of your blueprint fil
 At the time we support the following functions. They work exactly like they do in a regular ARM template.
 * [parameters()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-deployment#parameters)
 * [concat()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-array#concat)
+* [subscription()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-array#concat)
+* [resourceGroup()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-resource#resourcegroup)
 
 ### Blueprint
 This is your main Blueprint file. In order to be processed successfully, the blueprint must be created in Azure before any artifacts (policy, role, template) otherwise the calls to push those artifacts will fail. That's because the **artifacts are child resources of a blueprint**. The `Manage-AzureRmBlueprint` script takes care of this for you automatically. Typically, you will name this 01-blueprint.json so that it is sorted alphabetically first, but this name is up to you and doesn't affect anything.

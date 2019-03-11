@@ -1,0 +1,127 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "string",
+            "defaultValue": "VNet1",
+            "metadata": {
+              "description": "Name of the Spoke Virtual Network"
+            }
+          },
+          "vnetAddressPrefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/25",
+            "metadata": {
+              "description": "VNET Address prefix"
+            }
+          },
+          "subnet1Prefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.32/27",
+            "metadata": {
+              "description": "Subnet 1 Prefix"
+            }
+          },
+          "subnet1Name": {
+            "type": "string",
+            "defaultValue": "GatewaySubnet",
+            "metadata": {
+              "description": "Subnet 1 Name"
+            }
+          },
+          "subnet2Prefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.64/27",
+            "metadata": {
+              "description": "Subnet 2 Prefix"
+            }
+          },
+          "subnet2Name": {
+            "type": "string",
+            "defaultValue": "SecurityTrust",
+            "metadata": {
+              "description": "Subnet 2 Name"
+            }
+          },
+          "subnet3Prefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.96/27",
+            "metadata": {
+              "description": "Subnet 3 Prefix"
+            }
+          },
+          "subnet3Name": {
+            "type": "string",
+            "defaultValue": "SecurityUntrust",
+            "metadata": {
+              "description": "Subnet 3 Name"
+            }
+          }
+        },
+    "variables": {
+        "hubSubscriptionId": "442c67a2-002c-4df0-b7b4-dee8e6d206a5",
+        "hubResourceGroupName": "Network",
+        "hubvNetName": "hub01-vnet",
+        "vNet1toHUBPeeringName": "[concat(parameters('vnetName'),'/peering-to-HUB')]"
+        
+    },
+    "resources": [
+        {
+          "apiVersion": "2017-06-01",
+          "type": "Microsoft.Network/virtualNetworks",
+          "name": "[parameters('vnetName')]",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "addressSpace": {
+              "addressPrefixes": [
+                "[parameters('vnetAddressPrefix')]"
+              ]
+            },
+            "subnets": [
+              {
+                "name": "[parameters('subnet1Name')]",
+                "properties": {
+                  "addressPrefix": "[parameters('subnet1Prefix')]"
+                }
+              },
+              {
+                "name": "[parameters('subnet2Name')]",
+                "properties": {
+                  "addressPrefix": "[parameters('subnet2Prefix')]"
+                }
+              },
+              {
+                "name": "[parameters('subnet3Name')]",
+                "properties": {
+                  "addressPrefix": "[parameters('subnet3Prefix')]"
+                }
+              }
+            ]
+        },
+
+            "resources": [
+                    {
+                        "apiVersion": "2016-06-01",
+                        "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                        "name": "[variables('vNet1toHUBPeeringName')]",
+                        "location": "[resourceGroup().location]",
+                        "dependsOn": [
+                            "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]"
+                        ],
+                        "comments": "This is the peering from vNet 1 to HUB",
+                        "properties": {
+                            "allowVirtualNetworkAccess": "true",
+                            "allowForwardedTraffic": "false",
+                            "allowGatewayTransit": "false",
+                            "useRemoteGateways": "true",
+                            "remoteVirtualNetwork": {
+                                "id": "[resourceId(variables('hubSubscriptionId'),variables('hubResourceGroupName'),'Microsoft.Network/virtualNetworks',variables('hubvNetName'))]"
+                            }
+                        }
+                    }
+              
+            ]   
+        }
+    ]
+    }

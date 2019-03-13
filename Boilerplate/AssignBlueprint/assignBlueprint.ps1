@@ -6,15 +6,15 @@ param(
 )
 
 $blueprintName = "Boilerplate"
-$contributors = "caeebed6-cfa8-45ff-9d8a-03dba4ef9a7d"
+$contributors = "caeebed6-cfa8-45ff-9d8a-03dba4ef9a7d" # this is my princiapl ID in the microsoft tenant so you should change this :)
 
 # Get the version of the blueprint you want to assign, which we will pas to New-AzBlueprintAssignment
 $myBluerpint = Get-AzBlueprint -ManagementGroupId $managementGroupId -Name $blueprintName -LatestPublished
 
-Write-Host $myBlueprint
-
 # Each resource group artifact in the blueprint will need a hashtable for the actual RG name and location
 $rgHash = @{ name="MyBoilerplateRG"; location = "eastus" }
+
+# all other (non-rg) parameters are listed in a single hashtable, with a key/value pair for each parameter
 $parameters = @{ principalIds=$contributors }
 
 # All of the resource group artifact hashtables are themselves grouped into a parent hashtable

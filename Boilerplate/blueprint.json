@@ -18,8 +18,7 @@
         },
         "resourceGroups": {
             "SingleRG": {
-                "description": "An optional description for your RG artifact. FYI location and name properties can be left out and we will assume they are assignment-time parameters",
-                "location": "eastus"
+                "description": "An optional description for your RG artifact. FYI location and name properties can be left out and we will assume they are assignment-time parameters"
             }
         }
     },

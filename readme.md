@@ -46,6 +46,11 @@ At the time we support the following functions. They work exactly like they do i
 * [subscription()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-array#concat)
 * [resourceGroup()](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-resource#resourcegroup)
 
+We also support functions that only exist in blueprints:
+
+* [artifacts()](#passing-values-between-artifacts)
+* [resourceGroups()](https://google.com)
+
 ### Blueprint
 This is your main Blueprint file. In order to be processed successfully, the blueprint must be created in Azure before any artifacts (policy, role, template) otherwise the calls to push those artifacts will fail. That's because the **artifacts are child resources of a blueprint**. The `Manage-AzureRmBlueprint` script takes care of this for you automatically. Typically, you will name this 01-blueprint.json so that it is sorted alphabetically first, but this name is up to you and doesn't affect anything.
 
@@ -180,6 +185,25 @@ And then you can reference that parameter within the `template` section in `temp
 This shouldn't require any modification of your arm templates.
 
 The [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBlueprint/1.0.0) powershell module has a cmdlet called ```Import-AzureBlueprintArtifact``` that can automatically convert an ARM template into a blueprint template artifact and map all the parameter references for you. It's a good way to understand how everything works.
+
+### Passing values between artifacts
+There are many reasons you may want or need to pass the output from one artifact as the input to another artifact that is deployed later in the blueprint assignment sequence. If so, you can make use of the ```artifacts()``` function which lets you reference the details of a particular artifact.
+
+For example you may do something like this in a template artifact for a vnet:
+
+```json
+{
+    // todo
+}
+```
+
+Then in some other artifact, use the vnet id like so:
+
+```json
+{
+    // todo
+}
+```
 
 ### Push the Blueprint definition to Azure
 Now we’ll take advantage of the [Manage-AzureRMBlueprint]() script and push it to Azure. We can do so by running the following command. You should be in the directory of where your blueprint artifacts are saved.

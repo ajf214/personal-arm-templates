@@ -31,5 +31,5 @@ steps:
      targetType: 'filePath'
      filePath: '.\release.ps1'
      arguments: '-subId "d56e652e-758d-480a-8f0d-47f230264b4c" -blueprintName "Boilerplate" -spnId $(spnId) -spnPass $(spnPass) -tenantId $(tenantId)'
-     errorActionPreference: 'Continue'
+     errorActionPreference: 'stop'
 

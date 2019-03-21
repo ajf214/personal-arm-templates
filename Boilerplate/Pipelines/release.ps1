@@ -1,9 +1,19 @@
+<#
+
+FWIW, this only cleans up one rg that the script assumes was the rg created during the last test
+
+If the blueprint has more than 1 rg and/or subscription level artifacts, you will need to write some sort 
+of cleanup logic, or make sure you are deploying an update that can be deployed cleanly through ARM 
+
+#>
+
 param(
     [Parameter(Mandatory=$true)]$subId, # 35ad74f4-0b37-44a7-ba94-91b6ec6026cd
-    [Parameter(Mandatory=$true)]$blueprintName, # Boilerplate
+    [Parameter(Mandatory=$true)]$blueprintName,
     [Parameter(Mandatory=$true)]$spnId,
     [Parameter(Mandatory=$true)]$spnPass,
-    [Parameter(Mandatory=$true)]$tenantId
+    [Parameter(Mandatory=$true)]$tenantId,
+    [Parameter(Mandatory=$true)]$mgId
 )
 
 # -------- Get the powershell environment set up properly ----------
@@ -42,28 +52,39 @@ $rgName = "TestRG" # rg that will be deleted for cleanup, then recreated
 
 # Clean out the relevant sub/rgs
 
-$rgExists = Get-AzResourceGroup -Name $rgName
+# todo - should check whether or not this RG exists
+$rgExists = Get-AzResourceGroup -Name $rgName -ErrorAction silentlycontinue
 
 if ($rgExists) {
     # For now, delete the SingleRG for Boilerplate
     Remove-AzResourceGroup -Name $rgName -Force
 }
 
-$mgId = "root"
 $userAssignedPrincipalId = "/subscriptions/d56e652e-758d-480a-8f0d-47f230264b4c/resourceGroups/managed-identities/providers/Microsoft.ManagedIdentity/userAssignedIdentities/service-admin"
 $myBlueprint = Get-AzBlueprint -ManagementGroupId $mgId -Name $blueprintName -LatestPublished
+
+# parameters for Boilerplate
+<#
 
 $rgHash = @{ name=$rgName; location = "eastus" } # single rg
 $rgArray = @{ SingleRG = $rgHash } # array of all rgs
 
-$principal = 'd3e063f7-09cb-4526-9021-4759a7ba179c'
+$principal = 'd3e063f7-09cb-4526-9021-4759a7ba179c' # specific to tenant
 $params = @{ principalIds=$principal; genericBlueprintParameter="test"}
+#>
+
+# parameters for appnetwork
+$rgHash = @{ name=$rgName; location = "eastus" } # single rg
+$rgArray = @{ AppNetwork = $rgHash } # array of all rgs
+
+$principal = 'd3e063f7-09cb-4526-9021-4759a7ba179c'
+$params = @{ contributors=$principal; }
 
 # $date = Get-Date -UFormat %Y%m%d%H%M%S # todo - use the version string from DevOps
 $generatedAssignmentName = "A-$blueprintName" 
 
 # check to see if there is an existing assignment
-$oldAssignment = Get-AzBlueprintAssignment -SubscriptionId $subId -Name $generatedAssignmentName
+$oldAssignment = Get-AzBlueprintAssignment -SubscriptionId $subId -Name $generatedAssignmentName -ErrorAction silentlycontinue
 
 if ($oldAssignment) {
     # if yes, *update* the assignment 
@@ -78,6 +99,7 @@ if ($oldAssignment) {
 }
 
 # Check the status of the blueprint assignment
+
 $assignment = Get-AzBlueprintAssignment -Subscription $subId -Name $generatedAssignmentName
 $counter = 0 
 

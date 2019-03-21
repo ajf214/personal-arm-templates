@@ -1,13 +1,11 @@
 param(
     [Parameter(Mandatory=$true)]$mgId, 
     [Parameter(Mandatory=$true)]$BlueprintFolder,
-    [Parameter(Mandatory=$true)]$BlueprintModulesDirectory,
+    [Parameter(Mandatory=$true)]$blueprintName,
     [Parameter(Mandatory=$true)]$spnId,
     [Parameter(Mandatory=$true)]$spnPass,
     [Parameter(Mandatory=$true)]$tenantId
 )
-
-$blueprintName = "Boilerplate"
 
 # Output powershell version for debugging purposes and is probably generally good to know
 $PSVersionTable.PSVersion # PowerShell 5
@@ -57,6 +55,7 @@ $date = Get-Date -UFormat %Y%m%d.%H%M%S
 $genVersion = "$date.TEST" # todo - use the version from DevOps
 
 # success
+
 if ($?) {
     Write-Host "Imported successfully"
 

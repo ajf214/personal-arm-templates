@@ -22,7 +22,7 @@ steps:
    inputs:
      targetType: 'filePath'
      filePath: '.\build.ps1'
-     arguments: '-mgId root -BlueprintFolder "$(Build.SourcesDirectory)\Boilerplate" -BlueprintModulesDirectory "$(Build.SourcesDirectory)\BlueprintPSModules" -spnId $(spnId) -spnPass $(spnPass) -tenantId $(tenantId)'
+     arguments: '-mgId $(managementGroupId) -BlueprintFolder "$(Build.SourcesDirectory)\Example Blueprints\$(blueprintName)" -blueprintName $(blueprintName) -spnId $(spnId) -spnPass $(spnPass) -tenantId $(tenantId)'
      errorActionPreference: 'stop'
 
  - task: PowerShell@2
@@ -30,6 +30,6 @@ steps:
    inputs:
      targetType: 'filePath'
      filePath: '.\release.ps1'
-     arguments: '-subId "d56e652e-758d-480a-8f0d-47f230264b4c" -blueprintName "Boilerplate" -spnId $(spnId) -spnPass $(spnPass) -tenantId $(tenantId)'
+     arguments: '-subId $(subscriptionId) -blueprintName $(blueprintName) -spnId $(spnId) -spnPass $(spnPass) -tenantId $(tenantId) -mgId $(managementGroupId)'
      errorActionPreference: 'stop'
 

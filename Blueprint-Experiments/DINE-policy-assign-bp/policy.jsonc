@@ -1,0 +1,55 @@
+{
+    "properties": {
+        "mode": "all", // what is this?
+        "parameters": { /*
+            "allowedLocations": {
+                "type": "array",
+                "metadata": {
+                    "description": "The list of locations that can be specified when deploying resources",
+                    "strongType": "location",
+                    "displayName": "Allowed locations"
+                },
+                "defaultValue": "westus2"
+            } */
+        },
+        "displayName": "Allowed locations",
+        "description": "This policy enables you to restrict the locations your organization can specify when deploying resources.",
+        "policyRule": {
+            "if": {
+                "type": "Microsoft.Subscription"
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "type": "Microsoft.Blueprint/blueprintAssignments",
+                    "roleDefinitionIds": [
+                      "/providers/Microsoft.Authorization/roleDefinitions/de139f84-1756-47ae-9be6-808fbbe84772" // role for the MSI
+                    ],
+                    "existenceScope": "subscription",
+                    "existenceCondition": { // the check for whether this remediation should run or not. This is a one-hop relationship - can't evaluate multiple resources in a policy
+                      "field": "Microsoft.Blueprint/blueprintAssignments/name",
+                      "equals": "myAssignment" // check that an assignment with this name exists
+                    },
+                    "deployment": {
+                      "properties": {
+                        "mode": "incremental",
+                        "template": {
+                            // put blueprintAssignment creation template it
+                        },
+                        "parameters": {
+                          /*
+                          "webappName": {
+                            "value": "[field('fullName')]"
+                          },
+                          "webappLocation": {
+                            "value": "[field('location')]"
+                          }
+                          */
+                        }
+                      }
+                    }
+                }
+            }
+        }
+    }
+}

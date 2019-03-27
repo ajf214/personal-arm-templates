@@ -57,7 +57,7 @@
     "resources": [
       {
         "type": "Microsoft.Storage/storageAccounts",
-        "name": "[variables('storageAccountName')]",
+        "name": "[variables('storageAccountName')]", //this is a P1
         "location": "[parameters('location')]",
         "apiVersion": "2018-07-01",
         "sku": {

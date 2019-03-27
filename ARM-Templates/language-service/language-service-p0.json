@@ -1,0 +1,235 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "dnsLabelPrefix": {
+        "type": "string",
+        "metadata": {
+          "description": "Unique DNS Name for the Storage Account where the Virtual Machine's disks will be placed."
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "User name for the Virtual Machine."
+        }
+      },
+      "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password for the Virtual Machine."
+        }
+      },
+      "customData": {
+        "type": "string",
+        // example of inline-ing a cloud-init script in a ubuntu vm -- FWIW, it seems odd to include a yml file like this
+        "defaultValue": " 
+        #cloud-config
+        package_upgrade: true
+        packages:
+          - nginx
+          - nodejs
+          - npm
+        write_files:
+          - owner: www-data:www-data
+            path: /etc/nginx/sites-available/default
+            content: |
+              server {
+                listen 80;
+                location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection keep-alive;
+                  proxy_set_header Host $host;
+                  proxy_cache_bypass $http_upgrade;
+                }
+              }
+          - owner: azureuser:azureuser
+            path: /home/azureuser/myapp/index.js
+            content: |
+              var express = require('express')
+              var app = express()
+              var os = require('os');
+              app.get('/', function (req, res) {
+                res.send('Hello World from host ' + os.hostname() + '!')
+              })
+              app.listen(3000, function () {
+                console.log('Hello world app listening on port 3000!')
+              })
+        runcmd:
+          - service nginx restart
+          - cd "/home/azureuser/myapp"
+          - npm init
+          - npm install express -y
+          - nodejs index.js
+          ",
+        "metadata": {
+          "description": "Cloud init script passed as string"
+        }
+      },
+      "vmSize": {
+        "type": "string",
+        "defaultValue": "Standard_D1",
+        "metadata": {
+          "description": "VM size"
+        }
+      },
+      "ubuntuOSVersion": {
+        "type": "string",
+        "defaultValue": "14.04.2-LTS",
+        "allowedValues": [
+          "12.04.5-LTS",
+          "14.04.2-LTS",
+          "15.10"
+        ],
+        "metadata": {
+          "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS, 15.10."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      }
+    },
+    "variables": {
+      "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sacustmdata')]",
+      "imagePublisher": "Canonical",
+      "imageOffer": "UbuntuServer",
+      "nicName": "networkInterface1",
+      "vmName": "vm1",
+      "virtualNetworkName": "virtualNetwork1",
+      "publicIPAddressName": "publicIp1",
+      "addressPrefix": "10.0.0.0/16",
+      "subnet1Name": "Subnet-1",
+      "subnet1Prefix": "10.0.0.0/24",
+      "publicIPAddressType": "Dynamic",
+      "storageAccountType": "Standard_LRS",
+      "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+      "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
+      "apiVersion": "2015-06-15"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "variables('storageAccountName')", // the false positive on the length is a P0, interestingly this didn't show up for api version 2015-06-15
+                                                    // the comment is a DEMO
+        "apiVersion": "2018-07-01",
+        "location": "[parameters('location')]", // Need to sync with Steve on what is possible for syntax highlighting here
+                                                // for demo, I would expect the use of expressions ([]) to at least be highlighted
+        "properties": {
+          "accountType": "[variables('storageAccountType')]"
+        }
+      },
+      {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[variables('publicIPAddressName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+          "dnsSettings": {
+            "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+          }
+        }
+      },
+      { // DEMO REQUIREMENT - case insensitivity - the Name property of the vnet is capitalized 
+        "apiVersion": "2015-06-15", // JUST A BUG: for some reason, this shows up when the subnet Name property is capitalized
+        "type": "Microsoft.Network/virtualNetworks",
+        "Name": "[variables('virtualNetworkName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "[variables('addressPrefix')]"
+            ]
+          },
+          "subnets": [
+            {
+              "Name": "[variables('subnet1Name')]",
+              "properties": {
+                "addressPrefix": "[variables('subnet1Prefix')]"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[variables('nicName')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+          "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        ],
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "publicIPAddress": {
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                },
+                "subnet": {
+                  "id": "[variables('subnet1Ref')]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "apiVersion": "2016-04-30-preview",
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[variables('vmName')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        ],
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "osProfile": {
+            "computerName": "[variables('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "customData": "[base64(parameters('customData'))]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "[variables('imagePublisher')]",
+              "offer": "[variables('imageOffer')]",
+              "sku": "[parameters('ubuntuOSVersion')]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": true,
+              // open question on whether multi-line would work here, but I would expect it to. Maybe not for a demo, but a P0
+              // this seems more main-line than what the above cloud-init scenario or functions
+              "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/',             
+                variables('storageAccountName')), variables('apiVersion')).primaryEndpoints.blob)]"
+            }
+          }
+        }
+      }
+    ]
+  }

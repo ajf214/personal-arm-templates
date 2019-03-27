@@ -23,6 +23,7 @@
       "customData": {
         "type": "string",
         // example of inline-ing a cloud-init script in a ubuntu vm -- FWIW, it seems odd to include a yml file like this
+        // also adding this yml block messed up validation further down...
         "defaultValue": " 
         #cloud-config
         package_upgrade: true
@@ -222,7 +223,7 @@
           },
           "diagnosticsProfile": {
             "bootDiagnostics": {
-              "enabled": true,
+              "enabled": true, // should be able to be true or "true"
               // open question on whether multi-line would work here, but I would expect it to. Maybe not for a demo, but a P0
               // this seems more main-line than what the above cloud-init scenario or functions
               "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/',             

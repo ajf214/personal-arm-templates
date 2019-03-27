@@ -20,15 +20,6 @@
         "description": "Password for the Virtual Machine."
       }
     },
-    "customData": {
-      "type": "String",
-      // example of inline-ing a cloud-init script in a ubuntu vm -- FWIW, it seems odd to include a yml file like this
-      // also adding this yml block messed up validation further down...
-      "defaultValue": "           ",
-      "metadata": {
-        "description": "Cloud init script passed as string"
-      }
-    },
     "vmSize": {
       "type": "String",
       "defaultValue": "Standard_D1",
@@ -165,7 +156,29 @@
           "computerName": "[variables('vmName')]",
           "adminUserName": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]",
-          "customData": "[base64(parameters('customData'))]"
+          "customData": "[base64('
+            #cloud-config
+            package_upgrade: true
+            packages:
+              - nginx
+              - nodejs
+              - npm
+            write_files:
+              - owner: www-data:www-data
+                path: /etc/nginx/sites-available/default
+                content: |
+                  server {
+                    listen 80;
+                    location / {
+                      proxy_pass http://localhost:3000;
+                      proxy_http_version 1.1;
+                      proxy_set_header Upgrade $http_upgrade;
+                      proxy_set_header Connection keep-alive;
+                      proxy_set_header Host $host;
+                      proxy_cache_bypass $http_upgrade;
+                    }
+                  }'
+            )]"
         },
         "storageProfile": {
           "imageReference": {

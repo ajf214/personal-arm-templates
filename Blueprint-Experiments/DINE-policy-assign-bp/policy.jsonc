@@ -17,6 +17,7 @@
         "policyRule": {
             "if": {
                 "type": "Microsoft.Subscription"
+                /* as of today, there is no way to identify the parent mg, so there is no way to do this on subscription move */
             },
             "then": {
                 "effect": "deployIfNotExists",

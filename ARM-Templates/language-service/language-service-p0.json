@@ -1,3 +1,22 @@
+/*
+    P0s - "Preview"
+    ETA for Release - July
+
+    FP = False Positive
+
+    0. Full RP schema validation based on type and apiVersion
+    1. // and /* comments
+    2. multiline strings
+      - code/script scenario where newlines are important
+      - just long strings where multiline should be ignored
+    3. case insensitivity
+    4. FP when expression is used, but logic is evaluated on the text of the expression syntax, 
+      not the contents of the expression
+    5. FP on property value type can be a string
+      - String vs "String", true vs "true", int vs "int" (possibly may introduce RP issues with this)
+    6. ps cmdlet, az cli command can all deploy this "new" template
+*/
+
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -70,7 +89,6 @@
     "publicIpAddressId": {
       "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpAddressName'))]"
     },
-
   },
   "resources": [{
       "type": "Microsoft.Storage/storageAccounts", //bmoore - for demo, sort the properties on the top level resource type, apiVersion, name, location, sku
@@ -162,22 +180,7 @@
             packages:
               - nginx
               - nodejs
-              - npm
-            write_files:
-              - owner: www-data:www-data
-                path: /etc/nginx/sites-available/default
-                content: |
-                  server {
-                    listen 80;
-                    location / {
-                      proxy_pass http://localhost:3000;
-                      proxy_http_version 1.1;
-                      proxy_set_header Upgrade $http_upgrade;
-                      proxy_set_header Connection keep-alive;
-                      proxy_set_header Host $host;
-                      proxy_cache_bypass $http_upgrade;
-                    }
-                  }'
+              - npm'
             )]"
         },
         "storageProfile": {
@@ -214,7 +217,7 @@
       "value": "[if(equals(parameters('publicIpNewOrExisting'), 'none'), 
       'no public ip',
       concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))]
-  "
-}
-}
+      "
+    }
+  }
 }

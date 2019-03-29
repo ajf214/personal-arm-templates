@@ -17,8 +17,8 @@
     "resources": [
         {
             "type": "Microsoft.Blueprint/blueprintAssignments",
-            "name": "[parameters('assignmentName')]",
             "apiVersion": "2017-11-11-preview",
+            "name": "[parameters('assignmentName')]",
             "identity": {
                 "type": "systemAssigned",
                 "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"

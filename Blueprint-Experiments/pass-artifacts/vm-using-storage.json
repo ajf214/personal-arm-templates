@@ -1,0 +1,34 @@
+{
+    "kind": "template",
+    "name": "vm-using-storage",
+    "properties": {
+        "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "blueprintStorageId": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "single template parameter"
+                }
+              }
+            },
+            "variables": {},
+            "resources": [],
+            "outputs": {
+              "myArtifactTest": {
+                "type": "string",
+                "value": "[concat('LOOK AT THIS ID:', parameters('blueprintStorageId'))]"
+              }
+            }
+        },
+        "resourceGroup": "SingleRG",
+        "displayName": "Virtual machine that uses blueprint storage",
+        "parameters": {
+          "blueprintStorageId": {
+            "value": "[artifacts('storage').outputs.storageAccountId]"
+          }
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}

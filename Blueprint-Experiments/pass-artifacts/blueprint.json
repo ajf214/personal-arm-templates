@@ -1,0 +1,14 @@
+{
+    "properties": {
+        "description": "Pass values between a storage account template and a vm that uses that storage account",
+        "targetScope": "subscription",
+        "parameters": {},
+        "resourceGroups": {
+            "SingleRG": {
+                "description": "",
+                "location": "eastus"
+            }
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints" 
+}

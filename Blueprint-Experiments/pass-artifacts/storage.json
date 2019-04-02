@@ -1,0 +1,39 @@
+{
+    "kind": "template",
+    "name": "storage",
+    "properties": {
+        "template": {
+          "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+          },
+          "variables": {
+              "storageAccountName":"[concat('storage', uniqueString(resourceGroup().id))]" 
+          },
+          "resources": [
+            {
+              "name": "[variables('storageAccountName')]",
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2016-01-01",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "Storage",
+              "location": "eastus",
+              "tags": {},
+              "properties": {}
+            }
+          ],
+          "outputs": {
+            "storageAccountId": {
+              "type": "string",
+              "value": "[reference('storageAccountName').id]"
+            }
+          }
+        },
+        "resourceGroup": "SingleRG",
+        "displayName": "Blueprint storage account",
+        "parameters": {}
+    },
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
+}

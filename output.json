@@ -1,0 +1,43 @@
+{
+    "apiVersion": "2016-01-01",
+    "location": "eastus",
+    "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+    },
+    "tags": {
+        "businessowner": "",
+        "compositeApp": ""
+    },
+    "kind": "Storage",
+    "properties": {
+        "encryption": {
+            "services": {
+                "blob": {
+                    "enabled": true,
+                    "lastEnabledTime": "2019-04-02T03:42:42.6056301Z"
+                }
+            },
+            "keySource": "Microsoft.Storage"
+        },
+        "provisioningState": "Succeeded",
+        "creationTime": "2019-04-02T03:42:42.4962917Z",
+        "primaryEndpoints": {
+            "blob": "https://storagedsq3egxwktm74.blob.core.windows.net/",
+            "queue": "https://storagedsq3egxwktm74.queue.core.windows.net/",
+            "table": "https://storagedsq3egxwktm74.table.core.windows.net/",
+            "file": "https://storagedsq3egxwktm74.file.core.windows.net/"
+        },
+        "primaryLocation": "eastus",
+        "statusOfPrimary": "available"
+    },
+    "subscriptionId": "210b13f9-e96d-493c-919e-34e12038a338",
+    "resourceGroupName": "Ignite-Test-RG",
+    "resourceId": "Microsoft.Storage/storageAccounts/storagedsq3egxwktm74",
+    "referenceApiVersion": "2016-01-01",
+    "condition": true,
+    "isConditionTrue": true,
+    "isTemplateResource": false,
+    "isAction": false,
+    "provisioningOperation": "Read"
+}

@@ -1,11 +1,27 @@
 <!-- 
 Version 1.0 
-Last edited: 1-15-19
+Last edited: 4-1-19
 -->
 # Managing Blueprints as Code
 
 #### !! Disclaimer !!
 This doc is based on a powershell script that is managed by the community and is not officially supported by Microsoft. The Blueprints team is fast at work finishing official powershell cmdlets and azure cli commands. This doc will be updated once that happens.
+
+## Table of Contents
+  - [Prerequisites](#prerequisites)
+  - [How to use this guide](#how-to-use-this-guide)
+  - [Structure of blueprint artifacts](#structure-of-blueprint-artifacts)
+    - [Blueprint folder](#blueprint-folder)
+    - [Functions](#functions)
+    - [Blueprint](#blueprint)
+    - [Resource Group properties](#resource-group-properties)
+    - [Artifacts](#artifacts)
+    - [How Parameters work](#how-parameters-work)
+    - [Passing values between artifacts](#passing-values-between-artifacts)
+    - [Sequencing the deployment of artifacts](#sequencing-the-deployment-of-artifacts)
+  - [Push the Blueprint definition to Azure](#push-the-blueprint-definition-to-azure)
+  - [Next steps](#next-steps)
+  - [Contributing](#contributing)
 
 ## Prerequisites
 
@@ -189,29 +205,71 @@ The [AxAzureBlueprint](https://www.powershellgallery.com/packages/AxAzureBluepri
 ### Passing values between artifacts
 There are many reasons you may want or need to pass the output from one artifact as the input to another artifact that is deployed later in the blueprint assignment sequence. If so, you can make use of the ```artifacts()``` function which lets you reference the details of a particular artifact.
 
-For example you may do something like this in a template artifact for a vnet:
+Start by passing an [output](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-authoring-templates#outputs) in your template like this example where we are using the [reference](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions-resource#reference) function:
 
 ```json
 {
-    // todo
+    ...
+    "outputs": {
+        "storageAccountId": {
+            "type": "string",
+            "value": "[reference(variables('storageAccountName'), '2016-01-01', 'Full').resourceId]"
+        }
+    }
+    ...
 }
 ```
 
-Then in some other artifact, use the vnet id like so:
+Then in another artifact, pass the artifact output into the next template as a parameter:
 
 ```json
 {
-    // todo
+    "kind": "template",
+    "name": "vm-using-storage",
+    "properties": {
+        "template": {
+            ...
+        },
+        "parameters": {
+            "blueprintStorageId": {
+                "value": "[artifacts('storage').outputs.storageAccountId]"
+            }
+        }
+    },
+    "type": "Microsoft.Blueprint/blueprints/artifacts"
 }
 ```
 
-### Push the Blueprint definition to Azure
+Once you've done that, you can use that parameter anywhere in the `template` section of the artifact.
+
+
+### Sequencing the deployment of artifacts
+
+Often, you will want to run your templates in a specific order. For example, you may want to create a vnet before you create a vm. In that case, you can use the `dependsOn` property to take a dependency on another artifact. 
+
+In this example, this template artifact `dependsOn` the `policyAssignment` artifact, so the policy will get assigned first:
+
+```json
+{
+    "kind": "template",
+    "properties": {
+      ...
+      "dependsOn": ["policyAssignment"],
+      ...
+    }
+}
+```
+
+
+## Push the Blueprint definition to Azure
 Now we’ll take advantage of the [Manage-AzureRMBlueprint]() script and push it to Azure. We can do so by running the following command. You should be in the directory of where your blueprint artifacts are saved.
 ```powershell
 Manage-AzureRMBlueprint -mode Import -ImportDir ".\" -ManagementGroupID "ManagementGroupId"
 ```
 
 You will be asked to choose a subscription that is in the tenant where you want to save the blueprint definition, then confirm that it is ok to save something in your Azure subscription. Or you can use ```-Force``` to skip the confirmation. 
+
+And if you are hip and using the `Az` module instead, you can also add `-ModuleMode Az` to the end.
 
 Now you should see a new blueprint definition in Azure. You can update the blueprint by simply re-running the above command.
 
@@ -222,7 +280,8 @@ You might run into some issues. Here are some common ones:
 * **```parameters``` in an artifact are not found in the main blueprint file.** Make sure all parameter references are complete. If you are using a parameter in an artifact, make sure it is defined in the main `blueprint.json`
 * **```policyDefinitionId``` or ```roleDefinitionId``` does not exist.** If you are referencing a custom policy make sure that custom policy exists at or above the management group where the blueprint is saved. Custom role definitions are currently not supported for management groups.
 	
-### Next steps
-From here you will need to [publish the blueprint](https://docs.microsoft.com/en-us/azure/governance/blueprints/create-blueprint-portal#publish-a-blueprint) and then [assign the blueprint](https://docs.microsoft.com/en-us/azure/governance/blueprints/create-blueprint-portal#assign-a-blueprint) which you can do with either the azure portal or the rest API.
+## Next steps
+From here you will need to [publish the blueprint](https://docs.microsoft.com/en-us/azure/governance/blueprints/create-blueprint-portal#publish-a-blueprint) and then [assign the blueprint](https://docs.microsoft.com/en-us/azure/governance/blueprints/create-blueprint-portal#assign-a-blueprint) which you can do with either the azure portal, [powershell](https://www.powershellgallery.com/packages/Az.Blueprint/0.1.0) or the rest API.
 
-Let us know in the comments if you have any issues! 
+Of course, open an issue if you have any problems! Good luck!
+

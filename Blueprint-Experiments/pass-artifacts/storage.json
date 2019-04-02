@@ -27,7 +27,7 @@
           "outputs": {
             "storageAccountId": {
               "type": "string",
-              "value": "[reference('storageAccountName').id]"
+              "value": "[reference(variables('storageAccountName'), '2016-01-01', 'Full').resourceId]"
             }
           }
         },

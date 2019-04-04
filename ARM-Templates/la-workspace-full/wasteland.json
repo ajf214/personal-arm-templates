@@ -1,0 +1,25 @@
+concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')
+
+{
+    "apiVersion": "2017-03-15-preview",
+    "location": "[parameters('omsWorkspaceRegion')]",
+    "name": "[parameters('omsWorkspaceName')]",
+    "type": "Microsoft.OperationalInsights/workspaces",
+    "resources": [
+        {
+            // this should be a copy loop, referencing an array of subscription IDs
+            "name": "AzureActivityLog",
+            "type": "datasources",
+            "apiVersion": "2015-11-01-preview",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+            ],
+            "kind": "AzureActivityLog",
+            "properties": {
+                "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+            }
+        }
+    ]
+},
+
+la-sh360-e93d3/AzureActivityLog

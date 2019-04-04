@@ -1,0 +1,54 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "String",
+            "metadata": {
+                "description": "Specifies the name of the workspace."
+            }
+        },
+        "hubSubscriptionId": {
+            "type": "String",
+            "metadata": {
+                "description": "Subscription where log analytics workspace lives"
+            }
+        },
+        "hubResourceGroupName": {
+            "type": "String",
+            "metadata": {
+                "description": "Resource group where log analytics workspace lives"
+            }
+        }
+    },
+    "resources": [{
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "linkedTemplate",
+            "subscriptionId": "[parameters('hubSubscriptionId')]",
+            "resourceGroup": "[parameters('hubResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces/datasources",
+                            "apiVersion": "2015-11-01-preview",
+                            "name": "[concat(parameters('workspaceName'), '/datasources/myName')]",
+                            "kind": "AzureActivityLog",
+                            "properties": {
+                                "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+                            },
+                            "dependsOn": [
+                                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                            ]
+                       }
+                    ]
+                }
+            }
+        }
+
+    ]
+}

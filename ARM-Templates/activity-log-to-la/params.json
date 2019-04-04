@@ -1,0 +1,23 @@
+// New-AzResourceGroupDeployment -ResourceGroupName "todo" -TemplateFile ".\activity-log-to-la\activity-log-log-analytics.json" -TemplateParameterFile ".\activity-log-to-la\params.json"
+/*
+    State:
+        - workspace already created in a separate hub subscription
+        - new subscription is being set up, activity logs need to be routed to that subscription
+        - child resoruce of hub workspace will be created, pointing to this subscription
+*/
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+       "workspaceName": {
+           "value": "la-sh360-e93d3"
+       },
+       "hubSubscriptionId": {
+           "value": "e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+       },
+       "hubResourceGroupName": {
+           "value": "management-resource-group"
+       }
+    }
+  }

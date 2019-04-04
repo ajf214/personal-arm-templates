@@ -1,0 +1,23 @@
+// New-AzResourceGroupDeployment -ResourceGroupName "todo" -TemplateFile ".\activity-log-to-la\activity-log-log-analytics.json" -TemplateParameterFile ".\activity-log-to-la\params.json"
+/*
+    State:
+*/
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+       "omsWorkspaceName": {
+           "value": "la-sh360-e93d3"
+       },
+       "hubSubscriptionId": {
+           "value": "e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+       },
+       "hubResourceGroupName": {
+           "value": "management-resource-group"
+       },
+       "omsWorkspaceRegion": {
+           "value": "East US"
+       }
+    }
+  }

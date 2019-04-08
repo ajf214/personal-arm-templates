@@ -8,13 +8,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
        "omsWorkspaceName": {
-           "value": "la-sh360-e93d3"
+           "value": "alex-testing-blueprints"
        },
        "hubSubscriptionId": {
-           "value": "e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+           "value": "35ad74f4-0b37-44a7-ba94-91b6ec6026cd"
        },
        "hubResourceGroupName": {
-           "value": "management-resource-group"
+           "value": "alex-la-blueprints-testing"
        },
        "omsWorkspaceRegion": {
            "value": "East US"

@@ -18,25 +18,6 @@ Get-azContext
 
 # I gave Reader access to this identity to my BlueprintAssigner SPN to start...
 $userAssignedPrincipalId = "/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/Contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alex-test-identity"
-<# 
-Get-AzBlueprint -ManagementGroupId $mgId -Name $blueprintName -LatestPublished
-
-$myBlueprint = Get-AzBlueprint -ManagementGroupId $mgId -Name $blueprintName -LatestPublished
-
-
-# parameters for Boilerplate
-$rgHash = @{ name=$rgName; location = "eastus" } # single rg
-$rgArray = @{ SingleRG = $rgHash } # array of all rgs
-$principal = 'd3e063f7-09cb-4526-9021-4759a7ba179c' # specific to tenant
-$params = @{ principalIds=$principal; genericBlueprintParameter="test"}
-
-$generatedAssignmentName = "A-$blueprintName" 
-
-Write-Host "Creating new assignment..."
-New-AzBlueprintAssignment -Blueprint $myBlueprint -Location eastus -SubscriptionId $subId -Parameter $params -ResourceGroupParameter $rgArray -Name $generatedAssignmentName # -UserAssignedIdentity $userAssignedPrincipalId
-#>
-
-# Login first with Connect-AzAccount if not using Cloud Shell
 
 #region GetBlueprint
 # Get version '1.1' of the blueprint definition in the specified subscription
@@ -46,16 +27,10 @@ $bpDefinition = Get-AzBlueprint -ManagementGroupId $mgId -Name $blueprintName -L
 #region CreateAssignment
 # Create the hash table for Parameters
 $principal = 'd3e063f7-09cb-4526-9021-4759a7ba179c' # specific to tenant
-# $bpParameters = @{storageAccount_storageAccountType='Standard_GRS'}
 $bpParameters = @{ principalIds=$principal; genericBlueprintParameter='test'}
 
 # Create the hash table for ResourceGroupParameters
-# ResourceGroup is the resource group artifact placeholder name
 $bpRGParameters = @{SingleRg=@{name='test_0123';location='westus2'}}
-<#
-$rgHash = @{ name=$rgName; location = "eastus" } # single rg
-$rgArray = @{ SingleRG = $rgHash } # array of all rgs
-#>
 
 # Create the new blueprint assignment
 New-AzBlueprintAssignment -Name 'my-blueprint-assignment' -Blueprint $bpDefinition -SubscriptionId $subId -Location 'westus2' -Parameter $bpParameters -ResourceGroupParameter $bpRGParameters -UserAssignedIdentity $userAssignedPrincipalId

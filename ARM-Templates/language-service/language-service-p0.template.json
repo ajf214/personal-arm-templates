@@ -185,7 +185,7 @@
               - nginx
               - nodejs
               - npm'
-            )]"
+          )]"
         },
         "storageProfile": {
           "imageReference": {

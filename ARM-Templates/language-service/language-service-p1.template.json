@@ -2,7 +2,7 @@
     P1s - GA
     ETA for Release - September
 
-    0. features parity with current extension
+    0. features parity with current extension (i.e. recongizing unused params)
     1. function signature intellisense
         a. including UDFs
         b. hopefully things like resourceId and reference function can be contextual
@@ -72,6 +72,10 @@
       },
       "unusedParameter": { // this is caught by the extension today, noting for feature parity - ajf
         "type": "string"
+      },
+      "publicIpAddressName": {
+        "type": "string",
+        "defaultValue": "[concat(resourceGroup().name, '-pip')]"
       }
     },
     "variables": {
@@ -217,9 +221,9 @@
         "type": "string",
         // demo requirement/P0 - multi-line where newlines are important for code execution
         "value": "[if(equals(parameters('publicIpNewOrExisting'), 'none'), 
-        'no public ip',
-        concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))]
-        "
+          'no public ip',
+          concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))
+        ]"
       }
     }
   }

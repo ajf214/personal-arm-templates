@@ -71,6 +71,10 @@
       "metadata": {
         "description": "Determines whether or not a new public ip should be provisioned."
       }
+    },
+    "publicIpAddressName": {
+      "type": "string",
+      "defaultValue": "[concat(resourceGroup().name, '-pip')]"
     }
   },
   "variables": {
@@ -215,9 +219,9 @@
       "type": "string",
       // demo requirement/P0 - multi-line where newlines are important for code execution
       "value": "[if(equals(parameters('publicIpNewOrExisting'), 'none'), 
-      'no public ip',
-      concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))]
-      "
+        'no public ip',
+        concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))
+      ]"
     }
   }
 }

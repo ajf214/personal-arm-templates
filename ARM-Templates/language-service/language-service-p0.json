@@ -93,7 +93,7 @@
   "resources": [{
       "type": "Microsoft.Storage/storageAccounts", //bmoore - for demo, sort the properties on the top level resource type, apiVersion, name, location, sku
       "name": "[variables('storageAccountName')]", // the false positive on the length is a P0, interestingly this didn't show up for api version 2015-06-15
-      // the comment is a DEMO //bmoore - need brackets
+      // the comment is a DEMO
       "apiVersion": "2018-07-01",
       "location": "[parameters('location')]", // Need to sync with Steve on what is possible for syntax highlighting here
       // for demo, I would expect the use of expressions ([]) to at least be highlighted

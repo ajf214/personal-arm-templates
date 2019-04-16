@@ -1,8 +1,11 @@
+param(
+    [Parameter(Mandatory=$true)]$spnPass
+)
+
 # This SPN only has the custom 'Blueprint Assigner' role, which should only be able to assign existing roles
 # It also has Reader access to the parent MG where the blueprint object lives
 
 $spnId = "da2625e3-d0dc-4f81-a3db-6c98a98d9210"
-$spnPass = "VOntD1MKTA+azAHV2/uMynXyylDYizXwvets9T3RKtI="
 $tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 $mgId = "ContosoRoot"
 $blueprintName = "Boilerplate"

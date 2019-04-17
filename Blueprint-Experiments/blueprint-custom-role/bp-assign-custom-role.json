@@ -1,11 +1,16 @@
 {
-    "Name": "Blueprint Assigner",
+    "Name": "Blueprint Operator",
     "Id": "437d2ced-4a38-4302-8479-ed2bcb43d090",
-    "IsCustom": true,
+    "IsBuiltIn": true,
     "Description": "Can assign blueprints, but cannot create new blueprints",
     "Actions": [
         "Microsoft.Blueprint/blueprintAssignments/write",
-        "Microsoft.Blueprint/blueprintAssignments/delete"
+        "Microsoft.Blueprint/blueprintAssignments/delete",
+        "Microsoft.Authorization/*/read",
+        "Microsoft.Resources/subscriptions/resourceGroups/read",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Insights/alertRules/",
+        "Microsoft.Support/*"
     ],
     "NotActions": [],
     "DataActions": [],

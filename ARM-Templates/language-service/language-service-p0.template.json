@@ -71,10 +71,6 @@
       "metadata": {
         "description": "Determines whether or not a new public ip should be provisioned."
       }
-    },
-    "publicIpAddressName": {
-      "type": "string",
-      "defaultValue": "[concat(resourceGroup().name, '-pip')]"
     }
   },
   "variables": {
@@ -92,15 +88,19 @@
     "storageAccountType": "Standard_LRS",
     "publicIpAddressId": {
       "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpAddressName'))]"
-    },
+    }
   },
-  "resources": [{
+  "resources": [
+    {
       "type": "Microsoft.Storage/storageAccounts", //bmoore - for demo, sort the properties on the top level resource type, apiVersion, name, location, sku
       "name": "[variables('storageAccountName')]", // the false positive on the length is a P0, interestingly this didn't show up for api version 2015-06-15
       // the comment is a DEMO
       "apiVersion": "2018-07-01",
-      "location": "[parameters('location')]", // Need to sync with Steve on what is possible for syntax highlighting here
-      // for demo, I would expect the use of expressions ([]) to at least be highlighted
+      "kind": "storage",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "location": "[parameters('location')]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
       }
@@ -205,7 +205,7 @@
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
-            "enabled": "true", // should be able to be true or "true"
+            "enabled": true, // should be able to be true or "true"
             // open question on whether multi-line would work here, but I would expect it to. Maybe not for a demo, but a P0
             // this seems more main-line than what the above cloud-init scenario or functions
             "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))).primaryEndpoints.blob]"
@@ -218,9 +218,10 @@
     "ssh-command": {
       "type": "string",
       // demo requirement/P0 - multi-line where newlines are important for code execution
-      "value": "[if(equals(parameters('publicIpNewOrExisting'), 'none'), 
+      "value": "[
+        if(equals(parameters('publicIpNewOrExisting'), 'none'), 
         'no public ip',
-        concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))
+        concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))
       ]"
     }
   }

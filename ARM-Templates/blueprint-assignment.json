@@ -5,7 +5,7 @@
         "blueprintName": {
             "type": "string"
         },
-        "version": {
+        "blueprintVersion": {
             "type": "string"
         },
         "blueprintParameters": {
@@ -73,7 +73,7 @@
                         "name": "My-ER-TEST03"
                     }
                 },
-                "scope": "[concat('/subscriptions/', subscription().id]",
+                "scope": "[concat('/subscriptions/', subscription().id)]",
                 "locks": {
                     "mode": "none"
                 }

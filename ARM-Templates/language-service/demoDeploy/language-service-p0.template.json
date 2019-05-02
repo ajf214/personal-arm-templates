@@ -152,7 +152,10 @@
           "properties": {
             "privateIPAllocationMethod": "Dynamic",
             "publicIPAddress": {
-              "id": "[if(not(equals(parameters('publicIpNewOrExisting'), 'none')), variables('publicIpAddressId') , json('null'))]"
+              // This doesn't work
+              // "id": "[if(not(equals(parameters('publicIpNewOrExisting'), 'none')), variables('publicIpAddressId') , json('null'))]"
+              // this does work
+              "id": "/subscriptions/45f9252d-e27e-4ed8-ab4e-dc5054de13fa/resourceGroups/test-01234/providers/Microsoft.Network/publicIPAddresses/publicIp1"/* "[variables('publicIpAddressId')]" */               
             },
             "subnet": {
               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnet1Name'))]"
@@ -180,12 +183,9 @@
           "adminPassword": "[parameters('adminPassword')]",
           "customData": "[base64('
             #cloud-config
-            package_upgrade: true
-            packages:
-              - nginx
-              - nodejs
-              - npm'
-          )]"
+            script: |
+            echo test > test.txt
+            ')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -223,6 +223,10 @@
         'no public ip',
         concat('ssh ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpAddressName')), '2018-04-01').dnsSettings.fqdn))
       ]"
+    },
+    "pipResourceId": {
+      "type": "string",
+      "value": "[variables('publicIpAddressId')]"
     }
   }
 }

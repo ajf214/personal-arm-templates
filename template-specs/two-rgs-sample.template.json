@@ -1,0 +1,98 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    "ProdRG": {
+      "type": "string"
+    },
+    "ProdRG-location": {
+      "type": "string"
+    },
+    "PreProdRG": {
+      "type": "string"
+    },
+    "PreProdRG-location": {
+      "type": "string"
+    },
+    "OwnersPreProd": {
+      "type": "string"
+    },
+    "ContributorsProd": {
+      "type": "string"
+    },
+    "ReadersPreProd": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "ProdRG": "[parameters('ProdRG')]",
+    "ProdRG-location": "[parameters('ProdRG-location')]",
+    "PreProdRG": "[parameters('PreProdRG')]",
+    "PreProdRG-location": "[parameters('PreProdRG-location')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2018-05-01",
+      "location": "[variables('ProdRG-location')]",
+      "name": "[variables('ProdRG')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2018-05-01",
+      "location": "[variables('PreProdRG-location')]",
+      "name": "[variables('PreProdRG')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "prod-contributors",
+      "resourceGroup": "[variables('ProdRG')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateSpecId": "/providers/Microsoft.Resources/templateSpecs/roleAssignment",
+        "parameters": {
+          "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "principalIds": [
+            "[parameters('ContributorsProd')]"
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "pre-prod-owner",
+      "resourceGroup": "[variables('PreProdRG')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateSpecId": "/providers/Microsoft.Resources/templateSpecs/roleAssignment",
+        "parameters": {
+          "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "principalIds": [
+            "[parameters('OwnersPreProd')]"
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "pre-prod-reader",
+      "resourceGroup": "[variables('PreProdRG')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateSpecId": "/providers/Microsoft.Resources/templateSpecs/roleAssignment",
+        "parameters": {
+          "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+          "principalIds": [
+            "[parameters('ReadersPreProd')]"
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

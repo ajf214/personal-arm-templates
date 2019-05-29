@@ -1,0 +1,13 @@
+{
+    "type": "Microsoft.Blueprint/blueprints",
+    "properties": {
+        "description": "This will be displayed in the essentials, so make it good",
+        "targetScope": "subscription",
+        "parameters": {},
+        "resourceGroups": {
+            "test-exception": {
+                "location": "eastus"
+            }
+        }
+    }
+}

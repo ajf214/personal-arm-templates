@@ -1,0 +1,12 @@
+@{
+    parameters=@{
+        principalIds=$principal
+        genericBlueprintParameter='test'
+    }
+    resourceGroups=@{
+        SingleRg=@{
+            name='test_0123'
+            location='westus2'
+        }
+    }
+}

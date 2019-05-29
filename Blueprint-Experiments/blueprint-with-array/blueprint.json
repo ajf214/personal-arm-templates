@@ -1,0 +1,12 @@
+{
+    "type": "Microsoft.Blueprint/blueprints",
+    "properties": {
+        "description": "This will be displayed in the essentials, so make it good",
+        "targetScope": "subscription",
+        "parameters": { 
+            "principalIds": {
+                "type": "array"
+            }
+        }
+    }
+}

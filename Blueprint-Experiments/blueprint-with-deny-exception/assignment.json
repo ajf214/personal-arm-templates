@@ -1,0 +1,22 @@
+{
+    "identity": {
+        "type": "SystemAssigned"
+    },
+    "location": "westus2",
+    "properties": {
+        "blueprintId": "/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/blueprint-with-deny-exception",
+        "resourceGroups": {
+            "test-exception": {
+                "name": "alex-test-exception"
+            }
+        },
+        "locks": {
+            "mode": "AllResourcesReadOnly",
+            "excludedPrincipals": [
+                "caeebed6-cfa8-45ff-9d8a-03dba4ef9a7d"
+            ]
+        },
+        "parameters": {
+        }
+    }
+}

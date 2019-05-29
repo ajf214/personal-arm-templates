@@ -1,0 +1,16 @@
+{
+    "resourceGroups": {
+        "SingleRG": {
+            "name": "test_0123",
+            "location": "westus2"
+        }
+    },
+    "parameters": {
+        "principalIds": {
+            "value": "d3e063f7-09cb-4526-9021-4759a7ba179c"
+        },
+        "genericBlueprintParameter": {
+            "value": "test"
+        }
+    }
+}

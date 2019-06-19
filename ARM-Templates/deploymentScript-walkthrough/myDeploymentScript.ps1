@@ -1,0 +1,2 @@
+Get-AzResourceGroup
+Add-ScriptOutput 

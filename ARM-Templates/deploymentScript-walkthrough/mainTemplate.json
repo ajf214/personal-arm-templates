@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "monitoringContributorRole": "blah"
+    },
+    "resources": [
+        {
+            "name": "scriptName",
+            "type": "Microsoft.Deployments/deploymentScripts",
+            "apiVersion": "2019-06-01",
+            "identity": {  
+                "type":"UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/996a2f3f-ee01-4ffd-9765-d2c3fc98f30a/resourceGroups/scriptRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1" : {}
+                }
+            },
+            "location": "eastus",
+            "properties": {
+                "script": {
+                    "type": "PowerShell",
+                    "azVersion": "1.7.0",
+                    "content": "
+                    Get-AzResourceGroup
+                    Add-ScriptOutput($outputName, $outputValue)
+                    " // what does this look like multi-line?, what about with outputs?
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "name": "ace492e6-ebf6-48fa-8dd4-ea762489cbf3", // has to be a guid
+            "apiVersion": "2017-10-01-preview",
+            "properties": {
+                "roleDefinitionId": "[variables('monitoringContributorRole')]",
+                "principalId": "[reference(resourceId('Microsoft.Deployments/deploymentScripts', 'scriptName')).scriptResults.outputs.myOutput]",
+                "scope": "[resourceGroup().Id]"
+            }
+        }
+    ],
+    "outputs": {}
+}

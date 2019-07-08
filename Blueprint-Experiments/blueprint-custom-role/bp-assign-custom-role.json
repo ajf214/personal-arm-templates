@@ -1,22 +1,23 @@
 {
-    "Name": "Blueprint Operator",
-    "Id": "437d2ced-4a38-4302-8479-ed2bcb43d090",
-    "Description": "Can assign blueprints, but cannot create new blueprints",
-    "Actions": [
+  "Description": "Can assign blueprints, but cannot create new blueprints",
+  "IsServiceRole": true,
+  "IsBuiltIn": true,
+  "Id": "437d2ced-4a38-4302-8479-ed2bcb43d090",
+  "Name": "Blueprint Operator Service Role",
+  "Permissions": [
+    {
+      "Actions": [
         "Microsoft.Blueprint/blueprintAssignments/write",
         "Microsoft.Blueprint/blueprintAssignments/delete",
         "Microsoft.Authorization/*/read",
         "Microsoft.Resources/subscriptions/resourceGroups/read",
         "Microsoft.Resources/deployments/*",
         "Microsoft.Support/*"
-    ],
-    "NotActions": [],
-    "DataActions": [],
-    "NotDataActions": [],
-    "AssignableScopes": [
-      "/subscriptions/35ad74f4-0b37-44a7-ba94-91b6ec6026cd",
-      "/subscriptions/0745e7d2-1e06-4d9e-9b9b-f42442b8b92f",
-      "/subscriptions/71578c6b-75ba-4865-8f52-3e66d70389fd",
-      "/providers/Microsoft.Management/managementGroups/ContosoRoot"
-    ]
-  }
+      ],
+      "NotActions": []
+    }
+  ],
+  "Scopes": [
+    "/"
+  ]
+}

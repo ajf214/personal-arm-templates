@@ -12,7 +12,7 @@
           "name": "Standard_LRS"
         },
         "kind": "Storage",
-        "location": "eastus",
+        "location": "[resourceGroup().location]",
         "tags": {},
         "properties": {}
       }

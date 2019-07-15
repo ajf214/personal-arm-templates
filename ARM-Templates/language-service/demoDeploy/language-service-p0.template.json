@@ -158,7 +158,8 @@
               "id": "/subscriptions/45f9252d-e27e-4ed8-ab4e-dc5054de13fa/resourceGroups/test-01234/providers/Microsoft.Network/publicIPAddresses/publicIp1"/* "[variables('publicIpAddressId')]" */               
             },
             "subnet": {
-              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnet1Name'))]"
+              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 
+              variables('virtualNetworkName'), variables('subnet1Name'))]"
             }
           }
         }]

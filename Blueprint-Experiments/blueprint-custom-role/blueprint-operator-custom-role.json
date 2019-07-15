@@ -1,0 +1,24 @@
+{
+    "Description": "Can only manage blueprints",
+    "Id": "b2b316df-05ee-4f3c-b823-0e7877628898",
+    "Name": "Blueprint Operator Service Role",
+    "Actions": [
+        "Microsoft.Blueprint/blueprints/write",
+        "Microsoft.Blueprint/blueprints/artifacts/write",
+        "Microsoft.Blueprint/blueprints/versions/write",
+        "Microsoft.Blueprint/blueprints/delete",
+        "Microsoft.Blueprint/blueprints/artifacts/delete",
+        "Microsoft.Blueprint/blueprints/versions/delete",
+        "Microsoft.Blueprint/*/read",
+        "Microsoft.Authorization/*/read",
+        "Microsoft.Resources/subscriptions/resourceGroups/read",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Support/*"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "/providers/Microsoft.Management/managementGroups/2cc4a1e3-2d9e-4d60-9f42-43da6960ac91"
+    ]
+  }

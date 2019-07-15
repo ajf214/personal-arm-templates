@@ -1,5 +1,5 @@
 {
-  "Description": "Can assign blueprints, but cannot create new blueprints",
+  "Description": "Can assign existing published blueprints, but cannot create new blueprints. NOTE: this only works if the assignment is done with a user-assigned managed identity.",
   "IsServiceRole": true,
   "IsBuiltIn": true,
   "Id": "437d2ced-4a38-4302-8479-ed2bcb43d090",

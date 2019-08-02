@@ -4,7 +4,7 @@
     "IsCustom": true,
     "Description": "Can only manage blueprints",
     "Actions": [
-        "Microsoft.Blueprint/*",
+        "Microsoft.Blueprint/blueprints/*",
         "Microsoft.Authorization/*/read",
         "Microsoft.Resources/subscriptions/resourceGroups/read",
         "Microsoft.Resources/deployments/*",

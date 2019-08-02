@@ -1,0 +1,17 @@
+{
+    "type": "Microsoft.Blueprint/blueprints/artifacts",
+    "kind": "policyAssignment",
+    "properties": {
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2a0e14a6-b0a6-4fab-991a-187a4f81c498",
+        "parameters": {
+            "tagName": {
+                "value": "costCenter"
+            },
+            "tagValue": {
+                "value": "[parameters('costCenter')]"
+            }
+        },
+        "dependsOn": [],
+        "displayName": "Append tag and its default value"
+    }
+}

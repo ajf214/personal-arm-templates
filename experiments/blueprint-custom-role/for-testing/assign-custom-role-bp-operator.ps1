@@ -1,24 +1,23 @@
-<#
 param(
     [Parameter(Mandatory=$true)]$spnPass
 )
-#>
+
 
 # This SPN only has the custom 'Blueprint Assigner' role, which should only be able to assign existing roles
 # It also has Reader access to the parent MG where the blueprint object lives
 
-# $spnId = "da2625e3-d0dc-4f81-a3db-6c98a98d9210"
-# $tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
-$mgId = "ContosoRoot"
-$blueprintName = "Boilerplate"
-$subId = "35ad74f4-0b37-44a7-ba94-91b6ec6026cd"
+$spnId = "8c3aedd5-2213-4fc7-9514-e5862895b341" # bp-operator SPN
+$tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+$mgId = "2cc4a1e3-2d9e-4d60-9f42-43da6960ac91" # azure-blueprints-pipeline
+$blueprintName = "foundation-with-pci"
+$subId = "e93d3ee6-fac1-412f-92d6-bfb379e81af2" # Contoso IT - SH360 - Prod
 
-<#
+
 Write-Host "Start login with SPN"
 $pass = ConvertTo-SecureString $spnPass -AsPlainText -Force
 $cred = New-Object -TypeName pscredential -ArgumentList $spnId, $pass
 Login-AzAccount -Credential $cred -ServicePrincipal -TenantId $tenantId
-#>
+
 
 Write-Host "See which sub we've got with this SPN"
 Get-azContext
@@ -33,12 +32,11 @@ $bpDefinition = Get-AzBlueprint -ManagementGroupId $mgId -Name $blueprintName -L
 
 #region CreateAssignment
 # Create the hash table for Parameters
-$principal = 'd3e063f7-09cb-4526-9021-4759a7ba179c' # specific to tenant
-$bpParameters = @{ principalIds=$principal; genericBlueprintParameter='test'}
+$bpParameters = @{ deployAuditingonSQLservers_storageAccountsResourceGroup="Diag-001";}
 
 # Create the hash table for ResourceGroupParameters
-$bpRGParameters = @{SingleRg=@{name='test_0123';location='westus2'}}
+$bpRGParameters = @{Diagnostics=@{name='Diag-001'; location='westus'}}
 
 # Create the new blueprint assignment
-New-AzBlueprintAssignment -Name 'my-blueprint-assignment' -Blueprint $bpDefinition -SubscriptionId $subId -Location 'westus2' -Parameter $bpParameters -ResourceGroupParameter $bpRGParameters -UserAssignedIdentity $userAssignedPrincipalId
+New-AzBlueprintAssignment -Name 'my-blueprint-assignment' -Blueprint $bpDefinition -SubscriptionId $subId -Location 'westus' -Parameter $bpParameters -ResourceGroupParameter $bpRGParameters -UserAssignedIdentity $userAssignedPrincipalId
 #endregion CreateAssignment

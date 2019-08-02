@@ -1,0 +1,23 @@
+{
+    "identity": {
+        "type": "SystemAssigned"
+    },
+    "location": "westus2",
+    "properties": {
+        "blueprintId": "",
+        "resourceGroups": {
+            "Diagnostics": {
+                "name": "Diag-001",
+                "location": "westus"
+            }
+        },
+        "locks": {
+            "mode": "none"
+        },
+        "parameters": {
+            "deployAuditingonSQLservers_storageAccountsResourceGroup": {
+                "value": "Diag-001"
+            }
+        }
+    }
+}

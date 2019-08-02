@@ -1,0 +1,16 @@
+{
+  "kind": "policyAssignment",
+  "properties": {
+    "displayName": "Deploy Auditing on SQL servers",
+    "dependsOn": [],
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f4c68484-132f-41f9-9b6d-3e4b1cb55036",
+    "parameters": {
+      "retentionDays": {
+        "value": "[parameters('deployAuditingonSQLservers_retentionDays')]"
+      },
+      "storageAccountsResourceGroup": {
+        "value": "[parameters('deployAuditingonSQLservers_storageAccountsResourceGroup')]"
+      }
+    }
+  }
+}

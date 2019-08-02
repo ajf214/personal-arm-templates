@@ -1,0 +1,9 @@
+{
+  "kind": "policyAssignment",
+  "properties": {
+    "displayName": "Deploy SQL DB transparent data encryption",
+    "dependsOn": [],
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/86a912f6-9a06-4e26-b447-11b16ba8659f",
+    "parameters": {}
+  }
+}

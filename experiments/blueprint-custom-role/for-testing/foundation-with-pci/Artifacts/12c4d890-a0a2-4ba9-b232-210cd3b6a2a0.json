@@ -1,0 +1,9 @@
+{
+  "kind": "policyAssignment",
+  "properties": {
+    "displayName": "Require encryption on Data Lake Store accounts",
+    "dependsOn": [],
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a7ff3161-0087-490a-9ad9-ad6217f4f43a",
+    "parameters": {}
+  }
+}

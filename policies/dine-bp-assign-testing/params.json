@@ -1,0 +1,6 @@
+{
+    "likeString": {
+        "type": "string",
+        "defaultValue": "/subscriptions/*"
+    }
+}

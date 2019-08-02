@@ -1,0 +1,6 @@
+        "Microsoft.Blueprint/blueprints/write",
+        "Microsoft.Blueprint/blueprints/artifacts/write",
+        "Microsoft.Blueprint/blueprints/versions/write",
+        "Microsoft.Blueprint/blueprints/delete",
+        "Microsoft.Blueprint/blueprints/artifacts/delete",
+        "Microsoft.Blueprint/blueprints/versions/delete",

@@ -1,0 +1,13 @@
+{
+    "if": {
+        "allOf": [
+            {
+                "field": "id",
+                "like": "[parameters('likeString')]"
+            }
+        ]
+    },
+    "then": {
+        "effect": "audit"
+    }
+}

@@ -1,4 +1,3 @@
-# Deployment CLI consolidation command options
 
 # OPTION 1
 az deployment create --resource-group "rg-001" --template-file ".\azureDeploy.json"

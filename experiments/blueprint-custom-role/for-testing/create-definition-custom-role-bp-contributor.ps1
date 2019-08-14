@@ -18,6 +18,9 @@ $pass = ConvertTo-SecureString $spnPass -AsPlainText -Force
 $cred = New-Object -TypeName pscredential -ArgumentList $spnId, $pass
 Login-AzAccount -Credential $cred -ServicePrincipal -TenantId $tenantId
 
+# see what our context looks like
+Get-AzContext
+
 # import a blueprint should succeed
 Write-Host "Importing blueprint..."
 Import-AzBlueprintWithArtifact -Name $bpName -InputPath $bpPath -ManagementGroupId $mgId -Force

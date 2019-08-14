@@ -1,0 +1,22 @@
+{
+    "Description": "Can manage blueprint definitions, but assign them.",
+    "IsServiceRole": true,
+    "IsBuiltIn": true,
+    "Id": "41077137-e803-4205-871c-5a86e6a753b4",
+    "Name": "Blueprint Contributor Service Role",
+    "Permissions": [
+        {
+            "Actions": [
+                "Microsoft.Blueprint/blueprints/*",
+                "Microsoft.Authorization/*/read",
+                "Microsoft.Resources/subscriptions/resourceGroups/read",
+                "Microsoft.Resources/deployments/*",
+                "Microsoft.Support/*"
+            ],
+            "NotActions": []
+        }
+    ],
+    "Scopes": [
+        "/"
+    ]
+}

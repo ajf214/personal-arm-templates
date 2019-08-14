@@ -19,13 +19,13 @@ $cred = New-Object -TypeName pscredential -ArgumentList $spnId, $pass
 Login-AzAccount -Credential $cred -ServicePrincipal -TenantId $tenantId
 
 # import a blueprint should succeed
-Import-AzBlueprintWithArtifact -Name $bpName -InputPath $bpPath -ManagementGroupId $mgId
+Write-Host "Importing blueprint..."
+Import-AzBlueprintWithArtifact -Name $bpName -InputPath $bpPath -ManagementGroupId $mgId -Force
 
 # version a bluerint should succeed
-Write-Host "Importing blueprint..."
 $bp = Get-AzBlueprint -Name $bpName -ManagementGroupId $mgId
 Write-Host "Publishing new version..."
-Publish-AzBlueprint -Blueprint $bp -Version Get-Random
+Publish-AzBlueprint -Blueprint $bp -Version (Get-Random)
 
 # assign a blueprint should fail
 Write-Host "Starting assignment creation..."

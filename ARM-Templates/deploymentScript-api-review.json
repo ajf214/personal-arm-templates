@@ -33,7 +33,7 @@
             {     
                 "azPowerShellVersion": "1.7.0",
                 "arguments": "-commandText 'sp_helpdb'", // can pass an arguement string, but can't use double-quotes, right?
-                // can also use primaryScriptUri - why is this called supportingScriptUris? can this execute multiple?
+                // can also use primaryScriptUri instead of scriptContent
                 "scriptContent": "
                     param (
                         [Parameter(Mandatory=$true)[string]$commandText
@@ -53,12 +53,10 @@
 
                     $outputs = @{'timeCompleted' = (Get-Date)} # deploymentScript will pick this up as structured output
                 ",
-                "secureEnvironmentVariables": [ // these are passed into the ACI instance as environment variables
+                "secureEnvironmentVariables": // these are passed into the ACI instance as environment variables
                     {
-                        "name": "SqlConnectionString",
-                        "value": "[parameters('sqlConnectionString')]"
+                        "SqlConnectionString" : "[parameters('sqlConnectionString')]"
                     }
-                ]
             }
         }
     ],

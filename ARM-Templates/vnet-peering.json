@@ -31,6 +31,7 @@
       "subnetName": "subnet1",
       "subnetPrefix": "192.168.0.0/24"
     },
+    // this is my commment
     "vNet1tovNet2PeeringName": "[concat(parameters('vNet1Name'), '-', 'hub')]",
     "vNet2tovNet1PeeringName": "[concat('hub', '-', parameters('vNet1Name'))]",
     "hubSubscriptionId": "[parameters('hubSubscriptionId')]",

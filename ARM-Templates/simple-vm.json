@@ -49,7 +49,7 @@
       "addressPrefix": "10.0.0.0/16",
       "subnetName": "Subnet",
       "subnetPrefix": "10.0.0.0/24",
-      "publicIPAddressName": "myPublicIP",
+      "publicIPAddressName": "[concat('test', 'end')]",
       "vmName": "SimpleWinVM",
       "virtualNetworkName": "MyVNET",
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
@@ -74,7 +74,7 @@
         "properties": {
           "publicIPAllocationMethod": "Dynamic",
           "dnsSettings": {
-            "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+            "domainNameLabel": "[parameters('dnsLabelPrefix')]",
           }
         }
       },

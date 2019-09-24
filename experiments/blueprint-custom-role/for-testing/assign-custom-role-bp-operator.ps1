@@ -40,3 +40,9 @@ $bpRGParameters = @{Diagnostics=@{name='Diag-001'; location='westus'}}
 # Create the new blueprint assignment
 New-AzBlueprintAssignment -Name 'my-blueprint-assignment' -Blueprint $bpDefinition -SubscriptionId $subId -Location 'westus' -Parameter $bpParameters -ResourceGroupParameter $bpRGParameters -UserAssignedIdentity $userAssignedPrincipalId
 #endregion CreateAssignment
+
+$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$bpPath = "$scriptDir\foundation-with-pci"
+
+Write-Host "Importing blueprint..."
+Import-AzBlueprintWithArtifact -Name $bpName -InputPath $bpPath -ManagementGroupId $mgId -Force

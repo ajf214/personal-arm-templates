@@ -1,4 +1,5 @@
 {
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "existingVirtualNetworkResourceGroupName": {
@@ -107,7 +108,7 @@
                             "destinationAddressPrefix": "[reference(variables('subnetId'), '2018-04-01').addressPrefix]",
                             "access": "Allow",
                             "priority": 200,
-                            "direction": "Inbound"
+                            "direction":"Inbound"
                         }
                     },
                     {

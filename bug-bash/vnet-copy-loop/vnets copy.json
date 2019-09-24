@@ -1,0 +1,32 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ParameterArray": {
+            "type": "array"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",            
+            "apiVersion": "2017-05-10",
+            "name": "[concat('Deploy-',parameters('ParameterArray')[copyIndex('Vnets')].VnetName)]",
+            "copy": {
+                "name": "Vnets",
+                "count": "[length(parameters('ParameterArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": []
+                }
+            }
+        }
+    ],
+"outputs": {}
+}

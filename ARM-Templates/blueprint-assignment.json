@@ -26,7 +26,8 @@
             },
             "location": "westus2",
             "properties": {
-                "blueprintId": "[concat('/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/', parameters('blueprintName'), '/versions/', parameters('blueprintVersion'))]",
+                "blueprintId": "[concat('/providers/Microsoft.Management/managementGroups/ContosoRoot/providers/Microsoft.Blueprint/blueprints/', 
+                    parameters('blueprintName'), '/versions/', parameters('blueprintVersion'))]",
                 "parameters": {
                     "MyER_nsgName": {
                         "value": "MSIT-NSG"

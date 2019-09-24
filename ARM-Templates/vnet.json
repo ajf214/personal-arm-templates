@@ -33,11 +33,16 @@
         "name": "[parameters('vnetName')]",
         "location": "eastus",
         "properties": {
+          /*
           "addressSpace": {
             "addressPrefixes": [
               "[parameters('addressSpaceVnet')]"
             ]
           },
+          */
+          "addressSpace": {
+            "addressPrefixes": "[parameters('addressSpaceVnet')]" 
+          }, 
           "subnets": [
             {
               "name": "[parameters('subnet1Name')]",

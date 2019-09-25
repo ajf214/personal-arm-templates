@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "dnsLabelPrefix": {
@@ -65,7 +65,7 @@
     "addressPrefix": "10.0.0.0/16",
     "subnet1Name": "Subnet-1",
     "subnet1Prefix": "10.0.0.0/24",
-    "publicIPAddressType": "Dynamic",
+    "publicIPAddressType": "Dynamic", // can be either static or dynamic
     "storageAccountType": "Standard_LRS",
     "publicIpAddressId": {
       "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpAddressName'))]"
@@ -73,38 +73,23 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts", //bmoore - for demo, sort the properties on the top level resource type, apiVersion, name, location, sku
-      "name": "[variables('storageAccountName')]", // the false positive on the length is a P0, interestingly this didn't show up for api version 2015-06-15
-      // the comment is a DEMO
-      "apiVersion": "2018-07-01",
-      "kind": "storage",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "location": "[parameters('location')]",
-      "properties": {
-        "accountType": "[variables('storageAccountType')]"
-      }
-    },
-    {
       "condition": "[equals(parameters('publicIpNewOrExisting'), 'new')]",
-      "apiVersion": "2018-12-01", //update the apiVersions to a later one (that we have schemas for :))
+      "apiVersion": "2018-12-01",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
       "location": "[parameters('location')]",
       "properties": {
-        // "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
-        // "publicIPAllocationMethod": "Dynamic",
-        "publicIPAllocationMethod": "Dynamic",
+        "publicIPAllocationMethod": "[variables('publicIPAddressType')]", // can be static or dynamic
         "DNSSettings": {
           "domainNameLabel": "[parameters('dnsLabelPrefix')]"
         }
       }
     },
-    { // DEMO REQUIREMENT - case insensitivity - the Name property of the vnet is capitalized 
-      "apiVersion": "2018-12-01", // JUST A BUG: for some reason, this shows up when the subnet Name property is capitalized
+    /*
+    {
+      "apiVersion": "2018-12-01",
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[variables('virtualNetworkName')]", //bmoore - use a property in the properties object instead of one of the top level ones
+      "name": "[variables('virtualNetworkName')]",
       "location": "[parameters('location')]",
       "properties": {
         "AddressSpace": {
@@ -120,6 +105,20 @@
         }]
       }
     },
+    */
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2018-07-01",
+      "name": "[variables('storageAccountName')]",
+      "kind": "storage",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "[variables('storageAccountType')]"
+      }
+    },
     {
       "apiVersion": "2018-12-01",
       "type": "Microsoft.Network/networkInterfaces",
@@ -133,6 +132,7 @@
         "ipConfigurations": [{
           "Name": "ipconfig1",
           "properties": {
+            // "privateIPAllocationMethod": "Dynamic",
             "privateIPAllocationMethod": "Dynamic",
             "publicIPAddress": {
               // This doesn't work

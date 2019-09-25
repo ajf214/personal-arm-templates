@@ -11,6 +11,9 @@
         "scriptSuffix": {
             "type": "string",
             "defaultValue": "[newGuid()]"
+        },
+        "scriptUri": {
+            "type": "string"
         }
     },
     "variables": {
@@ -33,30 +36,14 @@
             {     
                 "azPowerShellVersion": "1.7.0",
                 "arguments": "-commandText 'sp_helpdb'", // can pass an arguement string, but can't use double-quotes, right?
-                // can also use primaryScriptUri instead of scriptContent
-                "scriptContent": "
-                    param (
-                        [Parameter(Mandatory=$true)[string]$commandText
-                    )
-
-                    $SqlConnection = New-Object System.Data.SqlClient.SqlConnection
-                    $SqlConnection.ConnectionString = $env:SqlConnectionString
-                    $SqlCmd = New-Object System.Data.SqlClient.SqlCommand
-                    $SqlCmd.CommandText = $commandText
-                    $SqlCmd.Connection = $SqlConnection
-                    $SqlAdapter = New-Object System.Data.SqlClient.SqlDataAdapter
-                    $SqlAdapter.SelectCommand = $SqlCmd
-                    $DataSet = New-Object System.Data.DataSet
-                    $SqlAdapter.Fill($DataSet)
-                    $SqlConnection.Close()
-                    $DataSet.Tables[0]
-
-                    $outputs = @{'timeCompleted' = (Get-Date)} # deploymentScript will pick this up as structured output
-                ",
-                "secureEnvironmentVariables": // these are passed into the ACI instance as environment variables
+                "primaryScriptUri": "[parameters('scriptUri')]",
+                 // these are passed into the ACI instance as environment variables
+                "environmentVariables": [
                     {
-                        "SqlConnectionString" : "[parameters('sqlConnectionString')]"
+                        "name": "SqlConnectionString",
+                        "secureValue": "[parameters('sqlConnectionString')]"
                     }
+                ]
             }
         }
     ],

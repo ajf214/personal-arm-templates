@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "msiToUseForSCript": {
+            "type": "string"
+        },
+        "sqlConnectionString": {
+            "type": "string"
+        },
+        "scriptSuffix": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        }
+    },
+    "variables": {
+        "scriptName": "[concat('createSqlData-', parameters('scriptSuffix'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2019-10-01-preview",
+            "name": "[variables('scriptName')]", // default value is newGuid() expression, so it will execute every time
+            "location": "[resourceGroup().location]",
+            "identity":{   
+                "type":"UserAssigned", 
+                "userAssignedIdentities": { 
+                    "[parameters('msiToUseForScript')]": {} 
+                } 
+            },
+            "kind": "AzurePowerShell", 
+            "properties":
+            {     
+                "azPowerShellVersion": "1.7.0",
+                "arguments": "-commandText 'sp_helpdb'", // can pass an arguement string, but can't use double-quotes, right?
+                // can also use primaryScriptUri instead of scriptContent
+                "scriptContent": "
+                    param (
+                        [Parameter(Mandatory=$true)$commandText
+                    )
+
+                    $SqlConnection = New-Object System.Data.SqlClient.SqlConnection
+                    $SqlConnection.ConnectionString = $env:SqlConnectionString
+                    $SqlCmd = New-Object System.Data.SqlClient.SqlCommand
+                    $SqlCmd.CommandText = $commandText
+                    $SqlCmd.Connection = $SqlConnection
+                    $SqlAdapter = New-Object System.Data.SqlClient.SqlDataAdapter
+                    $SqlAdapter.SelectCommand = $SqlCmd
+                    $DataSet = New-Object System.Data.DataSet
+                    $SqlAdapter.Fill($DataSet)
+                    $SqlConnection.Close()
+                    $DataSet.Tables[0]
+
+                    $outputs = @{'timeCompleted' = (Get-Date)} # deploymentScript will pick this up as structured output
+                ",
+                 // these are passed into the ACI instance as environment variables
+                "environmentVariables": [
+                    {
+                        "name": "SqlConnectionString",
+                        "secureValue": "[parameters('sqlConnectionString')]"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "timeCompleted": {
+            "type": "string",
+            "value": "[reference('scriptName').outputs.timeCompleted]" // using the output of the script
+        }
+    }
+}

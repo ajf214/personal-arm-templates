@@ -1,0 +1,30 @@
+{
+    "mode": "All",
+    "policyRule": {
+        "if": {
+            "field": "type",
+            "equals": "Microsoft.Resources/subscriptions"
+        },
+        "then": {
+            "effect": "auditIfNotExists",
+            "details": {
+                "type": "Microsoft.Insights/logProfiles",
+                "name": "default",
+                "existenceScope": "subscription",
+                "existenceCondition": {
+                    "allOf": [
+                        {
+                            "field": "Microsoft.Insights/logProfiles/retentionPolicy",
+                            "notEquals": ""
+                        },
+                        {
+                            "field": "Microsoft.Insights/logProfiles/serviceBusRuleId",
+                            "notEquals": ""
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "parameters": {}
+}

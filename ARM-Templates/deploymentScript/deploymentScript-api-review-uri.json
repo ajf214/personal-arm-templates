@@ -14,6 +14,10 @@
         },
         "scriptUri": {
             "type": "string"
+        },
+        "updateString": {
+            "type": "string",
+            "defaultValue": "[utcNow()]"
         }
     },
     "variables": {
@@ -37,7 +41,8 @@
                 "azPowerShellVersion": "1.7.0",
                 "arguments": "-commandText 'sp_helpdb'", // can pass an arguement string, but can't use double-quotes, right?
                 "primaryScriptUri": "[parameters('scriptUri')]",
-                 // these are passed into the ACI instance as environment variables
+                "forceUpdateTag": "[parameters('updateString')]", // can use this to trigger execution for otherwise duplicate PUTs
+                // these are passed into the ACI instance as environment variables
                 "environmentVariables": [
                     {
                         "name": "SqlConnectionString",

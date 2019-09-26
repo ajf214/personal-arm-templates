@@ -1,0 +1,82 @@
+{
+    "mode": "All",
+    "policyRule": {
+        "if": {
+            "field": "type",
+            "equals": "Microsoft.Resources/subscriptions"
+        },
+        "then": {
+            "effect": "deployIfNotExists",
+            "details": {
+                "type": "Microsoft.Blueprint/blueprintAssignments",
+                "name": "myBlueprint",
+                "existenceScope": "subscription",
+                "deploymentScope": "subscription",
+                "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                ],
+                "deployment": {
+                    "location": "eastus",
+                    "properties": {
+                        "mode": "incremental",
+                        "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                                "assignmentName": {
+                                    "type": "string",
+                                    "defaultValue": "myBlueprint"
+                                },
+                                "definitionLocationMG": {
+                                    "type": "string",
+                                    "defaultValue": "2cc4a1e3-2d9e-4d60-9f42-43da6960ac91"
+                                },
+                                "blueprintName": {
+                                    "type": "string",
+                                    "defaultValue": "101-boilerplate"
+                                },
+                                "blueprintVersion": {
+                                    "type": "string",
+                                    "defaultValue": "8"
+                                }
+                            },
+                            "variables": {
+                                "blueprintId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('definitionLocationMG'), '/providers/Microsoft.Blueprint/blueprints/', parameters('blueprintName'), '/versions/', parameters('blueprintVersion'))]"
+                            },
+                            "resources": [
+                                {
+                                    "type": "Microsoft.Blueprint/blueprintAssignments",
+                                    "apiVersion": "2018-11-01-preview",
+                                    "name": "[parameters('assignmentName')]",
+                                    "identity": {
+                                        "type": "systemAssigned"
+                                    },
+                                    "location": "westus2",
+                                    "properties": {
+                                        "blueprintId": "[variables('blueprintId')]",
+                                        "resourceGroups": {
+                                            "SingleRG": {
+                                                "name": "test-001",
+                                                "location": "westus2"
+                                            }
+                                        },
+                                        "locks": {
+                                            "mode": "none"
+                                        },
+                                        "parameters": {
+                                            "principalIds": {
+                                                "value": "caeebed6-cfa8-45ff-9d8a-03dba4ef9a7d"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "parameters": {}
+                    }
+                }
+            }
+        }
+    },
+    "parameters": {}
+}

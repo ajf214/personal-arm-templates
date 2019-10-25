@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "New Metric Alert"
+        },
+        "alertDescription": {
+            "value": "New metric alert created via template"
+        },
+        "alertSeverity": {
+            "value":3
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "resourceId": {
+            "value": "/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/a-management/providers/Microsoft.Compute/virtualMachines/asttest"
+        },
+        "metricName": {
+            "value": "Percentage CPU"
+        },
+        "operator": {
+          "value": "GreaterThan"
+        },
+        "threshold": {
+            "value": "80"
+        },
+        "timeAggregation": {
+            "value": "Average"
+        },
+        "actionGroupId": {
+            "value": "/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Insights/actionGroups/DummyAG"
+        }
+    }
+}

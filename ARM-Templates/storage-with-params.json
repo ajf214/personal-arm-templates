@@ -3,17 +3,17 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "storageLocation": {
-      "type": "string",
-      "metadata": {
-        "description": "test"
-      }
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
     }
   },
   "variables": {
   },
   "resources": [
     {
-      "name": "[concat('storage', uniqueString(resourceGroup().id))]",
+      "name": "[parameters('name')]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2016-01-01",
       "sku": {
@@ -25,5 +25,5 @@
       "properties": {}
     }
   ],
-  "outputs": {  }
+  "outputs": {}
 }

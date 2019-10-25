@@ -20,12 +20,12 @@
                     "properties": {
                         "mode": "incremental",
                         "template": {
-                            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
                             "contentVersion": "1.0.0.0",
                             "parameters": {
                                 "assignmentName": {
                                     "type": "string",
-                                    "defaultValue": "myBlueprint"
+                                    "defaultValue": "[concat('boilerplate-', substring(deployment().name, 0, 5))]"
                                 },
                                 "definitionLocationMG": {
                                     "type": "string",
@@ -38,12 +38,28 @@
                                 "blueprintVersion": {
                                     "type": "string",
                                     "defaultValue": "8"
+                                },
+                                "blueprintsFirstPartySpnId": {
+                                    "type": "string",
+                                    "defaultValue": "ffeb3a44-712a-4d2e-9b97-b1e032a40b29"
                                 }
                             },
                             "variables": {
-                                "blueprintId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('definitionLocationMG'), '/providers/Microsoft.Blueprint/blueprints/', parameters('blueprintName'), '/versions/', parameters('blueprintVersion'))]"
+                                "blueprintId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('definitionLocationMG'), '/providers/Microsoft.Blueprint/blueprints/', parameters('blueprintName'), '/versions/', parameters('blueprintVersion'))]",
+                                "roleAssignmentGuid": "[guid(subscription().subscriptionId)]",
+                                "ownerRoleDef": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
                             },
                             "resources": [
+                                {
+                                    "type": "Microsoft.Authorization/roleAssignments",
+                                    "apiVersion": "2017-09-01",
+                                    "name": "[variables('roleAssignmentGuid')]",
+                                    "properties": {
+                                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('ownerRoleDef'))]",
+                                        "principalId": "[parameters('blueprintsFirstPartySpnId')]",
+                                        "scope": "[subscription().id]"
+                                    }
+                                },
                                 {
                                     "type": "Microsoft.Blueprint/blueprintAssignments",
                                     "apiVersion": "2018-11-01-preview",
@@ -52,6 +68,7 @@
                                         "type": "systemAssigned"
                                     },
                                     "location": "westus2",
+                                    "dependsOn": ["[variables('roleAssignmentGuid')]"],
                                     "properties": {
                                         "blueprintId": "[variables('blueprintId')]",
                                         "resourceGroups": {

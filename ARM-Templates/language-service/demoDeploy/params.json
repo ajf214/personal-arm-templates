@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "dnsLabelPrefix": {
-            "value": "alexsstorageacount1234"
+            "value": "test005alex"
         },
         "adminUsername": {
             "value": "alfran"

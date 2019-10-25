@@ -39,8 +39,8 @@
             "properties":
             {     
                 "azPowerShellVersion": "1.7.0",
-                "arguments": "-commandText 'sp_helpdb'", // can pass an arguement string, but can't use double-quotes, right?
-                "primaryScriptUri": "[parameters('scriptUri')]",
+                "arguments": "-commandText 'sp_helpdb'", // can pass an arguement string, but can't use double-quotes or they must be escaped
+                "primaryScriptUri": "[parameters('scriptUri')]", // must be a publicly accessible URI
                 "forceUpdateTag": "[parameters('updateString')]", // can use this to trigger execution for otherwise duplicate PUTs
                 // these are passed into the ACI instance as environment variables
                 "environmentVariables": [

@@ -7,8 +7,14 @@
   },
   "resources": [
     {
+      // one line comment
       "name": "[concat('storage', uniqueString(resourceGroup().id))]",
       "type": "Microsoft.Storage/storageAccounts",
+      /*
+        multi
+        line
+        comment
+      */
       "apiVersion": "2016-01-01",
       "sku": {
         "name": "Standard_LRS"

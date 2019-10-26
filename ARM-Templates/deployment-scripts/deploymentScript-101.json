@@ -1,0 +1,47 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "timestamp": {
+            "type":"string",
+            "defaultValue": "[utcNow()]"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "name": "script-alex",
+            "apiVersion": "2019-10-01-preview",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/Contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alex-test-identity": {}
+                }
+            },
+            "properties": {
+                "azPowerShellVersion": "2.7",
+                "scriptContent": "
+                        param([string] $textToEcho)
+                        Write-Output $textToEcho
+                        $DeploymentScriptOutputs['text'] = $textToEcho
+                        Execute-BullshitCommand
+                    ",
+                "arguments": "-textToEcho 'myText'",
+                "timeout": "PT30M",
+                "retentionInterval": "PT1H",
+                "cleanupPreference": "OnSuccess",
+                "forceUpdateTag": "[parameters('timestamp')]"
+            }
+        }
+    ],
+    "outputs": {
+        "scriptVerification": {
+            "type": "string",
+            "value": "[reference('script-alex').outputs.text]"
+        }
+    }
+}

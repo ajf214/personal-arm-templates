@@ -1,0 +1,14 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+
+    ],
+    "outputs": {
+        "result": {
+            "value": "[reference('scriptInTemplate5').outputs.text]",
+            "type": "string"
+        }
+    }
+}

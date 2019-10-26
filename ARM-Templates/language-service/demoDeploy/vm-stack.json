@@ -1,5 +1,9 @@
 {
+<<<<<<< Updated upstream:ARM-Templates/language-service/demoDeploy/vm-stack.json
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+=======
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+>>>>>>> Stashed changes:ARM-Templates/language-service/demoDeploy/language-service-p0.template.json
   "contentVersion": "1.0.0.0",
   "parameters": {
     "dnsLabelPrefix": {
@@ -73,8 +77,27 @@
   },
   "resources": [
     {
+<<<<<<< Updated upstream:ARM-Templates/language-service/demoDeploy/vm-stack.json
       "condition": "[equals(parameters('publicIpNewOrExisting'), 'new')]",
       "apiVersion": "2018-12-01",
+=======
+      "type": "Microsoft.Storage/storageAccounts", //bmoore - for demo, sort the properties on the top level resource type, apiVersion, name, location, sku
+      "name": "[variables('storageAccountName')]", // the false positive on the length is a P0, interestingly this didn't show up for api version 2015-06-15
+      // the comment is a DEMO
+      "apiVersion": "2019-04-01",
+      "kind": "storage",
+      "sku": {
+        ""
+      },
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "[variables('storageAccountType')]"
+      }
+    },
+    {
+      "condition": "[equals(parameters('publicIpNewOrExisting'), 'new')]",
+      "apiVersion": "2019-07-01", //update the apiVersions to a later one (that we have schemas for :))
+>>>>>>> Stashed changes:ARM-Templates/language-service/demoDeploy/language-service-p0.template.json
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
       "location": "[parameters('location')]",

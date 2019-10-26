@@ -46,10 +46,15 @@
     "variables": {
       "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sawinvm')]",
       "nicName": "myVMNic",
-      "addressPrefix": "10.0.0.0/16",
+      "addressPrefix": "10.0.0.0/15",
       "subnetName": "Subnet",
+<<<<<<< Updated upstream:ARM-Templates/simple-vm.json
       "subnetPrefix": "10.0.0.0/24",
       "publicIPAddressName": "[concat('test', 'end')]",
+=======
+      "subnetPrefix": "10.0.0.0/23",
+      "publicIPAddressName": "myPublicIP",
+>>>>>>> Stashed changes:ARM-Templates/simple-vm/simple-vm.json
       "vmName": "SimpleWinVM",
       "virtualNetworkName": "MyVNET",
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
@@ -61,7 +66,7 @@
         "location": "[parameters('location')]",
         "apiVersion": "2018-07-01",
         "sku": {
-          "name": "Standard_LRS"
+          "name": "Standard_GRS"
         },
         "kind": "Storage",
         "properties": {}
@@ -72,7 +77,7 @@
         "location": "[parameters('location')]",
         "apiVersion": "2018-10-01",
         "properties": {
-          "publicIPAllocationMethod": "Dynamic",
+          "publicIPAllocationMethod": "Static",
           "dnsSettings": {
             "domainNameLabel": "[parameters('dnsLabelPrefix')]",
           }

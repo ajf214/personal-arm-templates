@@ -1,6 +1,0 @@
-"identity": {
-    "type": "userAssigned",
-    "userAssignedIdentities": {
-        "/subscriptions/996a2f3f-ee01-4ffd-9765-d2c3fc98f30a/resourceGroups/user-assigned-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/owner-identity": {}
-    }
-},

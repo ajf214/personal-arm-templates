@@ -1,0 +1,259 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "variables": {
+        "storageAccountName": "[concat('stor', uniqueString(resourceGroup().id))]",
+        "sqlServerName": "[concat('srvr', uniqueString(resourceGroup().id))]",
+        "sqlDatabaseName": "[concat('sqld', uniqueString(resourceGroup().id))]",
+        "appServicePlanName": "[concat('plan', uniqueString(resourceGroup().id))]",
+        "webAppName": "[concat('weba', uniqueString(resourceGroup().id))]",
+        "functionAppName": "[concat('func', uniqueString(resourceGroup().id))]",
+        "containerInstanceName": "[concat('cont', uniqueString(resourceGroup().id))]",
+        "databaseUsername": "applicationidentity",
+        "databasePassword": "A#joK2z98qTR",
+        "populateContainerImage": "seesharprun/contoso.spaces.populate",
+        "webContainerImage": "seesharprun/contoso.spaces.web",
+        "functionContainerImage": "seesharprun/contoso.spaces.api"
+    },
+    "resources": [
+        {
+            "name": "[variables('sqlServerName')]",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "version": "12.0",
+                "administratorLogin": "[variables('databaseUsername')]",
+                "administratorLoginPassword": "[variables('databasePassword')]"
+            },
+            "resources": [
+                {
+                    "name": "AllowAllWindowsAzureIps",
+                    "type": "firewallRules",
+                    "apiVersion": "2015-05-01-preview",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+                    ],
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    }
+                },
+                {
+                    "name": "[variables('sqlDatabaseName')]",
+                    "type": "databases",
+                    "apiVersion": "2017-10-01-preview",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+                    ],
+                    "sku": {
+                        "name": "GP_Gen5_4",
+                        "tier": "GeneralPurpose"
+                    },
+                    "properties": {
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": "34359738368"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "accessTier": "Hot"
+            },
+            "resources": [
+                {
+                    "name": "default/images",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2019-04-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+                    "properties": {
+                        "publicAccess": "Blob"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-10-01",
+            "name": "[variables('containerInstanceName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+                "[resourceId('Microsoft.Sql/servers/databases', variables('sqlServerName'), variables('sqlDatabaseName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "containers": [
+                    {
+                        "name": "populate",
+                        "properties": {
+                            "image": "[variables('populateContainerImage')]",
+                            "environmentVariables": [
+                                {
+                                    "name": "ConnectionStrings__AzureStorage",
+                                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-04-01').keys[0].value, ';')]"
+                                },
+                                {
+                                    "name": "ConnectionStrings__AzureSqlDb",
+                                    "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('sqlDatabaseName'), ';User Id=', variables('databaseUsername'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ';Password=', variables('databasePassword'), ';')]"
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "cpu": "4.0",
+                                    "memoryInGb": "8.0"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "restartPolicy": "OnFailure",
+                "osType": "Linux"
+            }
+        },
+        {
+            "name": "[variables('appServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "S1"
+            },
+            "kind": "linux",
+            "properties": {
+                "reserved": true
+            }
+        },
+        {
+
+            "name": "[variables('functionAppName')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+                "[resourceId('Microsoft.Sql/servers/databases', variables('sqlServerName'), variables('sqlDatabaseName'))]",
+                "[resourceId('Microsoft.ContainerInstance/containerGroups', variables('containerInstanceName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+            ],
+            "kind": "functionapp",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "clientAffinityEnabled": false,
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "https://index.docker.io"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-04-01').keys[0].value, ';')]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "10.14.1"
+                        },
+                        {
+                            "name": "SqlConnectionString",
+                            "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('sqlDatabaseName'), ';User Id=', variables('databaseUsername'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ';Password=', variables('databasePassword'), ';')]"
+                        }
+                    ],
+                    "appCommandLine": "",
+                    "linuxFxVersion": "[concat('DOCKER|', variables('functionContainerImage'))]"
+                }
+            }
+        },
+        {
+            "name": "[variables('webAppName')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "location": "[resourceGroup().location]",
+            "kind": "app",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+                "[resourceId('Microsoft.Sql/servers/databases', variables('sqlServerName'), variables('sqlDatabaseName'))]",
+                "[resourceId('Microsoft.ContainerInstance/containerGroups', variables('containerInstanceName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "clientAffinityEnabled": false,
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "https://index.docker.io"
+                        },
+                        {
+                            "name": "ResourceData__BlobContainerUri",
+                            "value": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2019-04-01').primaryEndpoints.blob, 'images/')]"
+                        },
+                        {
+                            "name": "ConnectionData__GetFeaturedLocationsApiUrl",
+                            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('functionAppName')), '2018-11-01').defaultHostName, '/api/getfeaturedlocations')]"
+                        },
+                        {
+                            "name": "ConnectionData__GetAllLocationsApiUrl",
+                            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('functionAppName')), '2018-11-01').defaultHostName, '/api/getalllocations')]"
+                        },
+                        {
+                            "name": "ConnectionData__GetSpecificLocationApiUrl",
+                            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('functionAppName')), '2018-11-01').defaultHostName, '/api/getspecificlocation')]"
+                        },
+                        {
+                            "name": "ConnectionData__AddToCartApiUrl",
+                            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('functionAppName')), '2018-11-01').defaultHostName, '/api/addtocart')]"
+                        },
+                        {
+                            "name": "ConnectionData__GetCartApiUrl",
+                            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('functionAppName')), '2018-11-01').defaultHostName, '/api/getcart')]"
+                        },
+                        {
+                            "name": "ConnectionData__ClearCartApiUrl",
+                            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('functionAppName')), '2018-11-01').defaultHostName, '/api/clearcart')]"
+                        }
+                    ],
+                    "appCommandLine": "",
+                    "linuxFxVersion": "[concat('DOCKER|', variables('webContainerImage'))]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "WebApplicationUri": {
+            "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('webAppName')), '2018-11-01').defaultHostName)]",
+            "type": "string"
+        }
+    }
+}

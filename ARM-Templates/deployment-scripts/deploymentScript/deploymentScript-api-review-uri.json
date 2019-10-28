@@ -10,7 +10,7 @@
         },
         "scriptSuffix": {
             "type": "string",
-            "defaultValue": "[newGuid()]"
+            "defaultValue": "myScript" // can use [newGuid()] function if you want a new script resource created with each execution
         },
         "scriptUri": {
             "type": "string"
@@ -27,7 +27,7 @@
         {
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2019-10-01-preview",
-            "name": "[variables('scriptName')]", // default value is newGuid() expression, so it will execute every time
+            "name": "[variables('scriptName')]",
             "location": "[resourceGroup().location]",
             "identity":{   
                 "type":"UserAssigned", 

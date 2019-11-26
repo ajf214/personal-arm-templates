@@ -1,0 +1,40 @@
+{
+    "type": "Microsoft.Blueprint/blueprints",
+    "properties": {
+        "targetScope": "subscription",
+        "description": "Testing VNET peering scenario",
+        "parameters": {
+            "spokeVnet_hubSubscriptionId": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "hubSubscriptionId (SpokeVnet)"
+                },
+                "defaultValue": "3e6ccc80-f91f-42c8-b7f3-d9bd3be81110",
+                "allowedValues": []
+            },
+            "spokeVnet_hubResourceGroup": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "hubResourceGroup (SpokeVnet)"
+                },
+                "defaultValue": "hubResourceGroup",
+                "allowedValues": []
+            },
+            "spokeVnet_hubVnetName": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "hubVnetName (SpokeVnet)"
+                },
+                "defaultValue": "huvnet",
+                "allowedValues": []
+            }
+        },
+        "resourceGroups": {
+            "Network": {
+                "location": "australiaeast",
+                "metadata": {},
+                "dependsOn": []
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "subscriptionId": "e93d3ee6-fac1-412f-92d6-bfb379e81af2", // Contoso IT – SH360 – Prod
+            "name": "parentScopeDeployment",
+            "location": "eastus",
+            "properties": {
+                "templateLink": "uri",
+                "parametersLink": "uri"
+            }
+        },
+        {
+            // health check
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "subscriptionId": "e93d3ee6-fac1-412f-92d6-bfb379e81af2", // Contoso IT – SH360 – Prod
+            "name": "parentScopeDeployment",
+            "location": "eastus",
+            "properties": {
+                "templateLink": "uri",
+                "parametersLink": "uri"
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}

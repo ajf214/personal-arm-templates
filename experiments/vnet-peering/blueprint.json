@@ -5,36 +5,33 @@
         "description": "Testing VNET peering scenario",
         "parameters": {
             "spokeVnet_hubSubscriptionId": {
-                "type": "string",
-                "metadata": {
-                    "displayName": "hubSubscriptionId (SpokeVnet)"
-                },
-                "defaultValue": "3e6ccc80-f91f-42c8-b7f3-d9bd3be81110",
-                "allowedValues": []
+                "type": "string"
             },
             "spokeVnet_hubResourceGroup": {
-                "type": "string",
-                "metadata": {
-                    "displayName": "hubResourceGroup (SpokeVnet)"
-                },
-                "defaultValue": "hubResourceGroup",
-                "allowedValues": []
+                "type": "string"
             },
             "spokeVnet_hubVnetName": {
+                "type": "string"
+            },
+            "spokeVnet_vnetName": {
                 "type": "string",
-                "metadata": {
-                    "displayName": "hubVnetName (SpokeVnet)"
-                },
-                "defaultValue": "huvnet",
-                "allowedValues": []
+                "defaultValue": "vNet1"
+            },
+            "spokeVnet_vnetAddressPrefix": {
+                "type": "string",
+                "defaultValue": "10.0.2.0/24"
+            },
+            "spokeVnet_subnetAddressPrefix": {
+                "type": "string",
+                "defaultValue": "10.0.2.0/27"
+            },
+            "spokeVnet_subnetName": {
+                "type": "string",
+                "defaultValue": "spoke1"
             }
         },
         "resourceGroups": {
-            "Network": {
-                "location": "australiaeast",
-                "metadata": {},
-                "dependsOn": []
-            }
+            "Network": {}
         }
     }
 }

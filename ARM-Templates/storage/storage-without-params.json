@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
   },
@@ -7,14 +7,8 @@
   },
   "resources": [
     {
-      // one line comment
       "name": "[concat('storage', uniqueString(resourceGroup().id))]",
       "type": "Microsoft.Storage/storageAccounts",
-      /*
-        multi
-        line
-        comment
-      */
       "apiVersion": "2016-01-01",
       "sku": {
         "name": "Standard_LRS"
@@ -23,7 +17,6 @@
       "location":"East US",
       "tags": {
       },
-      // testing a comment!
       "properties": {
       }
     }

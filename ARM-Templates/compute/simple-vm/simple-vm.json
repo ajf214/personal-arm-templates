@@ -48,13 +48,8 @@
       "nicName": "myVMNic",
       "addressPrefix": "10.0.0.0/15",
       "subnetName": "Subnet",
-<<<<<<< Updated upstream:ARM-Templates/simple-vm.json
-      "subnetPrefix": "10.0.0.0/24",
-      "publicIPAddressName": "[concat('test', 'end')]",
-=======
       "subnetPrefix": "10.0.0.0/23",
       "publicIPAddressName": "myPublicIP",
->>>>>>> Stashed changes:ARM-Templates/simple-vm/simple-vm.json
       "vmName": "SimpleWinVM",
       "virtualNetworkName": "MyVNET",
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
@@ -62,7 +57,7 @@
     "resources": [
       {
         "type": "Microsoft.Storage/storageAccounts",
-        "name": "[variables('storageAccountName')]", //this is a P1
+        "name": "[variables('storageAccountName')]", // this is a P1
         "location": "[parameters('location')]",
         "apiVersion": "2018-07-01",
         "sku": {
@@ -79,7 +74,7 @@
         "properties": {
           "publicIPAllocationMethod": "Static",
           "dnsSettings": {
-            "domainNameLabel": "[parameters('dnsLabelPrefix')]",
+            "domainNameLabel": "[parameters('dnsLabelPrefix')]"
           }
         }
       },
@@ -120,7 +115,7 @@
               "properties": {
                 "privateIPAllocationMethod": "Dynamic",
                 "publicIPAddress": {
-                  "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
                 },
                 "subnet": {
                   "id": "[variables('subnetRef')]"
@@ -169,7 +164,7 @@
           "networkProfile": {
             "networkInterfaces": [
               {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
               }
             ]
           },

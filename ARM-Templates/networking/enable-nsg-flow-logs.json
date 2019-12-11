@@ -1,0 +1,112 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "resources": [
+        {
+            "name": "nested",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "alex-nsg-test",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "nsgFlowLogTest",
+                            "type": "Microsoft.Network/networkSecurityGroups",
+                            "apiVersion": "2019-09-01",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "securityRules": [
+                                    {
+                                        "name": "nsgRule1",
+                                        "properties": {
+                                            "description": "description",
+                                            "protocol": "Tcp",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "*",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 100,
+                                            "direction": "Inbound"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "vnet-flowlog-test",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "apiVersion": "2018-08-01",
+                            "location": "[resourceGroup().location]",
+                            "tags": {
+                                "displayName": "virtualNetwork1"
+                            },
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                        "192.0.0.0/16"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "storageflowlogalextest2",
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "apiVersion":"2019-04-01",
+                            "location": "[resourceGroup().location]",
+                            "kind": "StorageV2",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "nsgId": {
+                            "type": "string",
+                            "value": "[resourceId('Microsoft.Network/networkSecurityGroups','nsgFlowLogTest')]"// "[reference('nsgFlowLogTest', '2019-09-01', 'Full')]"
+                        },
+                        "storageId": {
+                            "type": "string",
+                            "value": "[resourceId('Microsoft.Storage/storageAccounts', 'storageflowlogalextest')]"
+                        }
+                    }
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "dependsOn": ["nested"], // try full resourceId in the reference call
+            "name": "NetworkWatcher_centraluseuap/AlexFlowLogs",
+            "type": "Microsoft.Network/networkWatchers/FlowLogs/",
+            "location": "centraluseuap",
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "targetResourceId": // "[reference(resourceId('alex-nsg-test', 'Microsoft.Resources/deployments','nested')).outputs.nsgId]",
+                    "/subscriptions/4ce8c9fe-cadc-47d6-9c76-335812fd59df/resourceGroups/alex-nsg-test/providers/Microsoft.Network/networkSecurityGroups/nsgFlowLogTest",                    
+                "storageId": 
+                    "/subscriptions/4ce8c9fe-cadc-47d6-9c76-335812fd59df/resourceGroups/alex-nsg-test/providers/Microsoft.Storage/storageAccounts/storageflowlogalextest2",
+                    // "[reference('nested').outputs.storageId]",
+                    // "/subscriptions/56abfbd6-ec72-4ce9-831fbc2b6f2c5505/resourceGroups/MyCanaryFlowLog/providers/Microsoft.Storage/storageAccounts/storagev2ira
+                "enabled": true,
+                "flowAnalyticsConfiguration": {},
+                "retentionPolicy": {
+                    "days": 5,
+                    "enabled": true
+                },
+                "format": {
+                    "type": "JSON",
+                    "version": 1
+                }
+            }
+        }
+    ]
+}

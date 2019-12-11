@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "alex-test-cluster"
+        },
+        "dnsPrefix": {
+            "value": "alextestcluster"
+        },
+        "linuxAdminUsername": {
+            "value": "alfran"
+        },
+        "sshRSAPublicKey": {
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKXe8kmNwgpeBx5NaRgUyYNFNY7K5PS9B943TuBbA3bTG8ER7zq3Xz10yGGUXIJ60LTxyrI3KyQnmW9bAH2pb5SaSesGwR9t+1SUIaJNYMS7ZPivDm//fE84E1/75W5ZETboWHVt/TQwSpWpx4tW2Gjr4TNHg0geKek13h4K1fvP0dHQ7ROw1qe51XGE/toSDZHBPfuSbWZLcBD7wUa9i/BLZqHI3vB+5g1R2CGqUNlAJ4rdB9lj0j61snYxspVkQVJRIfeT+CpRx70edZXrC7gIoSP9sZkVQi8zL0Bh/MxpeunsqQ+azfgOnKJN3x5XaTcNgeJ5aZI2g3xm1IpgiP alfran@DESKTOP-354I6AM"
+        },
+        "servicePrincipalClientId": {
+            "value": "30cabdde-8d15-4cf5-b69b-9efcd2437956"
+        },
+        "servicePrincipalClientSecret": {
+            "value": "f3d87814-412d-401d-9436-b0e757eb4035"
+        }
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "identity": {
+            "type": "string",
+            "defaultValue": "/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/Contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alex-test-identity"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "name": "scriptInTemplate1",
+            "apiVersion": "2019-10-01-preview",
+            "location": "[resourceGroup().location]", // must be a canary region for now (eastus2euap)
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "[parameters('identity')]": {}
+                }
+            },
+            "properties": {
+                "azPowerShellVersion": "2.7",
+                "scriptContent": "
+                    param([string] $textToEcho)
+                    Write-Output $textToEcho
+                    $DeploymentScriptOutputs['text'] = $textToEcho",
+                "Arguments": "-textToEcho 'test'",
+                "timeout": "PT30M",
+                "retentionInterval": "P1D",
+                "cleanupPreference": "OnSuccess",
+                "forceUpdateTag": "1"
+            }
+        }
+    ],
+    "outputs": {}
+}

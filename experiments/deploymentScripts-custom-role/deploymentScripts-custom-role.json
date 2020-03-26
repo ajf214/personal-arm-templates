@@ -1,0 +1,22 @@
+{
+    "Name": "Deployment Scripts Contributor",
+    "Id": "eae30820-0065-4e94-af65-5ccffab364a9",
+    "IsCustom": true,
+    "Description": "Can only CRUD deployment scripts",
+    "Actions": [
+        "Microsoft.Resources/deploymentScripts/*",
+        "Microsoft.Storage/storageAccounts/*",
+        "Microsoft.Container/containerGroups/*",
+        "Microsoft.Authorization/*/read",
+        "Microsoft.Resources/subscriptions/resourceGroups/read",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Support/*"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "/providers/Microsoft.Management/managementGroups/2cc4a1e3-2d9e-4d60-9f42-43da6960ac91",
+        "/subscriptions/e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+    ]
+  }

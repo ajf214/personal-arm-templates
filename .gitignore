@@ -5,3 +5,4 @@ Example Blueprints/PortalBlueprints/ISO27001
 ARM-Templates/linked-template-parameters.json
 ARM-Templates/tenant-level-deployment.json
 Updates
+experiments/deploymentScripts-custom-role/creds

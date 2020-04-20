@@ -1,0 +1,19 @@
+{
+    "roleName": "deploymentScriptforMI",
+    "Name": "Deployment Scripts For MI",
+    "Id": "fb12dfee-319f-4080-a61a-76c967c0a1e2",
+    "IsCustom": true,
+    "Description": "Permissions for the MI to execute a deployment script",
+    "Actions": [
+        "Microsoft.Authorization/*/read",
+        "Microsoft.Resources/subscriptions/resourceGroups/read",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Support/*"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "/subscriptions/d56e652e-758d-480a-8f0d-47f230264b4c"
+    ]
+  }

@@ -2,7 +2,7 @@
     "Actions": [
         "Microsoft.Resources/deploymentScripts/*",
         "Microsoft.Storage/storageAccounts/*",
-        "Microsoft.Container/containerGroups/*",
+        "Microsoft.ContainerInstance/containerGroups/*",
         "Microsoft.Authorization/*/read",
         "Microsoft.Resources/subscriptions/resourceGroups/read",
         "Microsoft.Resources/deployments/*",

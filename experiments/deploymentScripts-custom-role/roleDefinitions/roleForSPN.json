@@ -1,13 +1,12 @@
 {
     "roleName": "deploymentScriptContributor",
-    "Name": "Deployment Scripts Contributor",
+    "Name": "deploymentScriptsContributor",
     "Id": "f940961f-226c-451c-abab-37297cff9494",
     "IsCustom": true,
     "Description": "Can only CRUD deployment scripts",
     "Actions": [
         "Microsoft.Resources/deploymentScripts/*",
         "Microsoft.Resources/*/read",
-        "Microsoft.Resources/locations/deploymentScriptOperationResults/read",
         "Microsoft.Authorization/*/read",
         "Microsoft.Resources/subscriptions/resourceGroups/read",
         "Microsoft.Resources/deployments/*",

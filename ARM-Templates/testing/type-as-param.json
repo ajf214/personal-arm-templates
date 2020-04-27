@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceType": {
+            "type": "string"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[uniqueString(resourceGroup().id)]",
+            "type": "[parameters('resourceType')]",
+            "apiVersion": "2019-06-01",
+            "tags": {
+                "displayName": "[uniqueString(resourceGroup().id)]"
+            },
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+               "name": "Premium_LRS",
+               "tier": "Premium"
+             }
+        }
+    ],
+    "outputs": {}
+}

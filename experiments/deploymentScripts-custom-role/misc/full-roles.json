@@ -1,0 +1,12 @@
+{
+    "Actions": [
+        "Microsoft.Resources/deploymentScripts/*",
+        "Microsoft.Storage/storageAccounts/*",
+        "Microsoft.ContainerInstance/containerGroups/*",
+        "Microsoft.Authorization/*/read",
+        "Microsoft.Resources/subscriptions/resourceGroups/read",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Support/*",
+        "Microsoft.Resources/locations/deploymentScriptOperationResults/*"
+    ]
+}

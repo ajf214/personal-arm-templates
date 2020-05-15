@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "identity": {
+            "type": "string",
+            "defaultValue": "/subscriptions/d56e652e-758d-480a-8f0d-47f230264b4c/resourcegroups/managed-identities/providers/Microsoft.ManagedIdentity/userAssignedIdentities/deploymentScriptMI"
+        },
+        "timestamp": {
+            "type": "string",
+            "defaultValue": "[utcNow()]"
+        }
+    },
+    "variables": {
+        "storageAccountName": "[concat('dsstgstd', uniqueString(resourceGroup().id))]"
+    },
+    "resources": [
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS"
+            }
+        },
+        {
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ],
+            "type": "Microsoft.Resources/deploymentScripts",
+            "name": "[concat(parameters('timestamp'), 'script003')]",
+            "apiVersion": "2019-10-01-preview",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "[parameters('identity')]": {
+                    }
+                }
+            },
+            "properties": {
+                "azPowerShellVersion": "3.0", // should this be an enum/swagger update?
+                "scriptContent": "
+                    param([string] $textToEcho)
+                    Write-Output $textToEcho
+                    $DeploymentScriptOutputs['text'] = $textToEcho",
+                "Arguments": "-textToEcho 'test'",
+                "timeout": "PT6M",
+                "retentionInterval": "P1D",
+                "cleanupPreference": "OnSuccess",
+                "storageAccountSettings": {
+                    "storageAccountName": "[variables('storageAccountName')]",
+                    "storageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value]"
+                }
+            }
+        }
+    ]
+}

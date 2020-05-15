@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "identity": {
+            "value": "/subscriptions/d56e652e-758d-480a-8f0d-47f230264b4c/resourcegroups/managed-identities/providers/Microsoft.ManagedIdentity/userAssignedIdentities/deploymentScriptMI"
+        },
+        "timestamp": {
+            "value": "[utcNow()]"
+        }
+    }
+}

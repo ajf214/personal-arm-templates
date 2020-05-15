@@ -1,12 +1,12 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
       "storageLocation": {
-        "type": "string",
-        "metadata": {
-          "description": "test"
-        }
+        "type": "string"
+      },
+      "sku": {
+        "type": "string"
       }
     },
     "variables": {
@@ -15,14 +15,17 @@
       {
         "name": "[concat('storage', uniqueString(resourceGroup().id))]",
         "type": "Microsoft.Storage/storageAccounts",
-        "apiVersion": "2016-01-01",
         "sku": {
-          "name": "Standard_LRS"
+          "name": "[parameters('sku')]"
         },
+        "apiVersion": "2016-01-01",
         "kind": "Storage",
         "location": "[parameters('storageLocation')]",
         "tags": {},
         "properties": {}
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts"
       }
     ],
     "outputs": {  }

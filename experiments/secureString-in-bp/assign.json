@@ -1,0 +1,28 @@
+{
+    "identity": {
+      "type": "SystemAssigned"
+    },
+    "location": "westus2",
+    "properties": {
+      "blueprintId": "/providers/Microsoft.Management/managementGroups/2cc4a1e3-2d9e-4d60-9f42-43da6960ac91/providers/Microsoft.Blueprint/blueprints/test-kv",
+      "resourceGroups": {
+        "ResourceGroup": {
+          "name": "rg-001"
+        }
+      },
+      "locks": {
+        "mode": "none"
+      },
+      "parameters": {
+        "test-secure_test": {
+          "reference": {
+            "keyVault": {
+              "id": "/subscriptions/996a2f3f-ee01-4ffd-9765-d2c3fc98f30a/resourceGroups/HelleBlueprintRG1/providers/Microsoft.KeyVault/vaults/alex-test-kv"
+            },
+            "secretName": "my-secret-password"
+          }
+        }
+      }
+    }
+  }
+  

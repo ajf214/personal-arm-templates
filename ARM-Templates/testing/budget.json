@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "budgetCategory": {
+            "type": "string"
+        },
+        "amount": {
+           "type": "string"
+        },
+        "startDate": {
+            "type": "string"
+        },
+        "endDate": {
+            "type": "string"
+        },
+        "resourceFilter": {
+            "type": "array"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Consumption/budgets",
+            "apiVersion": "2019-10-01",
+            "name": "test",
+            "properties": {
+                "category": "[parameters('budgetCategory')]",
+                "amount": "[parameters('amount')]",
+                "timeGrain": "Monthly",
+                "timePeriod": {
+                    "startDate": "[parameters('startDate')]",
+                    "endDate": "[parameters('endDate')]"
+                },
+                "filters": {
+                    "resources": "[parameters('resourceFilter')]"// ["test", "test"]
+                }
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}

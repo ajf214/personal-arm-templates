@@ -7,18 +7,15 @@
   },
   "resources": [
     {
-      "name": "[concat('storage', uniqueString(resourceGroup().id))]",
+      "name": "[concat('storage2', uniqueString(resourceGroup().id))]",
+      // i'm a comment
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2016-01-01",
+      "apiVersion": "2012-01-01",
       "sku": {
         "name": "Standard_LRS"
       },
-      "kind": "Storage",
-      "location":"East US",
-      "tags": {
-      },
-      "properties": {
-      }
+      "kind": "Blah",
+      "location":"East US"
     }
   ],
   "outputs": {

@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "name": "nestedDeployment1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [],
+                    "outputs": {
+                        "test-hyphen": {
+                            "type": "string",
+                            "value": "alex"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "my-output": {
+            "type": "string",
+            "value": "[reference('nestedDeployment1').outputs['test-hyphen'].value]"
+        }
+    }
+}

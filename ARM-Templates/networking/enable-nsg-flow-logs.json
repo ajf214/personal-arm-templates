@@ -121,11 +121,13 @@
             "apiVersion": "2019-09-01",
             "properties": {
                 "targetResourceId": 
-                    "[variables('nsgId')]",
-                    // "[reference(resourceId('alex-nsg-test', 'Microsoft.Resources/deployments','nested')).outputs.nsgId]" -- this doesn't work...                    
+                    // "[variables('nsgId')]", -- this works
+                    // "[reference(resourceId('alex-nsg-test', 'Microsoft.Resources/deployments', 'nested')).outputs.nsgId]" -- this doesn't work...
+                    "[resourceId('alex-nsg-test', 'Microsoft.Network/networkSecurityGroups', reference(resourceId('alex-nsg-test', 'Microsoft.Resources/deployments', 'nested')).outputs.nsgName)]",                   
                 "storageId": 
-                    "[variables('storageId')]",
+                    //"[variables('storageId')]",
                     // "[reference('nested').outputs.storageId]" -- this doesn't work...
+                    "[resourceId('alex-nsg-test', 'Microsoft.Storage/storageAccounts', reference(resourceId('alex-nsg-test', 'Microsoft.Resources/deployments', 'nested')).outputs.storageName)]",
                 "enabled": true,
                 "flowAnalyticsConfiguration": {},
                 "retentionPolicy": {

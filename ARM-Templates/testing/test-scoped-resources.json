@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            // fully qualified Id: /providersMicrosoft.Management/managementGroups/deploymentMG/providers/{scope}/providers/Microsoft.Authorization/roleAssignment/test
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion":"2017-09-01",
+            "name": "test",
+            "scope": "Microsoft.Compute/virtualMachines/vm1", // create a role assignment on the VM itself, but not the entire RG
+            "properties": {}
+        },
+        {
+            // fully qualified Id: /providersMicrosoft.Management/managementGroups/deploymentMG/providers/{scope}/providers/Microsoft.Management/managementGroups/ChildGroup
+            "type": "Microsoft.Management/managementGroups",
+            "scope": "/",
+            "apiVersion": "2019-01-01",
+            "name": "ChildGroup",
+            "properties": {
+                "displayName": "ChildGroup",
+                "details": {
+                    "parent": {
+                        "id": "/providers/Microsoft.Management/managementGroups/RootGroup"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}

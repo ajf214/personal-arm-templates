@@ -26,10 +26,11 @@
             },
             "properties": {
                 "azPowerShellVersion": "3.0", // should this be an enum/swagger update?
-                "scriptContent": "
+                "scriptContent": " 
                     param([string] $textToEcho)
                     Write-Output $textToEcho
                     $DeploymentScriptOutputs['text'] = $textToEcho",
+                // alternatively can use primaryScriptUri
                 "Arguments": "-textToEcho 'test'",
                 "timeout": "PT6M",
                 "retentionInterval": "P1D",

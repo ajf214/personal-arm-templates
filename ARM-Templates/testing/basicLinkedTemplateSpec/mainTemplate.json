@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "nested",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "./artifacts/otherTemp.json"
+                }
+            }
+        },
+        {
+            "name": "nested2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "./artifacts/storage.json"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "fromNested": {
+            "type": "string",
+            "value": "[reference('nested').outputs.testOutput.value]"
+        }
+    }
+}

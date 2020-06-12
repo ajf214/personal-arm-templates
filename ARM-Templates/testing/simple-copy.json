@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "tags": [
+            "Application Name",
+            "Application Owner",
+            "Business Criticality",
+            "Contact Email",
+            "Cost Center",
+            "Data Classification"
+        ]
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policySetDefinitions",
+            "name": "Default Corporate Tags",
+            "apiVersion": "2018-05-01",
+            "properties": {
+            "displayName": "Corporate Tag Policy",
+            "description": "This initiative enforces resource group tagging and resource tag inheritence.",
+            "metadata": {
+                "category": "Tags"
+            },
+            "parameters": {},
+            "copy": [
+                {
+                    "name": "policyDefinitions",
+                    "count": "[length(variables('tags'))]",
+                    "input": {
+                            "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+                            "parameters": {
+                                "tagName": {
+                                    "value": "[variables('tags')[copyIndex('policyDefinitions')]]"
+                                }
+                            }
+                        }
+                }
+            ]
+            }
+        }
+    ],
+    "outputs": {}
+}

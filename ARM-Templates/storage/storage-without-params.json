@@ -1,23 +1,17 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-  },
-  "variables": {
-  },
   "resources": [
     {
-      "name": "[concat('storage2', uniqueString(resourceGroup().id))]",
-      // i'm a comment
+      "name": "[concat('storage', uniqueString(resourceGroup().id))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2012-01-01",
+      "apiVersion": "2019-06-01",
+      "location": "[resourceGroup().location]",
+      "kind": "StorageV2",
       "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "Blah",
-      "location":"East US"
+        "name": "Premium_LRS",
+        "tier": "Premium"
+      }
     }
-  ],
-  "outputs": {
-  }
+  ]
 }

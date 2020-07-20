@@ -6,9 +6,9 @@
     "variables": {},
     "resources": [
         {
-            "name": "nested",
+            "name": "nested1",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2020-06-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -19,7 +19,7 @@
         {
             "name": "nested2",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2020-06-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -29,9 +29,13 @@
         }
     ],
     "outputs": {
-        "fromNested": {
+        "fromNested1": {
             "type": "string",
-            "value": "[reference('nested').outputs.testOutput.value]"
+            "value": "[reference('nested1').outputs.testOutput.value]"
+        },
+        "fromNested2": {
+            "type": "string",
+            "value": "[reference('nested2').outputs.testOutput.value]"
         }
     }
 }

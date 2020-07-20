@@ -10,11 +10,11 @@
       "name": "[concat('storage2', uniqueString(resourceGroup().id))]",
       // i'm a comment
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2012-01-01",
+      "apiVersion": "2019-06-01",
       "sku": {
         "name": "Standard_LRS"
       },
-      "kind": "Blah",
+      "kind": "StorageV2",
       "location":"East US"
     }
   ],

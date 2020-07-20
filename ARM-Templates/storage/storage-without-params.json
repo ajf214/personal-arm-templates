@@ -6,12 +6,11 @@
       "name": "[concat('storage', uniqueString(resourceGroup().id))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2019-06-01",
-      "location": "[resourceGroup().location]",
-      "kind": "StorageV2",
       "sku": {
-        "name": "Premium_LRS",
-        "tier": "Premium"
-      }
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "location":"East US"
     }
   ]
 }

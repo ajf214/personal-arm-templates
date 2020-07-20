@@ -1,0 +1,26 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "myString": {
+      "type": "string",
+      "defaultValue": "my value"
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2020-01-01",
+      "name": "myStorage1234",
+      "sku": {}
+    }
+  ],
+  "outputs": {
+    "out": {
+      "type": "string",
+      "value": "Im an output"
+    }
+  }
+}

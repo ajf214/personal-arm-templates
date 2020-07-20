@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AllParams": {
+            "type": "object"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        // Certificate used for SSL Binding on the Web App and Slots
+        {
+            "type": "Microsoft.Web/certificates",
+            "apiVersion": "2016-03-01",
+            "name": "[parameters('AllParams').WebPart.KeyVaultSecretName]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "keyVaultId": "[parameters('AllParams').WebPart.KeyVaultId]",
+                "keyVaultSecretName": "[parameters('AllParams').WebPart.KeyVaultSecretName]",
+                "serverFarmId": "[resourceId(parameters('AllParams').ResourceGroupPart.WebAppResourceGroup,'Microsoft.Web/serverfarms', parameters('AllParams').WebPart.ServicePlanName)]"
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

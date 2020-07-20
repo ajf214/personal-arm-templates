@@ -1,0 +1,165 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "type": "string"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "name": "ServicePlan",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'ServicePlan', '/', 'ServicePlan.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "name": "Certificate",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'ServicePlan')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Certificate', '/', 'Certificate.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "name": "WebApp",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'Certificate')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'WebApp', '/', 'WebApp.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "name": "WebAppSlots",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'WebApp')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'WebAppSlots', '/', 'WebAppSlots.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "name": "AppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'WebAppSlots')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'AppInsights', '/', 'AppInsights.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "name": "HostNameBindings",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'AppInsights')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'HostNameBindings', '/', 'HostNameBindings.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        //{
+        // "name": "AppSettings",
+        // "type": "Microsoft.Resources/deployments",
+        // "apiVersion": "2019-10-01",
+        // "dependsOn": [
+        // "[resourceId('Microsoft.Resources/deployments', 'HostNameBindings')]"
+        // ],
+        // "properties": {
+        // "mode": "Incremental",
+        // "templateLink": {
+        // "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'AppSettings', '/', 'AppSettings.json', parameters('_artifactsLocationSasToken'))]",
+        // "contentVersion": "1.0.0.0"
+        // },
+        // "parametersLink": {
+        // "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+        // "contentVersion": "1.0.0.0"
+        // }
+        // }
+        //},
+        {
+            "name": "AccessRestrictions",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'HostNameBindings')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'AccessRestrictions', '/', 'AccessRestrictions.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ARMTemplates/', 'Parameters', '/', 'SBX.parameters.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ]
+}

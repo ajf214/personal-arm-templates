@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "name": "<<AliasName>>",
+            "type": "Microsoft.Subscription/aliases",
+            "apiVersion": "2020-07-01",
+            "properties": {
+                "workLoad": "Production | DevTest",
+                "displayName": "<<Subscription display name>>",
+                "billingScope": "/providers/Microsoft.Billing/billingAccounts/d6fd151e-2f30-50d5-34b2-fe40b1d64b7f:31670802-3752-4741-b5cc-683c71eca69b_2019-05-31/billingProfiles/JIMI-YGZA-BG7-TGB/invoiceSections/NNUD-SDJC-PJA-TGB"
+            },
+            "dependsOn": [],
+            "tags": {}
+        }
+        // optionally deploy a resourcegroup and resources in RG via two nested deployments
+        /*
+        {
+            "name": "nestedDeployment1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "subscriptions/<SUBSCRIPTION-ID>", // how do I know this subscription ID?
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        // create resource group here
+                    ],
+                    "outputs": {}
+                }
+            }
+        },
+        {
+            "name": "nestedDeployment1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "subscriptionId": "<SUBSCRIPTION-ID>", // how do I know this subscription ID?
+            "resourceGroup": "<RG-NAME-FROM-STEP-2",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        // create resources in the resource group
+                    ],
+                    "outputs": {}
+                }
+            }
+        }
+        */
+    ]
+}

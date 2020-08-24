@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "nestedDeployment0",
+            "type": "Microsoft.Resources/deployments",
+            "location": "eastus",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "outer"
+                },
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [],
+                    "outputs": {
+                        "test": {
+                            "type": "string",
+                            "value": "test"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "nestedDeployment1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "eastus",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "subscriptionId": {
+                        "value": "[reference('nestedDeployment0').outputs.test]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "subscriptionId": {
+                            "type": "object"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+
+                    ],
+                    "outputs": {
+                        "subId": {
+                            "type": "object",
+                            "value": "[parameters('subscriptionId')]" // is this a false-positive?
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

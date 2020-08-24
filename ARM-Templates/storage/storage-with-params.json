@@ -4,24 +4,20 @@
   "parameters": {
     "storageLocation": {
       "type": "string"
-    },
-    "name": {
-      "type": "string"
     }
   },
   "variables": {
   },
   "resources": [
     {
-      "name": "[parameters('name')]",
+      "name": "[uniqueString(resourceGroup().id)]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2016-01-01",
       "sku": {
         "name": "Standard_LRS"
       },
       "kind": "Storage",
-      // "location": "[parameters('storageLocation')]",
-      "location": "East US",
+      "location": "[parameters('storageLocation')]",
       "tags": {},
       "properties": {}
     }

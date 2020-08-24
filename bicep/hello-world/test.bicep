@@ -1,5 +1,5 @@
-parameter storageName string
-variable location = 'eastus'
+param storageName string
+var location = 'eastus'
 
 resource stg 'Microsoft.Storage/storageAccounts@2019-06-01' = {
     name: storageName

@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#", // af - what is the target scope of this deployment?
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "uniqueAliasName": "aliasName1"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments", // af = why is this a nested deployment?
+            "apiVersion": "2019-10-01",
+            "name": "nestedTemplate20",
+            "location": "westus",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "variables": {
+                        "uniqueAliasName": "aliasName1"
+                    },
+                    "resources": [
+                        {
+                            "name": "[variables('uniqueAliasName')]",
+                            "type": "Microsoft.Subscription/aliases",
+                            "apiVersion": "2019-10-01-preview",
+                            "properties": {
+                                "workLoad": "Production | DevTest",
+                                "displayName": "<<Subscription display name>>",
+                                "billingScope": "/providers/Microsoft.Billing/billingAccounts/d6fd151e-2f30-50d5-34b2-fe40b1d64b7f:31670802-3752-4741-b5cc-683c71eca69b_2019-05-31/billingProfiles/JIMI-YGZA-BG7-TGB/invoiceSections/NNUD-SDJC-PJA-TGB"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "subscriptionId": {
+                            "type": "string",
+                            "value": "[replace(reference(variables('uniqueAliasName')).subscriptionId, 'subscriptions/', '')]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "createResourceGroupOuter",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "westus",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "subscriptionId": {
+                        "value": "[reference('nestedTemplate20').outputs.subscriptionId.value]"
+                    }
+                },
+                "template": {
+                    "$schema": "https: //schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "subscriptionId": {
+                            "type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "name": "createResourceGroupInner2",
+                            "type": "Microsoft.Resources/deployments",
+                            "subscriptionId": "[parameters('subscriptionId')]", // af - reference normally is not allowed here, so you are getting around it by doing a nested deployemnt?
+                            "apiVersion": "2019-10-01",
+                            "location": "westus",
+                            "properties": {
+                                "expressionEvaluationOptions": { "scope": "inner" },
+                                "mode": "Incremental",
+                                "parameters": {},
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "variables": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Resources/resourceGroups",
+                                            "apiVersion": "2020-05-01",
+                                            "location": "[deployment().location]",
+                                            "name": "dfdfdfd",
+                                            "properties": {},
+                                            "tags": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "messageFromLinkedTemplate": {
+            "type": "string",
+            "value": "[reference('nestedTemplate20').outputs.subscriptionId.value]"
+        }
+    }
+}

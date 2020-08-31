@@ -1,0 +1,262 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string"
+    },
+    "suffix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "australiaeast",
+        "koreacentral",
+        "westus2"
+      ]
+    },
+    "locationCode": {
+      "type": "string",
+      "defaultValue": "krc",
+      "allowedValues": [
+        "aue",
+        "krc",
+        "wus2"
+      ]
+    },
+    "publicIpDnsLabel": {
+      "type": "string"
+    },
+    "virtualNetworkAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16"
+    },
+    "virtualNetworkSubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24"
+    },
+    "virtualMachineAdminUsername": {
+      "type": "string"
+    },
+    "virtualMachineAdminPassword": {
+      "type": "secureString"
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_D8s_v3",
+      "allowedValues": [
+        "Standard_D2s_v3",
+        "Standard_D4s_v3",
+        "Standard_D8s_v3"
+      ]
+    },
+    "virtualMachinePublisher": {
+      "type": "string",
+      "defaultValue": "MicrosoftWindowsDesktop",
+      "allowedValues": [
+        "MicrosoftVisualStudio",
+        "MicrosoftWindowsDesktop"
+      ]
+    },
+    "virtualMachineOffer": {
+      "type": "string",
+      "defaultValue": "Windows-10",
+      "allowedValues": [
+        "visualstudio2019latest",
+        "Windows-10"
+      ]
+    },
+    "virtualMachineSku": {
+      "type": "string",
+      "defaultValue": "20h1-pro-g2",
+      "allowedValues": [
+        "vs-2019-comm-latest-ws2019",
+        "vs-2019-ent-latest-ws2019",
+        "20h1-pro-g2",
+        "20h1-ent-g2"
+      ]
+    },
+    "virtualMachineExtensionCustomScriptUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/devkimchi/LiveStream-VM-Setup-Sample/main/install.ps1"
+    }
+  },
+  "functions": [],
+  "variables": {
+    "metadata": {
+      "longName": "[format('{{0}}-{0}-{1}{2}', parameters('name'), parameters('locationCode'), if(equals(coalesce(parameters('suffix'), ''), ''), '', ''))]",
+      "shortName": "[format('{{0}}{0}{1}{2}', replace(parameters('name'), '-', ''), parameters('locationCode'), if(equals(coalesce(parameters('suffix'), ''), ''), '', ''))]"
+    },
+    "securityRules": [
+      {
+        "name": "default-allow-3389",
+        "properties": {
+          "priority": 1000,
+          "access": "Allow",
+          "direction": "Inbound",
+          "protocol": "TCP",
+          "sourcePortRange": "*",
+          "sourceAddressPrefix": "*",
+          "destinationAddressPrefix": "*",
+          "destinationPortRange": 3389
+        }
+      }
+    ],
+    "subnetName": "default",
+    "subnets": [
+      {
+        "name": "[variables('subnetName')]",
+        "properties": {
+          "addressPrefix": "[parameters('virtualNetworkSubnetPrefix')]",
+          "networkSecurityGroup": {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', replace(variables('metadata').longName, '{0}', 'nsg'))]"
+          }
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-10-01",
+      "name": "[replace(variables('metadata').shortName, '{0}', 'st')]",
+      "location": "[parameters('location')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2018-07-01",
+      "name": "[replace(variables('metadata').longName, '{0}', 'pip')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "dnsSettings": {
+          "domainNameLabel": "[format('{0}', if(equals(coalesce(parameters('publicIpDnsLabel'), ''), ''), replace(variables('metadata').shortName, '{0}', 'vm'), parameters('publicIpDnsLabel')))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-07-01",
+      "name": "[replace(variables('metadata').longName, '{0}', 'nsg')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": "[variables('securityRules')]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2018-07-01",
+      "name": "[replace(variables('metadata').longName, '{0}', 'vnet')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('virtualNetworkAddressPrefix')]"
+          ]
+        },
+        "subnets": "[variables('subnets')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', replace(variables('metadata').longName, '{0}', 'nsg'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2018-07-01",
+      "name": "[replace(variables('metadata').longName, '{0}', 'nic')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', replace(variables('metadata').longName, '{0}', 'pip'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', replace(variables('metadata').longName, '{0}', 'vnet'), variables('subnetName'))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', replace(variables('metadata').longName, '{0}', 'pip'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', replace(variables('metadata').longName, '{0}', 'vnet'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-10-01",
+      "name": "[replace(variables('metadata').shortName, '{0}', 'vm')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "osProfile": {
+          "computerName": "[replace(variables('metadata').shortName, '{0}', 'vm')]",
+          "adminUsername": "[parameters('virtualMachineAdminUsername')]",
+          "adminPassword": "[parameters('virtualMachineAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('virtualMachinePublisher')]",
+            "offer": "[parameters('virtualMachineOffer')]",
+            "sku": "[parameters('virtualMachineSku')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[replace(variables('metadata').longName, '{0}', 'osdisk')]",
+            "createOption": "FromImage"
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": "[resourceId('Microsoft.Network/networkInterfaces', replace(variables('metadata').longName, '{0}', 'nic'))]"
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', replace(variables('metadata').shortName, '{0}', 'st'))).primaryEndpoints.blob]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', replace(variables('metadata').longName, '{0}', 'nic'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', replace(variables('metadata').shortName, '{0}', 'st'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2018-10-01",
+      "name": "[format('{0}/config-app', replace(variables('metadata').shortName, '{0}', 'vm'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.10",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[parameters('virtualMachineExtensionCustomScriptUri')]"
+          ]
+        },
+        "protectedSettings": {
+          "commandToExecute": "[format('powershell -ExecutionPolicy Unrestricted -File ./{0}', last(split(parameters('virtualMachineExtensionCustomScriptUri'), '/')))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', replace(variables('metadata').shortName, '{0}', 'vm'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

@@ -225,6 +225,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2018-10-01' = {
       ]
     }
     protectedSettings: {
+      // why does this need to be protected? Doesn't look like there are any secrets
       commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File ./${last(split(virtualMachineExtensionCustomScriptUri, '/'))}'
     }
   }

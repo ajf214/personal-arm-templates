@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "postgreSqlServer": {
+      "type": "object",
+      "defaultValue": {
+        "name": "alfrandb"
+      }
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters( 'postgreSqlServer' ).name]",
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "apiVersion": "2017-12-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "GP_Gen5_2",
+        "capacity": 2, // "[parameters( 'postgreSqlServer' ).virtualCores]",
+        "family": "Gen5"
+        // "size": "5120"
+      },
+      "properties": {
+        // "version": "11",
+        "administratorLogin": "alex",
+        "administratorLoginPassword": "P@ssw0rd1234",
+        "storageProfile": {
+          // "storageMB": "[mul(5, 1024 )]"
+          // "backupRetentionDays": "[parameters( 'postgreSqlServer' ).backupRetentionDays]",
+          // "geoRedundantBackup": "[parameters( 'postgreSqlServer' ).geoRedundantBackup]",
+          // "storageAutogrow": "[parameters( 'postgreSqlServer' ).storageAutogrow]"
+        }
+        // "sslEnforcement": "Enabled",
+        // "createMode": "Default",
+        // "minimalTlsVersion": "TLS1_0",
+        // "publicNetworkAccess": "Enabled",
+        // "infrastructureEncryption": "[parameters( 'postgreSqlServer' ).infrastructureEncryption]"
+      }
+    }
+  ],
+  "outputs": {}
+}

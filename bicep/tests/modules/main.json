@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "eastus"
+    }
+  },
+  "functions": [],
+  "variables": {
+    "stgKind": "Storage"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2019-06-01",
+      "name": "!@mystorage001fawe awefawefaw afwe wef aw",
+      "location": "[parameters('location')]",
+      "kind": "[variables('stgKind')]",
+      "sku": {
+        "name": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "networking",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "test": {
+            "value": "value"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "test": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "variables": {},
+          "resources": [],
+          "outputs": {
+            "outTest": {
+              "type": "string",
+              "value": "[parameters('test')]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "vnetId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'networking'), '2019-10-01').outputs.outTest.value]"
+    },
+    "blobUri": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', '!@mystorage001fawe awefawefaw afwe wef aw')).primaryEndpoints.blob]"
+    }
+  }
+}

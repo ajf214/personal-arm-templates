@@ -17,6 +17,9 @@ resource stg2 'Microsoft.Storage/storageAccounts@2019-06-01' = {
         name: 'Standard_LRS'
     }
     kind: 'StorageV2'
+    properties: {
+      accessTier: 'hot'
+    }
 }
 
 output stgId string = 'my output' // stg.resourceId

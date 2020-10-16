@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "defaultValue": "rg-bicep-eus-loganalytics"
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "la-bicep-eus-01"
+    }
+  },
+  "functions": [],
+  "variables": {
+    "diagnosticSettingName": "GlobalActivityLog"
+  },
+  "resources": [],
+  "outputs": {
+    "test2": {
+      "type": "string",
+      "value": "[resourceId(subscription().subscriptionId, parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+    }
+  }
+}

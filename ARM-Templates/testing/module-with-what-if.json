@@ -6,13 +6,19 @@
     "variables": {},
     "resources": [
         {
+            // test
             "name": "nestedDeployment1",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/ajf214/personal-arm-templates/master/ARM-Templates/storage/storage-without-params.json"
+                    "uri": "[
+                      concat('http://raw.githubusercontent.com',
+                      '/ajf214/personal-arm-templates',
+                      '/master/ARM-Templates/storage/storage-without-params.json'
+                      )
+                    ]"// "https://raw.githubusercontent.com/ajf214/personal-arm-templates/master/ARM-Templates/storage/storage-without-params.json"
                 },
                 "parameters": {
                 }

@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "tsSub": {
+            "value": "e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+        },
+        "tsRg": {
+            "value": "brittle-hollow"
+        },
+        "tsName": {
+            "value": "ignite20"
+        },
+        "tsVersion": {
+            "value": "0.2"
+        }
+    }
+}

@@ -1,0 +1,329 @@
+[
+  {
+      "name": "ServiceFabric_AAD",
+      "description": "Service Fabric clusters should only use Azure Active Directory for client authentication",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.ServiceFabric/clusters",
+          "path": "properties.azureActiveDirectory.tenantId",
+          "hasValue": false
+      }
+  },
+  {
+      "name": "Kubernetes_NonVulnerable",
+      "description": "Kubernetes Services should be upgraded to a non-vulnerable Kubernetes version",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.ContainerService/managedClusters",
+          "path": "properties.kubernetesVersion",
+          "regex": "1\\.(([0-9]\\..*)|(10\\..*)|(11\\.[0-8])|(12\\.[0-6])|(13\\.[0-4]))"
+      }
+  },
+  {
+      "name": "ApiApp_UsesFTPS",
+      "description": "FTPS only should be required in your API App",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.Web/sites",
+          "allOf": [
+              {
+                  "path": "kind",
+                  "regex": "api$"
+              },
+              {
+                  "resourceType": "Microsoft.Web/sites/config",
+                  "allOf": [
+                      {
+                          "path": "name",
+                          "equals": "web"
+                      },
+                      {
+                          "not": {
+                              "path": "properties.ftpsState",
+                              "in": [
+                                  "FtpsOnly",
+                                  "Disabled"
+                              ]
+                          }
+                      }
+                  ]
+              }
+          ]
+      }
+  },
+  {
+      "name": "ApiApp_LatestTLS",
+      "description": "Latest TLS version should be used in your API App",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.Web/sites",
+          "allOf": [
+              {
+                  "path": "kind",
+                  "regex": "api$"
+              },
+              {
+                  "resourceType": "Microsoft.Web/sites/config",
+                  "allOf": [
+                      {
+                          "path": "name",
+                          "equals": "web"
+                      },
+                      {
+                          "path": "properties.minTlsVersion",
+                          "notEquals": "1.2"
+                      }
+                  ]
+              }
+          ]
+      }
+  },
+  {
+      "name": "AppServices_DiagnosticLogs",
+      "description": "Diagnostic Logs in App Services should be enabled",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.Web/sites",
+          "allOf": [
+              {
+                  "not": {
+                      "path": "kind",
+                      "regex": "functionapp"
+                  }
+              },
+              {
+                  "not": {
+                      "path": "kind",
+                      "regex": "linux"
+                  }
+              },
+              {
+                  "resourceType": "Microsoft.Web/sites/config",
+                  "anyOf": [
+                      {
+                          "path": "properties.detailedErrorLoggingEnabled",
+                          "equals": false
+                      },
+                      {
+                          "path": "properties.httpLoggingEnabled",
+                          "equals": false
+                      },
+                      {
+                          "path": "properties.requestTracingEnabled",
+                          "equals": false
+                      }
+                  ]
+              }
+          ]
+      }
+  },
+  {
+      "name": "ApiApp_Https",
+      "description": "API App should only be accessible over HTTPS",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.Web/sites",
+          "allOf": [
+              {
+                  "path": "kind",
+                  "regex": "api$"
+              },
+              {
+                  "path": "properties.httpsOnly",
+                  "notEquals": true
+              }
+          ]
+      }
+  },
+  {
+      "name": "NoConditionalDependsOn",
+      "description": "DependsOn must not be conditional",
+      "recommendation": "",
+      "helpUri": "",
+      "parseTemplate": false, // evaluate?
+      "check": {
+          "path": "resources[*].dependsOn[*]",
+          "regex": ".*if\\(.*"
+      }
+  },
+  {
+      "name": "NonDebugDeploymentResources",
+      "description": "Deployment resources must not be debug",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "resourceType": "Microsoft.Resources/deployments",
+          "allOf": [
+              {
+                  "path": "properties.debugSetting.detailLevel",
+                  "exists": true
+              },
+              {
+                  "path": "properties.debugSetting.detailLevel",
+                  "notEquals": "None"
+              }
+          ]
+      }
+  },
+  {
+      "name": "CorrectSchema",
+      "description": "DeploymentTemplate schema is correct",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "not": {
+              "path": "$schema",
+              "in": [
+                  "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                  "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                  "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#"
+              ]
+          }
+      }
+  },
+  {
+      "name": "NoConcatForVariables",
+      "description": "Dynamic Variable References should not use concat",
+      "recommendation": "",
+      "helpUri": "",
+      "parseTemplate": false,
+      "check": {
+          "path": "*.**",
+          "regex": "variables\\(concat\\((?<VariableName>[^']+)\\)parameters\\((?<ParameterName>[^']+)\\)\\)"
+      }
+  },
+  {
+      "name": "DontUseManagedIdentityExt",
+      "description": "Managed Identity extension must not be used",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "anyOf": [
+              {
+                  "resourceType": "Microsoft.Compute/virtualMachines/extensions",
+                  "path": "properties.type",
+                  "regex": "ManagedIdentityExtension"
+              },
+              {
+                  "resourceType": "Microsoft.Compute/virtualMachines",
+                  "anyOf": [
+                      {
+                          "resourceType": "Microsoft.Compute/virtualMachines/extensions",
+                          "path": "properties.type",
+                          "regex": "ManagedIdentityExtension"
+                      }
+                  ]
+              }
+          ]
+      }
+  },
+  {
+      "name": "ValidMinMax",
+      "description": "Min and Max value are numbers, and if one is specified, so is the other",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "path": "parameters.*",
+          "AnyOf": [
+              // Only maxValue exists
+              {
+                  "AllOf": [
+                      {
+                          "path": "maxValue",
+                          "exists": true
+                      },
+                      {
+                          "path": "minValue",
+                          "exists": false
+                      }
+                  ]
+              },
+              // Only minValue exists
+              {
+                  "AllOf": [
+                      {
+                          "path": "maxValue",
+                          "exists": false
+                      },
+                      {
+                          "path": "minValue",
+                          "exists": true
+                      }
+                  ]
+              },
+              // One isn't a number (< 0 or >= 0)
+              {
+                  "not": {
+                      "anyOf": [
+                          {
+                              "path": "maxValue",
+                              "greaterOrEqual": 0
+                          },
+                          {
+                              "path": "maxValue",
+                              "lessThan": 0
+                          },
+                          {
+                              "path": "minValue",
+                              "greaterOrEqual": 0
+                          },
+                          {
+                              "path": "minValue",
+                              "lessThan": 0
+                          }
+                      ]
+                  }
+              }
+          ]
+      }
+  },
+  {
+      "name": "ParametersSectionExists",
+      "description": "Parameters section must exist",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "path": "parameters",
+          "hasValue": false
+      }
+  },
+  {
+      "name": "ResourcesHaveLocation",
+      "description": "Resources should have location",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "not": {
+              "path": "resources[*].location",
+              "regex": "^(\\[.*\\])|global$"
+          }
+      }
+  },
+  {
+      "name": "NoSecureStringDefault",
+      "description": "Secure string parameters cannot have default value",
+      "recommendation": "",
+      "helpUri": "",
+      "check": {
+          "path": "parameters.*",
+          "allOf": [
+              {
+                  "path": "type",
+                  "equals": "securestring"
+              },
+              {
+                  "path": "defaultValue",
+                  "hasValue": true
+              }
+          ]
+      }
+  }
+]

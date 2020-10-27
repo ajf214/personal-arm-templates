@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "IpAddress": {
+      "type": "array",
+      "defaultValue": []
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "[concat('nested-', copyIndex())]",
+      "condition": "[greater(length(parameters('IpAddress')), 0)]",
+      "copy": {
+        "name": "iterator",
+        "count": "[length(parameters('IpAddress'))]",
+        "mode": "serial"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "parameters": {
+          "ipAddressInner": {
+              "value": "[parameters('IpAddress')]"
+          },
+          "index": {
+            "value": "[copyIndex()]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "ipAddressInner": {
+              "type": "array"
+            },
+            "index": {
+              "type": "int"
+            }
+          },
+          "resources": [
+            {
+              "apiVersion": "2020-05-01",
+              "type": "Microsoft.Network/publicIPAddresses",
+              "name": "[parameters('ipAddressInner')[parameters('index')].publicIpAddressName]",
+              "location": "[parameters('ipAddressInner')[parameters('index')].location]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": [
+                  {
+                    "ipTagType": "[parameters('ipAddressInner')[parameters('index')].ipTagType]",
+                    "tag": "[parameters('ipAddressInner')[parameters('index')].tag]"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

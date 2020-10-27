@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "postgresSqlServer": {
+      "type": "object",
+      "defaultValue": {
+        "name": "alfrandb"
+      }
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "type": "microsoft.dbforpostgreSql/servers",
+      "apiVersion": "2017-12-01",
+      "name": "[format('{0}{1}', parameters('postgresSqlServer').name, uniqueString(resourceGroup().id))]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "GP_Gen5_2",
+        "capacity": 2,
+        "family": "Gen5",
+        "size": "5120"
+      },
+      "properties": {
+        "administratorLogin": "alex",
+        "administratorLoginPassword": "P@ssw0rd1234",
+        "createMode": "Default"
+      }
+    }
+  ],
+  "outputs": {}
+}

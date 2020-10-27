@@ -6,21 +6,17 @@
       "type": "string"
     }
   },
-  "variables": {
-  },
   "resources": [
     {
-      "name": "[uniqueString(resourceGroup().id)]",
+      "name": "[concat('af', uniqueString(resourceGroup().id))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2016-01-01",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "Storage",
+      "apiVersion": "2019-06-01",
       "location": "[parameters('storageLocation')]",
-      "tags": {},
-      "properties": {}
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Premium_LRS",
+        "tier": "Premium"
+      }
     }
-  ],
-  "outputs": {}
+  ]
 }

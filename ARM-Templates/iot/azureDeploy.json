@@ -1,0 +1,154 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "iotHubName": {
+          "type": "String"
+      },
+      "sku_name": {
+          "type": "String",
+          "defaultValue": "S1"
+      }
+  },
+  "variables": {
+      "iotHubName": "[concat('clife-iothub-',parameters('iotHubName'))]",
+      "eventHubName": "iothub-ingest",
+      "EventHubNamespaceName": "[concat('main-event-hubs-',parameters('iotHubName'))]",
+      "EventHubAccessPolicy": "sender"
+  },
+  "resources": [
+      {
+          "type": "Microsoft.Devices/IotHubs",
+          "apiVersion": "2020-03-01",
+          "name": "[variables('iotHubName')]",
+          "location": "[resourceGroup().location]",
+          "sku": {
+              "name": "[parameters('sku_name')]",
+              "capacity": 1
+          },
+          "identity": {
+              "type": "SystemAssigned"
+          }
+      },
+      {
+          "comments": "Adds permissions to the SystemAssigned Identity of the IotHub. https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles",
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2018-02-01",
+          "name": "addAccessPolicy",
+          "dependsOn": [
+              "[resourceId('Microsoft.Devices/IotHubs', variables('iotHubName'))]"
+          ],
+          "properties": {
+              "mode": "Incremental",
+              "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [
+                      {
+                          "type": "Microsoft.EventHub/namespaces/eventhubs/providers/roleAssignments",
+                          "apiVersion": "2018-01-01-preview",
+                          "name": "[concat(variables('EventHubNamespaceName'),'/',variables('eventHubName'),'/Microsoft.Authorization/',guid(uniqueString(variables('EventHubNamespaceName'))))]",
+                          "properties": {
+                              "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '2b629674-e913-4c01-ae53-ef4638d8f975')]",
+                              "principalId": "[reference(resourceId('Microsoft.Devices/IotHubs', variables('iotHubName')), '2020-03-01', 'Full').identity.principalId]",
+                              "scope": "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubNamespaceName'), variables('eventHubName'))]"
+                          }
+                      }
+                  ]
+              }
+          }
+      },
+      {
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2018-02-01",
+          "name": "updateIotHub",
+          "dependsOn": [
+              "addAccessPolicy"
+          ],
+          "properties": {
+              "mode": "Incremental",
+              "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [
+                      {
+                          "type": "Microsoft.Devices/IotHubs",
+                          "apiVersion": "2020-03-01",
+                          "name": "[variables('iotHubName')]",
+                          "location": "[resourceGroup().location]",
+                          "sku": {
+                              "name": "[parameters('sku_name')]",
+                              "capacity": 1
+                          },
+                          "identity": {
+                              "type": "SystemAssigned"
+                          },
+                          "properties": {
+                              "ipFilterRules": [],
+                              "eventHubEndpoints": {
+                                  "events": {
+                                      "retentionTimeInDays": 1,
+                                      "partitionCount": 4
+                                  }
+                              },
+                              "routing": {
+                                  "endpoints": {
+                                      "serviceBusQueues": [],
+                                      "serviceBusTopics": [],
+                                      "eventHubs": [
+                                          {
+                                              "endpointUri": "[concat('sb://',variables('EventHubNamespaceName'),'.servicebus.windows.net')]",
+                                              "entityPath": "[variables('eventHubName')]",
+                                              "authenticationType": "identityBased",
+                                              "name": "[variables('eventHubName')]"
+                                          }
+                                      ],
+                                      "storageContainers": []
+                                  },
+                                  "routes": [
+                                      {
+                                          "name": "[variables('eventHubName')]",
+                                          "source": "DeviceMessages",
+                                          "condition": "true",
+                                          "endpointNames": [
+                                              "[variables('eventHubName')]"
+                                          ],
+                                          "isEnabled": true
+                                      }
+                                  ],
+                                  "fallbackRoute": {
+                                      "name": "$fallback",
+                                      "source": "DeviceMessages",
+                                      "condition": "true",
+                                      "endpointNames": [
+                                          "events"
+                                      ],
+                                      "isEnabled": false
+                                  }
+                              },
+                              "messagingEndpoints": {
+                                  "fileNotifications": {
+                                      "lockDurationAsIso8601": "PT1M",
+                                      "ttlAsIso8601": "PT1H",
+                                      "maxDeliveryCount": 10
+                                  }
+                              },
+                              "enableFileUploadNotifications": false,
+                              "cloudToDevice": {
+                                  "maxDeliveryCount": 10,
+                                  "defaultTtlAsIso8601": "PT1H",
+                                  "feedback": {
+                                      "lockDurationAsIso8601": "PT1M",
+                                      "ttlAsIso8601": "PT1H",
+                                      "maxDeliveryCount": 10
+                                  }
+                              },
+                              "features": "None"
+                          }
+                      }
+                  ]
+              }
+          }
+      }
+  ]
+}

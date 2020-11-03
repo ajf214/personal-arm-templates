@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "AllParams": {
+          "type": "object"
+      }
+  },
+  "variables": {
+      "kvName": "kvadotfrank101",
+      "objectId": ""
+  },
+  "resources": [
+      /*
+      {
+          "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+          "apiVersion": "2018-11-30",
+          "name": "[parameters('AllParams').WebPart.ManagedIdentityName]",
+          "location": "[resourceGroup().location]"
+      },
+      */
+      // prereq - existing keyvault
+      {
+          "type": "Microsoft.KeyVault/vaults/accessPolicies",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('AllParams').WebPart.KeyVaultName, '/add')]",
+          "location": "[resourceGroup().location]",
+          "properties": {
+              "sku": {
+                  "family": "A",
+                  "name": "standard"
+              },
+              "tenantId": "[subscription().tenantId]",
+              "enableSoftDelete": true,
+              "enabledForDeployment": true,
+              "enabledForTemplateDeployment": true,
+              "enabledForDiskEncryption": false,
+              "accessPolicies": [
+                  {
+                      "tenantId": "[subscription().tenantId]",
+                      "objectId": "[reference(concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('AllParams').WebPart.ManagedIdentityName), '2018-11-30').principalId]",
+                      "permissions": {
+                          "keys": [
+                              "Get",
+                              "List"
+                          ],
+                          "secrets": [
+                              "Get",
+                              "List"
+                          ],
+                          "certificates": [
+                              "Get",
+                              "List"
+                          ]
+                      }
+                  }
+              ]
+          }
+      }
+  ]
+}

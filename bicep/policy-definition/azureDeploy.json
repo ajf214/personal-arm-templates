@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+      "policyName": "restrict-allowed-locations-policy",
+      "policyDisplayName": "Restrict allowed locations for resources",
+      "policyDescription": "This policy restrict the locations you can specify when deploying resources. Excludes resource groups, Microsoft.AzureActiveDirectory/b2cDirectories, and resources that use the 'global' region."
+  },
+  "resources": [
+      {
+          "type": "Microsoft.Authorization/policyDefinitions",
+          "name": "[variables('policyName')]",
+          "apiVersion": "2019-09-01",
+          "properties": {
+              "displayName": "[variables('policyDisplayName')]",
+              "policyType": "Custom",
+              "description": "[variables('policyDescription')]",
+              "metadata": {
+                  "category": "General"
+              },
+              "mode": "All",
+              "parameters": {
+                  "allowedLocations": {
+                      "type": "Array",
+                      "metadata": {
+                          "displayName": "Allowed locations",
+                          "description": "The list of locations that can be specified when deploying resources.",
+                          "strongType": "location"
+                      }
+                  }
+              },
+              "policyRule": {
+                  "if": {
+                      "allOf": [
+                          {
+                              "field": "location",
+                              "notIn": "[[parameters('allowedLocations')]" //Use an additional left bracket here, so the function is not invoked in the ARM template itself
+                          },
+                          {
+                              "field": "location",
+                              "notEquals": "global"
+                          },
+                          {
+                              "field": "type",
+                              "notEquals": "Microsoft.AzureActiveDirectory/b2cDirectories"
+                          }
+                      ]
+                  },
+                  "then": {
+                      "effect": "Deny"
+                  }
+              }
+          }
+      }
+  ]
+}

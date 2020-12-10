@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "functions": [],
+  "variables": {
+    "basename": "alfran",
+    "location": "[resourceGroup().location]",
+    "failover_location": "westus"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2020-04-01",
+      "name": "[format('{0}cosmosaccount', variables('basename'))]",
+      "location": "[variables('location')]",
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "enableAutomaticFailover": false,
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session"
+        },
+        "locations": [
+          {
+            "failoverPriority": 1,
+            "locationName": "[variables('failover_location')]"
+          },
+          {
+            "failoverPriority": 0,
+            "locationName": "[variables('location')]"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2020-04-01",
+      "name": "[format('{0}/memealyzer', format('{0}cosmosaccount', variables('basename')))]",
+      "properties": {
+        "options": {
+          "throughput": 400
+        },
+        "resource": {
+          "id": "memealyzer"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosaccount', variables('basename')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2020-04-01",
+      "name": "[format('{0}/images', format('{0}/memealyzer', format('{0}cosmosaccount', variables('basename'))))]",
+      "properties": {
+        "options": {
+          "throughput": 400
+        },
+        "resource": {
+          "partitionKey": {
+            "paths": [
+              "/uid"
+            ]
+          },
+          "id": "images",
+          "uniqueKeyPolicy": {
+            "uniqueKeys": [
+              {
+                "paths": [
+                  "/uid"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', split(format('{0}/memealyzer', format('{0}cosmosaccount', variables('basename'))), '/')[0], split(format('{0}/memealyzer', format('{0}cosmosaccount', variables('basename'))), '/')[1])]"
+      ]
+    }
+  ]
+}

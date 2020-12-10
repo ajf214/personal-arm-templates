@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "westus"
+    },
+    "timestamp": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
+    },
+    "dsName": {
+      "type": "string",
+      "defaultValue": "[format('ds{0}', uniqueString(resourceGroup().name))]"
+    }
+  },
+  "functions": [],
+  "variables": {
+    "uamiId": "/subscriptions/e93d3ee6-fac1-412f-92d6-bfb379e81af2/resourceGroups/alex-test-feb/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alfran-test-ds-min-permissions"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2020-10-01",
+      "kind": "AzurePowerShell",
+      "name": "[parameters('dsName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[variables('uamiId')]": {}
+        }
+      },
+      "properties": {
+        "azPowerShellVersion": "3.0",
+        "scriptContent": "$DeploymentScriptOutputs[\"test\"] = Get-AzContext",
+        "forceUpdateTag": "[parameters('timestamp')]",
+        "retentionInterval": "PT4H"
+      }
+    }
+  ],
+  "outputs": {
+    "scriptOutput": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', parameters('dsName'))).outputs.test]"
+    }
+  }
+}

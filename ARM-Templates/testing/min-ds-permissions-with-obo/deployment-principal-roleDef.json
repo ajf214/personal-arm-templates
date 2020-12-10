@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "roleName": "deployment-script-min",
+    "description": "",
+    "assignableScopes": [
+      "/subscriptions/e93d3ee6-fac1-412f-92d6-bfb379e81af2"
+    ],
+    "permissions": [
+      {
+        "actions": [
+          "Microsoft.Authorization/*/read",
+          "Microsoft.Insights/alertRules/*",
+          "Microsoft.Insights/diagnosticSettings/*",
+          "Microsoft.ResourceHealth/availabilityStatuses/read",
+          "Microsoft.Resources/deployments/*",
+          "Microsoft.Resources/subscriptions/resourceGroups/read",
+          "Microsoft.Storage/storageAccounts/*",
+          "Microsoft.Support/*",
+          "Microsoft.ContainerInstance/containerGroups/*",
+          "Microsoft.Resources/deploymentScripts/*"
+        ],
+        "notActions": [],
+        "dataActions": [],
+        "notDataActions": []
+      }
+    ]
+  }
+}

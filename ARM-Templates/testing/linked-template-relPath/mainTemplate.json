@@ -19,8 +19,8 @@
   ],
   "outputs": {
     "fromLinked": {
-      "type": "object",
-      "value": "[reference('linked01')]"
+      "type": "string",
+      "value": "[reference('linked01').outputs.test.value]"
     }
   }
 }

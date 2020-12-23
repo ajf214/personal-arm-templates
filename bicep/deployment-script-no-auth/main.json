@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "westus"
+    },
+    "timestamp": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
+    },
+    "dsName": {
+      "type": "string",
+      "defaultValue": "[format('ds{0}', uniqueString(resourceGroup().name))]"
+    }
+  },
+  "functions": [],
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2020-10-01",
+      "kind": "AzureCLI",
+      "name": "[parameters('dsName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "azCliVersion": "2.15.1",
+        "arguments": "one two three",
+        "scriptContent": "echo $3",
+        "forceUpdateTag": "[parameters('timestamp')]",
+        "retentionInterval": "PT4H"
+      }
+    }
+  ],
+  "outputs": {
+    "dsNameOut": {
+      "type": "string",
+      "value": "[parameters('dsName')]"
+    }
+  }
+}

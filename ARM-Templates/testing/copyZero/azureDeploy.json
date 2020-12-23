@@ -1,0 +1,370 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "consumerGroups": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "The array of ConsumerGroups to create on the shared Event Hub."
+      }
+    },
+    "environment": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 7,
+      "metadata": {
+        "description": "The resource environment name to append to created resources i.e. 'gps-<environment>-<resourceName>'."
+      }
+    },
+    "eventHubs": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "The array of Event Hubs and/or Consumer Groups to create on the shared Event Hub."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location these resources are deployed to."
+      }
+    },
+    "topics": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "The array of Topics to create on the Service Bus."
+      }
+    },
+    "subscriptions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "The array of Subscriptions to create on the Service Bus.  The subscription object must include the topic name, subscription name, and filter to apply."
+      }
+    },
+    "queues": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "The array of Queues to create on the Service Bus.  The queue object allows certain properties (defined in queue creation below) to be overridden."
+      }
+    }
+  },
+  "variables": {
+    "apiAppHostingPlanName": "[concat(variables('baseName'), '-api')]",
+    "baseName": "[toLower(concat('gps-', parameters('environment'), '-shared'))]",
+    "consumptionFuncAppHostingPlanName": "[concat(variables('baseName'), '-fnc')]",
+    "dataFactoryName": "[variables('baseName')]",
+    "eventHubAuthRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventHubNamespaceName'), 'RootManageSharedAccessKey')]",
+    "eventHubDefaultMsgRetention": "2",
+    "eventHubDefaultPartitions": "32",
+    "eventHubNamespaceName": "[concat(variables('baseName'), '-eh')]",
+    "mapsName": "[variables('baseName')]",
+    "mapsResourceId": "[resourceId('Microsoft.Maps/accounts', variables('mapsName'))]",
+    "premiumFuncAppHostingPlanName": "[concat(variables('baseName'), '-fnp')]",
+    "premiumServiceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('premiumServiceBusName'), 'RootManageSharedAccessKey')]",
+    "premiumServiceBusName": "[concat(variables('baseName'), '-svb')]",
+    "premiumServiceBusResourceId": "[resourceId('Microsoft.ServiceBus/namespaces', variables('premiumServiceBusName'))]",
+    "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusName'), 'RootManageSharedAccessKey')]",
+    "serviceBusDefaultMaxSizeInMegabytes": 2048,
+    "serviceBusDefaultPartitionMaxSizeInMegabytes": 5120,
+    "serviceBusName": "[variables('baseName')]",
+    "serviceBusResourceId": "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]",
+    "standardFuncAppHostingPlanName": "[concat(variables('baseName'), '-fns')]",
+    "storageAccountName": "[toLower(concat('gps', replace(parameters('environment'), '-', ''), 'data'))]",
+    "templateNameVersion": "", // "[concat(variables('templateSpecName'), ' ', variables('templateSpecVersion'))]",
+    "webAppHostingPlanName": "[concat(variables('baseName'), '-web')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('eventHubNamespaceName'), '/', if(greater(length(parameters('eventHubs')), 0), parameters('eventHubs')[copyIndex()].eventHub, 'notDeployed'))]",
+      "metadata": {
+        "description": "The Event Hubs created on the shared Event Hub."
+      },
+      "tags": {
+        "Template": "[variables('templateNameVersion')]"
+      },
+      "properties": {
+        "messageRetentionInDays": "[if(and(contains(parameters('eventHubs')[copyIndex()], 'properties'), contains(parameters('eventHubs')[copyIndex()].properties, 'messageRetentionInDays')), coalesce(parameters('eventHubs')[copyIndex()].properties.messageRetentionInDays, variables('eventHubDefaultMsgRetention')), variables('eventHubDefaultMsgRetention'))]",
+        "partitionCount": "[if(and(contains(parameters('eventHubs')[copyIndex()], 'properties'), contains(parameters('eventHubs')[copyIndex()].properties, 'partitionCount')), coalesce(parameters('eventHubs')[copyIndex()].properties.partitionCount, variables('eventHubDefaultPartitions')), variables('eventHubDefaultPartitions'))]",
+        "status": "Active"
+      },
+      "resources": [
+        {
+          "condition": "[and(greater(length(parameters('eventHubs')), 0), contains(parameters('eventHubs')[copyIndex()], 'consumerGroup'))]",
+          "type": "consumergroups",
+          "apiVersion": "2017-04-01",
+          "name": "[if(and(greater(length(parameters('eventHubs')), 0), contains(parameters('eventHubs')[copyIndex()], 'consumerGroup')), parameters('eventHubs')[copyIndex()].consumerGroup, 'notDeployedCG')]",
+          "dependsOn": [
+            "[if(greater(length(parameters('eventHubs')), 0), parameters('eventHubs')[copyIndex()].eventHub, 'notDeployed')]"
+          ],
+          "properties": {}
+        }
+      ],
+      "copy": {
+        "name": "eventHubs",
+        "count": "[length(parameters('eventHubs'))]"
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('eventHubNamespaceName'), '/', if(greater(length(parameters('consumerGroups')), 0), concat(parameters('consumerGroups')[copyIndex()].endpoint, '/', parameters('consumerGroups')[copyIndex()].consumerGroup), 'notDeployed/notDeployed'))]",
+      "metadata": {
+        "description": "The Consumer Groups created on the specified Event Hub Endpoint."
+      },
+      "properties": {},
+      "copy": {
+        "name": "consumerGroups",
+        "count": "[length(parameters('consumerGroups'))]"
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('premiumServiceBusName'), '/', if(greater(length(parameters('topics')), 0), if(contains(parameters('topics')[copyIndex()], 'name'), parameters('topics')[copyIndex()].name, parameters('topics')[copyIndex()]), 'notDeployed'))]",
+      "metadata": {
+        "description": "The topics created on the shared premium service bus (based on the supplied array of topics)."
+      },
+      "properties": {
+        "path": "[if(contains(parameters('topics')[copyIndex()], 'name'), parameters('topics')[copyIndex()].name, parameters('topics')[copyIndex()])]",
+        "maxSizeInMegabytes": "[if(and(contains(parameters('topics')[copyIndex()], 'properties'), contains(parameters('topics')[copyIndex()].properties, 'maxSizeInMegabytes')), coalesce(parameters('topics')[copyIndex()].properties.maxSizeInMegabytes, variables('serviceBusDefaultMaxSizeInMegabytes')), variables('serviceBusDefaultMaxSizeInMegabytes'))]",
+        "defaultMessageTimeToLive": "P7D",
+        "enablePartitioning": "[if(equals(toLower(reference(variables('premiumServiceBusResourceId'), '2017-04-01', 'Full').sku.name), 'premium'), 'false', 'true')]"
+      },
+      "copy": {
+        "name": "topics",
+        "count": "[length(parameters('topics'))]"
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('serviceBusName'), '/', if(greater(length(parameters('topics')), 0), if(contains(parameters('topics')[copyIndex()], 'name'), parameters('topics')[copyIndex()].name, parameters('topics')[copyIndex()]), 'notDeployed'))]",
+      "metadata": {
+        "description": "The topics created on the shared service bus (based on the supplied array of topics)."
+      },
+      "properties": {
+        "path": "[if(contains(parameters('topics')[copyIndex()], 'name'), parameters('topics')[copyIndex()].name, parameters('topics')[copyIndex()])]",
+        "maxSizeInMegabytes": "[if(and(contains(parameters('topics')[copyIndex()], 'properties'), contains(parameters('topics')[copyIndex()].properties, 'maxSizeInMegabytes')), coalesce(parameters('topics')[copyIndex()].properties.maxSizeInMegabytes, variables('serviceBusDefaultPartitionMaxSizeInMegabytes')), variables('serviceBusDefaultPartitionMaxSizeInMegabytes'))]",
+        "defaultMessageTimeToLive": "P7D",
+        "enablePartitioning": "[if(equals(toLower(reference(variables('serviceBusResourceId'), '2017-04-01', 'Full').sku.name), 'premium'), 'false', 'true')]"
+      },
+      "copy": {
+        "name": "topics",
+        "count": "[length(parameters('topics'))]"
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('premiumServiceBusName'), '/', if(greater(length(parameters('subscriptions')), 0), concat(parameters('subscriptions')[copyIndex()].topic, '/', parameters('subscriptions')[copyIndex()].subscription), 'notDeployed/notDeployed'))]",
+      "location": "[parameters('location')]",
+      "metadata": {
+        "description": "The subscriptions created for topics on the shared premium service bus (based on the supplied array of subscription objects)."
+      },
+      "properties": {
+        "defaultMessageTimeToLive": "P3D"
+      },
+      "dependsOn": [ "topics" ],
+      "resources": [
+        {
+          "condition": "[and(greater(length(parameters('subscriptions')), 0), not(empty(if(equals(length(parameters('subscriptions')), 0), '', parameters('subscriptions')[copyIndex()].filter))))]",
+          "name": "MessageFilter",
+          "type": "rules",
+          "apiVersion": "2017-04-01",
+          "properties": {
+            "filterType": "SqlFilter",
+            "sqlFilter": {
+              "sqlExpression": "[if(greater(length(parameters('subscriptions')), 0), parameters('subscriptions')[copyIndex()].filter, 'notDeployed')]"
+            }
+          },
+          "dependsOn": [
+            "[if(greater(length(parameters('subscriptions')), 0), parameters('subscriptions')[copyIndex()].subscription, 'notDeployed')]"
+          ]
+        }
+      ],
+      "copy": {
+        "name": "subscriptions",
+        "count": "[length(parameters('subscriptions'))]"
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('serviceBusName'), '/', if(greater(length(parameters('subscriptions')), 0), concat(parameters('subscriptions')[copyIndex()].topic, '/', parameters('subscriptions')[copyIndex()].subscription), 'notDeployed/notDeployed'))]",
+      "location": "[parameters('location')]",
+      "metadata": {
+        "description": "The subscriptions created for topics on the shared service bus (based on the supplied array of subscription objects)."
+      },
+      "properties": {
+        "defaultMessageTimeToLive": "P3D"
+      },
+      "dependsOn": [ "topics" ],
+      "resources": [
+        {
+          "condition": "[and(greater(length(parameters('subscriptions')), 0), not(empty(if(equals(length(parameters('subscriptions')), 0), '', parameters('subscriptions')[copyIndex()].filter))))]",
+          "name": "MessageFilter",
+          "type": "rules",
+          "apiVersion": "2017-04-01",
+          "properties": {
+            "filterType": "SqlFilter",
+            "sqlFilter": {
+              "sqlExpression": "[if(greater(length(parameters('subscriptions')), 0), parameters('subscriptions')[copyIndex()].filter, 'notDeployed')]"
+            }
+          },
+          "dependsOn": [
+            "[if(greater(length(parameters('subscriptions')), 0), parameters('subscriptions')[copyIndex()].subscription, 'notDeployed')]"
+          ]
+        }
+      ],
+      "copy": {
+        "name": "subscriptions",
+        "count": "[length(parameters('subscriptions'))]"
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/queues",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('premiumServiceBusName'), '/', if(greater(length(parameters('queues')), 0), parameters('queues')[copyIndex()].name, 'notDeployed'))]",
+      "metadata": {
+        "description": "The queues created on the shared premium service bus (based on the supplied array of queue objects)."
+      },
+      "properties": {
+        "path": "[parameters('queues')[copyIndex()].name]",
+        "maxSizeInMegabytes": "[if(and(contains(parameters('queues')[copyIndex()], 'properties'), contains(parameters('queues')[copyIndex()].properties, 'maxSizeInMegabytes')), coalesce(parameters('queues')[copyIndex()].properties.maxSizeInMegabytes, variables('serviceBusDefaultMaxSizeInMegabytes')), variables('serviceBusDefaultMaxSizeInMegabytes'))]",
+        "defaultMessageTimeToLive": "[if(and(contains(parameters('queues')[copyIndex()], 'properties'), contains(parameters('queues')[copyIndex()].properties, 'defaultMessageTimeToLive')), coalesce(parameters('queues')[copyIndex()].properties.defaultMessageTimeToLive, 'P3D'), 'P3D')]",
+        "enablePartitioning": "[if(equals(toLower(reference(variables('premiumServiceBusResourceId'), '2017-04-01', 'Full').sku.name), 'premium'), 'false', 'true')]",
+        "requiresDuplicateDetection": "[if(and(contains(parameters('queues')[copyIndex()], 'properties'), contains(parameters('queues')[copyIndex()].properties, 'requiresDuplicateDetection')), coalesce(parameters('queues')[copyIndex()].properties.requiresDuplicateDetection, 'false'), 'false')]"
+      },
+      "copy": {
+        "name": "queues",
+        "count": "[length(parameters('queues'))]"
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/queues",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('serviceBusName'), '/', if(greater(length(parameters('queues')), 0), parameters('queues')[copyIndex()].name, 'notDeployed'))]",
+      "metadata": {
+        "description": "The queues created on the shared service bus (based on the supplied array of queue objects)."
+      },
+      "properties": {
+        "path": "[parameters('queues')[copyIndex()].name]",
+        "maxSizeInMegabytes": "[if(and(contains(parameters('queues')[copyIndex()], 'properties'), contains(parameters('queues')[copyIndex()].properties, 'maxSizeInMegabytes')), coalesce(parameters('queues')[copyIndex()].properties.maxSizeInMegabytes, variables('serviceBusDefaultPartitionMaxSizeInMegabytes')), variables('serviceBusDefaultPartitionMaxSizeInMegabytes'))]",
+        "defaultMessageTimeToLive": "[if(and(contains(parameters('queues')[copyIndex()], 'properties'), contains(parameters('queues')[copyIndex()].properties, 'defaultMessageTimeToLive')), coalesce(parameters('queues')[copyIndex()].properties.defaultMessageTimeToLive, 'P3D'), 'P3D')]",
+        "enablePartitioning": "[if(equals(toLower(reference(variables('serviceBusResourceId'), '2017-04-01', 'Full').sku.name), 'premium'), 'false', 'true')]",
+        "requiresDuplicateDetection": "[if(and(contains(parameters('queues')[copyIndex()], 'properties'), contains(parameters('queues')[copyIndex()].properties, 'requiresDuplicateDetection')), coalesce(parameters('queues')[copyIndex()].properties.requiresDuplicateDetection, 'false'), 'false')]"
+      },
+      "copy": {
+        "name": "queues",
+        "count": "[length(parameters('queues'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "AzureMapsKey": {
+      "type": "string",
+      "value": "[listkeys(variables('mapsResourceId'), '2018-05-01').primaryKey]",
+      "metadata": {
+        "description": "The primary key for the shared Azure Maps."
+      }
+    },
+    "DataFactoryName": {
+      "type": "string",
+      "value": "[variables('dataFactoryName')]",
+      "metadata": {
+        "description": "The name of the shared Data Factory."
+      }
+    },
+    "EventHubConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('eventHubAuthRuleResourceId'), '2017-04-01').primaryConnectionString]",
+      "metadata": {
+        "description": "The primary connection string for the shared Event Hub."
+      }
+    },
+    "EventHubName": {
+      "type": "string",
+      "value": "[variables('eventHubNamespaceName')]",
+      "metadata": {
+        "description": "The name of the shared Event Hub."
+      }
+    },
+    "PremiumServiceBusConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('premiumServiceBusAuthRuleResourceId'), '2017-04-01').primaryConnectionString]",
+      "metadata": {
+        "description": "The primary connection string for the shared Premium Service Bus."
+      }
+    },
+    "PremiumServiceBusKey": {
+      "type": "string",
+      "value": "[listkeys(variables('premiumServiceBusAuthRuleResourceId'), '2017-04-01').primaryKey]",
+      "metadata": {
+        "description": "The primary authorization key for the shared Premium Service Bus."
+      }
+    },
+    "ServiceBusConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('serviceBusAuthRuleResourceId'), '2017-04-01').primaryConnectionString]",
+      "metadata": {
+        "description": "The primary connection string for the shared Service Bus."
+      }
+    },
+    "ServiceBusKey": {
+      "type": "string",
+      "value": "[listkeys(variables('serviceBusAuthRuleResourceId'), '2017-04-01').primaryKey]",
+      "metadata": {
+        "description": "The primary authorization key for the shared Service Bus."
+      }
+    },
+    "SharedApiAppHostingPlanName": {
+      "type": "string",
+      "value": "[variables('apiAppHostingPlanName')]",
+      "metadata": {
+        "description": "The name of the shared api Application Hosting Plan."
+      }
+    },
+    "SharedConsumptionFuncAppHostingPlanName": {
+      "type": "string",
+      "value": "[variables('consumptionFuncAppHostingPlanName')]",
+      "metadata": {
+        "description": "The name of the shared consumption Azure Function Application Hosting Plan."
+      }
+    },
+    "SharedPremiumFuncAppHostingPlanName": {
+      "type": "string",
+      "value": "[variables('premiumFuncAppHostingPlanName')]",
+      "metadata": {
+        "description": "The name of the shared premium Azure Function Application Hosting Plan."
+      }
+    },
+    "SharedStandardFuncAppHostingPlanName": {
+      "type": "string",
+      "value": "[variables('standardFuncAppHostingPlanName')]",
+      "metadata": {
+        "description": "The name of the shared standard Azure Function Application Hosting Plan."
+      }
+    },
+    "SharedWebAppHostingPlanName": {
+      "type": "string",
+      "value": "[variables('webAppHostingPlanName')]",
+      "metadata": {
+        "description": "The name of the shared web Application Hosting Plan."
+      }
+    },
+    "StorageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]",
+      "metadata": {
+        "description": "The name of the shared ADLS gen2 storage account."
+      }
+    }
+  }
+}

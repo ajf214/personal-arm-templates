@@ -1,21 +1,14 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "storageName": {
-      "type": "string",
-      "defaultValue": "[variables('location')]"
-    }
-  },
+  "parameters": {},
   "functions": [],
-  "variables": {
-    "location": "eastus"
-  },
+  "variables": {},
   "resources": [],
   "outputs": {
     "test": {
       "type": "string",
-      "value": "[parameters('storageName')]"
+      "value": "I'm an output"
     }
   }
 }

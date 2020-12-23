@@ -1,0 +1,231 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "acrPassword": {
+      "type": "string"
+    },
+    "sqlServerPassword": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "lfa2"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "acrName": {
+            "value": "lawrencefarmsantiques"
+          },
+          "dockerUsername": {
+            "value": "lfaAdmin"
+          },
+          "dockerPassword": {
+            "value": "[parameters('acrPassword')]"
+          },
+          "dockerImageAndTag": {
+            "value": "lfa/frontend:latest"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "name": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "acrName": {
+              "type": "string"
+            },
+            "dockerUsername": {
+              "type": "string"
+            },
+            "dockerPassword": {
+              "type": "string"
+            },
+            "dockerImageAndTag": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "variables": {},
+          "resources": [
+            {
+              "type": "microsoft.web/sites",
+              "apiVersion": "2018-11-01",
+              "name": "[format('{0}-site', parameters('name'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "name": "[format('{0}-site', parameters('name'))]",
+                "siteConfig": {
+                  "appSettings": [
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_URL",
+                      "value": "[format('https://{0}.azurecr.io', parameters('acrName'))]"
+                    },
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                      "value": "[parameters('dockerUsername')]"
+                    },
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                      "value": "[parameters('dockerPassword')]"
+                    },
+                    {
+                      "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                      "value": false
+                    }
+                  ],
+                  "linuxFxVersion": "[format('DOCKER|{0}.azurecr.io/{1}', parameters('acrName'), parameters('dockerImageAndTag'))]"
+                },
+                "serverFarmId": "[resourceId('microsoft.web/serverFarms', parameters('name'))]"
+              },
+              "dependsOn": [
+                "[resourceId('microsoft.web/serverFarms', parameters('name'))]"
+              ]
+            },
+            {
+              "type": "microsoft.web/serverFarms",
+              "apiVersion": "2018-11-01",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "B1",
+                "tier": "Basic"
+              },
+              "kind": "linux",
+              "properties": {
+                "name": "[parameters('name')]",
+                "workerSize": 0,
+                "workerSizeId": 0,
+                "numberOfWorkers": 1,
+                "reserved": true
+              }
+            }
+          ],
+          "outputs": {
+            "websiteId": {
+              "type": "string",
+              "value": "[resourceId('microsoft.web/sites', format('{0}-site', parameters('name')))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "serverName": {
+            "value": "lfa2"
+          },
+          "dbName": {
+            "value": "db"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "username": {
+            "value": "adminUser"
+          },
+          "password": {
+            "value": "[parameters('sqlServerPassword')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "serverName": {
+              "type": "string"
+            },
+            "dbName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string",
+              "defaultValue": "admin"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "variables": {},
+          "resources": [
+            {
+              "type": "microsoft.sql/servers",
+              "apiVersion": "2019-06-01-preview",
+              "name": "[parameters('serverName')]",
+              "location": "[parameters('location')]",
+              "kind": "v12.0",
+              "properties": {
+                "administratorLogin": "[parameters('username')]",
+                "administratorLoginPassword": "[parameters('password')]",
+                "version": "12.0"
+              }
+            },
+            {
+              "type": "microsoft.sql/servers/databases",
+              "apiVersion": "2019-06-01-preview",
+              "name": "[format('{0}/{1}', parameters('serverName'), parameters('dbName'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Basic",
+                "capacity": 5
+              },
+              "kind": "v12.0,user",
+              "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "maxSizeBytes": "2147483648",
+                "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+                "zoneRedundant": false,
+                "readScale": "Disabled",
+                "readReplicaCount": 0,
+                "storageAccountType": "GRS"
+              },
+              "dependsOn": [
+                "[resourceId('microsoft.sql/servers', parameters('serverName'))]"
+              ]
+            }
+          ],
+          "outputs": {}
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "myOutput": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appService'), '2019-10-01').outputs.websiteId.value]"
+    }
+  }
+}

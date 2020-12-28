@@ -6,21 +6,21 @@
   "variables": {},
   "resources": [
     {
-      "name": "linked01",
+      "name": "siblingLinked",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "relativePath": "./linkedTemplate.json"
+          "relativePath": "linkedTemplate.json"
         }
       }
     }
   ],
   "outputs": {
-    "fromLinked": {
+    "fromSibling": {
       "type": "string",
-      "value": "[reference('linked01').outputs.test.value]"
+      "value": "[reference('siblingLinked').outputs.fromChild.value]"
     }
   }
 }

@@ -30,28 +30,43 @@ $context = $stg.Context
 $stgContainer = Get-AzStorageContainer -Name $containerName -Context $context -ErrorAction SilentlyContinue
 if (!$stgContainer) {
   Write-Host "Creating storage container..."
-  New-AzStorageContainer -Name $containerName -Context $context 
+  $stgContainer = New-AzStorageContainer -Name $containerName -Context $context 
 } else {
   Write-Host "Storage container $containerName already exists"
 }
 
-$filePath = "C:\Users\alfran\repos\personal-arm-templates\ARM-Templates\testing\linked-template-relPath"
+$folderRoot = "C:\Users\alfran\repos\personal-arm-templates\ARM-Templates\testing\linked-template-relPath"
 
 # Upload the template
 Write-Host "Uploading files..."
-Set-AzStorageBlobContent -Container $containerName -File "$filePath\mainTemplate.json" -Blob "mainTemplate.json" -Context $context -Force
-Set-AzStorageBlobContent -Container $containerName -File "$filePath\linkedTemplate.json" -Blob "linkedTemplate.json" -Context $context -Force
+
+$filesToUpload = Get-ChildItem $folderRoot -Recurse -File
+
+foreach ($file in $filesToUpload) {
+  Write-Host $file
+  $targetPath = ($file.fullname.Substring($folderRoot.Length + 1)).Replace("\", "/")
+  Write-Host "Uploading $("\" + $file.fullname.Substring($folderRoot.Length + 1)) to $($stgContainer.CloudBlobContainer.Uri.AbsoluteUri + "/" + $targetPath)"
+  Set-AzStorageBlobContent -File $file.fullname -Container $stgContainer.Name -Blob $targetPath -Context $context -Force # | Out-Null
+}
+
 Write-Host "Files uploaded"
 
-# construct root templateUri for deployment
-$templateUri = $stg.Context.BlobEndPoint + "$containerName/mainTemplate.json"
+Write-Host "Start deployment at following location:"
 
-# Generate sasUri
-$sasToken = New-AzStorageContainerSASToken -Container $containerName -Context $stg.Context -Permission r -ExpiryTime (Get-Date).AddHours(4)
+$deploy = $true
 
-# strip off leading '?' because ARM backend will add it automatically, which might be an issue
-$newSas = $sasToken.substring(1)
+if ($deploy) {
+  # construct root templateUri for deployment
+  $templateUri = $stg.Context.BlobEndPoint + "$containerName/mainTemplate.json"
 
-Write-Host "Attempting deployment with following URI: "
-Write-Host "$templateUri$sasToken" # using original $sasToken since it has the leading '?' for the purpose of emitting a debuggin URL
-New-AzResourceGroupDeployment -ResourceGroupName "brittle-hollow" -TemplateUri $templateUri -QueryString $newSas -Verbose
+  # Generate sasUri
+  $sasToken = New-AzStorageContainerSASToken -Container $containerName -Context $stg.Context -Permission r -ExpiryTime (Get-Date).AddHours(4)
+
+  # strip off leading '?' because ARM backend will add it automatically, which might be an issue
+  $newSas = $sasToken.substring(1)
+
+  Write-Host "Attempting deployment with following URI: "
+  Write-Host "$templateUri$sasToken" # using original $sasToken since it has the leading '?' for the purpose of emitting a debuggin URL
+  
+  New-AzResourceGroupDeployment -ResourceGroupName "brittle-hollow" -TemplateUri $templateUri -QueryString $newSas -Verbose
+}

@@ -1,6 +1,1 @@
-targetScope = 'subscription'
-
-module mod './module.bicep' = {
-  scope: resourceGroup('test')
-  name: 'test'
-}
+output rgId string = resourceId(subscription().subscriptionId, 'microsoft.resources/resourceGroups', resourceGroup().name)

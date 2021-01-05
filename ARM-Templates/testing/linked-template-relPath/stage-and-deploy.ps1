@@ -2,9 +2,10 @@ $ErrorActionPreference = "Stop"
 
 $location = "eastus"
 $resourceGroupName = "ARM_Deploy_Staging"
+$deploymentMethod = "cli" # "powershell"
 
 # todo - this should be unique to the sub AND resource group, currently only unique to sub
-$StorageAccountName = 'stage' + ((Get-AzContext).Subscription.Id).Replace('-', '').substring(0, 19)
+$storageAccountName = 'stage' + ((Get-AzContext).Subscription.Id).Replace('-', '').substring(0, 19)
 $containerName = "template-staging" # container must be 3-63 characters, all
 
 # Create a resource group
@@ -12,7 +13,8 @@ $rg = Get-AzResourceGroup -Name $resourceGroupName -ErrorAction SilentlyContinue
 if (!$rg) {
   Write-Host "Creating resource group..."
   New-AzResourceGroup -Name $resourceGroupName -Location $location
-} else {
+}
+else {
   Write-Host "Resource Group $resourceGroupName already exists"
 }
 
@@ -21,7 +23,8 @@ $stg = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storage
 if (!$stg) {
   Write-Host "Creating storage account..."
   $stg = New-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -Location $location -SkuName "Standard_LRS"
-} else {
+}
+else {
   Write-Host "Storage account $storageAccountName already exists"
 }
 $context = $stg.Context
@@ -31,7 +34,8 @@ $stgContainer = Get-AzStorageContainer -Name $containerName -Context $context -E
 if (!$stgContainer) {
   Write-Host "Creating storage container..."
   $stgContainer = New-AzStorageContainer -Name $containerName -Context $context 
-} else {
+}
+else {
   Write-Host "Storage container $containerName already exists"
 }
 
@@ -51,22 +55,40 @@ foreach ($file in $filesToUpload) {
 
 Write-Host "Files uploaded"
 
-Write-Host "Start deployment at following location:"
-
 $deploy = $true
 
 if ($deploy) {
-  # construct root templateUri for deployment
-  $templateUri = $stg.Context.BlobEndPoint + "$containerName/mainTemplate.json"
 
-  # Generate sasUri
-  $sasToken = New-AzStorageContainerSASToken -Container $containerName -Context $stg.Context -Permission r -ExpiryTime (Get-Date).AddHours(4)
+  if ($deploymentMethod -eq "powershell") {
+    # construct root templateUri for deployment
+    $templateUri = $stg.Context.BlobEndPoint + "$containerName/mainTemplate.json"
 
-  # strip off leading '?' because ARM backend will add it automatically, which might be an issue
-  $newSas = $sasToken.substring(1)
+    # Generate sasUri
+    $sasToken = New-AzStorageContainerSASToken -Container $containerName -Context $stg.Context -Permission r -ExpiryTime (Get-Date).AddHours(4)
 
-  Write-Host "Attempting deployment with following URI: "
-  Write-Host "$templateUri$sasToken" # using original $sasToken since it has the leading '?' for the purpose of emitting a debuggin URL
-  
-  New-AzResourceGroupDeployment -ResourceGroupName "brittle-hollow" -TemplateUri $templateUri -QueryString $newSas -Verbose
+    # strip off leading '?' because ARM backend will add it automatically, which might be an issue
+    $newSas = $sasToken.substring(1)
+
+    Write-Host "Attempting deployment with following URI: "
+    Write-Host "$templateUri$sasToken" # using original $sasToken since it has the leading '?' for the purpose of emitting a debuggin URL
+
+    New-AzResourceGroupDeployment -ResourceGroupName "brittle-hollow" -TemplateUri $templateUri -QueryString $newSas -Verbose
+  }
+
+  elseif ($deploymentMethod -eq "cli") {
+    $datePlusDay = (Get-Date).AddDays(1)
+    $formattedDate = $datePlusDay.toString("yyyy-MM-dd")
+
+    $sasToken = az storage container generate-sas --account-name $storageAccountName --expiry $formattedDate --auth-mode login --as-user --name $containerName --permissions r -o tsv
+    $blobUri = az storage account show -n $storageAccountName -g $resourceGroupName -o tsv --query primaryEndpoints.blob
+    $templateUri = $blobUri + "$containerName/mainTemplate.json"
+    $uriWithSas = $templateUri + "?$sasToken"
+    Write-Host "Full URI: $uriWithSas"
+
+    az deployment group create -u $templateUri -g brittle-hollow --verbose --query-string $sasToken.toString()
+  }
+
+  else {
+    Write-Host "No deployment method provided"
+  }
 }

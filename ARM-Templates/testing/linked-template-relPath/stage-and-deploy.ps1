@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $location = "eastus"
 $resourceGroupName = "ARM_Deploy_Staging"
-$deploymentMethod = "cli" # "powershell"
+$deploymentMethod = "powershell" # "powershell"
 
 # todo - this should be unique to the sub AND resource group, currently only unique to sub
 $storageAccountName = 'stage' + ((Get-AzContext).Subscription.Id).Replace('-', '').substring(0, 19)
@@ -68,6 +68,8 @@ if ($deploy) {
 
     # strip off leading '?' because ARM backend will add it automatically, which might be an issue
     $newSas = $sasToken.substring(1)
+
+    Write-Host "Sas token"
 
     Write-Host "Attempting deployment with following URI: "
     Write-Host "$templateUri$sasToken" # using original $sasToken since it has the leading '?' for the purpose of emitting a debuggin URL

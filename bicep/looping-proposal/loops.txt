@@ -1,0 +1,221 @@
+scenarios:
+  - create a set of resources
+    * resources must be accessible outside of the "loop" throughout the bicep file
+    * if we allow child resources inside of the parent, we must allow a resource loop there too
+    * should work with existing syntax as well (i.e. an array of existing storage accounts)
+  - return an array of values for a property in a resource
+  - allow you to loop by:
+   * loop over a set of numbers
+   * loop over an array
+   * loop over an array with an index I can reference
+  - combine loops and conditions
+    * filtering (I should be able to access the iterator)
+      - skipping items based on a condition == false
+
+
+// assume a list of things
+
+var things = [
+  {
+    name: 'value'
+    enabled: true
+  }
+  {
+    name: 'second value'
+    enabled: false
+  }
+]
+
+/***** CURRENT SPEC *****/
+
+// simple loop for resources
+resource[] foo 'microsoft.foo/bar@0000-00-00' = [
+  for thing in things: {
+    name: thing.name
+  }
+]
+
+OR
+
+// simple loop for resources
+resource[] foo 'microsoft.foo/bar@0000-00-00' = [for thing in things: {
+  name: thing.name
+}]
+
+// access properties of one of the declared resources
+foo[0].id
+
+// with conditions
+// simple loop for resources
+resource[] foo 'microsoft.foo/bar@0000-00-00' = [for thing in things if (thing.enabled): {
+  name: thing.name
+}]
+
+// loop on properties
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'foo'
+  properties: {
+    listOfThings: [for thing in things: {
+      value: thing.name
+    }]
+  }
+}
+
+// copyMode
+@batchSize(3)
+resource[] foo 'microsoft.foo/bar@0000-00-00' = [for thing in things: {
+  name: thing.name
+}]
+
+Pros:
+ - consistent between resource and property loops
+ - clear contract for accessing resources outside of the loop
+
+
+/***** DECORATOR STYLE *****/
+
+@copies(length(things), i)
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: thing[i].name
+}
+
+// access properties of one of the declared resources
+foo[0].id
+
+// with conditions
+@copies(length(things), 'i')
+resource foo 'microsoft.foo/bar@0000-00-00' = if(things[i].enabled) {
+  name: things[i].name
+}
+
+// property iteration
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'foo'
+  properties: {
+    @copies(length(things), var i)
+    subnets: {
+      value: things[i].name
+    }
+  }
+}
+
+Pros:
+ - more similar to ARM Template
+
+Cons:
+ - awkward property looping
+
+
+/***** "TRADITIONAL" STYLE *****/
+
+for thing in things {
+  resource foo 'microsoft.foo/bar@0000-00-00' = {
+    name: thing.name
+  }
+}
+
+// access properties of one of the declared resources
+foo[0].id
+
+// with conditions
+for thing in things {
+  resource foo 'microsoft.foo/bar@0000-00-00' = if(thing.exists) {
+    name: thing.name
+  }
+}
+
+// loop on properties
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'foo'
+  properties: {
+    listOfThings: [for thing in things: {
+      value: thing.name
+    }]
+  }
+}
+
+Pros:
+ - looping on resources is most similar to other languages
+
+Cons:
+ - inconsistent looping syntax
+ - conceptually strange to be able to access an object outside of a loop 
+  that was created inside of a loop
+ - we may not allow certain keywords inside of the loop which is strange
+
+
+
+
+
+
+    * integer index of the array
+    - for item in range(0, n)
+    - for item in 0..n
+   * by item of the array
+    - for item in items
+   * or both
+    - for (item, i) in items
+
+
+
+
+2. also should be able to condition the entire loop such that the loop is not evaluated
+     - 
+
+if (thingExist) {
+  for ... {
+    // declare resource
+  }
+}
+
+
+resource foo '...' = if (true) {
+
+} else existing = {
+  name: ''
+  scope: resourceGroup('foo')
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+resource "aws_security_group" "example" {
+  name        = "friendly_subnets"
+  description = "Allows access from friendly subnets"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port = 0
+    to_port   = 0
+    protocol  = -1
+
+    # For each number in subnet_numbers, extend the CIDR prefix of the
+    # requested VPC to produce a subnet CIDR prefix.
+    # For the default value of subnet_numbers above and a VPC CIDR prefix
+    # of 10.1.0.0/16, this would produce:
+    #   ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
+    cidr_blocks = [
+      for num in var.subnet_numbers:
+      cidrsubnet(data.aws_vpc.example.cidr_block, 8, num)
+    ]
+  }
+}
+
+resource "aws_subnet" "example" {
+  for_each = var.subnet_numbers
+
+  vpc_id            = aws_vpc.example.id
+  availability_zone = each.key
+  cidr_block        = cidrsubnet(aws_vpc.example.cidr_block, 8, each.value)
+}

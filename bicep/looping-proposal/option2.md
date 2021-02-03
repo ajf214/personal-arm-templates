@@ -62,7 +62,7 @@ var fooId = foo[0].id
 
 ```
 @copies(length(things), 'i')
-resource foo 'microsoft.foo/bar@0000-00-00' = if(things[i].enabled) {
+resource foo 'microsoft.foo/bar@0000-00-00' = if (things[i].enabled) {
   name: things[i].name
 }
 ```

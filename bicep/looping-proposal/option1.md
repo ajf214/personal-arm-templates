@@ -15,6 +15,12 @@ var things = [
   }
 ]
 ```
+#
+#
+#
+#
+#
+#
 
 **Simple loop for resources**
 
@@ -23,12 +29,24 @@ resource[] foo 'microsoft.foo/bar@0000-00-00' = [for thing in things: {
   name: thing.name
 }]
 ```
+#
+#
+#
+#
+#
+#
 
 **Access properties of one of the declared resources**
 
 ```
 var fooId = foo[0].id
 ```
+#
+#
+#
+#
+#
+#
 
 **Loop with filtering**
 
@@ -37,6 +55,12 @@ resource[] foo 'microsoft.foo/bar@0000-00-00' = [for thing in things if (thing.e
   name: thing.name
 }]
 ```
+#
+#
+#
+#
+#
+#
 
 **Loop on properties**
 
@@ -51,6 +75,14 @@ resource foo 'microsoft.foo/bar@0000-00-00' = {
 }
 ```
 
+#
+#
+#
+#
+#
+#
+
+
 **Support all modifiers of ARM template copy**
 
 ```
@@ -59,6 +91,13 @@ resource[] foo 'microsoft.foo/bar@0000-00-00' = [for thing in things: {
   name: thing.name
 }]
 ```
+
+#
+#
+#
+#
+#
+#
 
 **With nested child resource**
 

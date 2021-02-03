@@ -1,4 +1,4 @@
-# Option 3
+# Option 3 - Traditional style
 
 Assume the existence of a list of things:
 

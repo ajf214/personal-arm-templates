@@ -1,4 +1,4 @@
-# Option 2
+# Option 2 - Decorator style
 
 Assume the existence of a list of things:
 

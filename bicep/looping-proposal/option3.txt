@@ -1,0 +1,48 @@
+var things = [
+  {
+    name: 'value'
+    enabled: true
+  }
+  {
+    name: 'second value'
+    enabled: false
+  }
+]
+
+// simple loop
+for thing in things:
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: thing.name
+}
+
+// access properties of one of the declared resources
+output foo[0].id as string
+
+// with conditions
+for thing in things if (thing.exists):
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: thing.name
+}
+
+// loop on properties
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'foo'
+  properties: {
+    listOfThings: [
+      for thing in things: {
+        value: thing.name
+      }
+    ]
+  }
+}
+
+// with nested child resource
+
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'blah'
+
+  for thing in things:
+  resource childOfFoo 'baz' = {
+    name: thing.name
+  }
+}

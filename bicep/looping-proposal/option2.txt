@@ -1,0 +1,52 @@
+param numberOfThings int = 3
+
+var things = [
+  {
+    name: 'value'
+    enabled: true
+  }
+  {
+    name: 'second value'
+    enabled: false
+  }
+]
+
+// function signature for decorator
+// @copies(count: int, iteratorSymbol: string, [batchSize: int])
+
+@copies(length(things), 'i')
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: things[i].name
+}
+
+// access properties of one of the declared resources
+foo[0].id
+
+// with conditions for filtering
+@copies(length(things), 'i')
+resource foo 'microsoft.foo/bar@0000-00-00' = if(things[i].enabled) {
+  name: things[i].name
+}
+
+// property iteration
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'foo'
+  properties: {
+    someArray: [
+      @copies(length(things), 'i')
+      {
+        baz: things[i].name
+      }
+    ]
+  }
+}
+
+// with nested child resource
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: 'blah'
+
+  @copies(length(things), 'i')
+  resource childOfFoo 'baz' = {
+    name: thing[i].name
+  }
+}

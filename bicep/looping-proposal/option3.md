@@ -1,3 +1,9 @@
+# Option 1
+
+Assume the existence of a list of things:
+
+
+```
 var things = [
   {
     name: 'value'
@@ -8,36 +14,58 @@ var things = [
     enabled: false
   }
 ]
+```
 
-// simple loop
+**Simple loop for resources**
+
+```
 for thing in things:
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: thing.name
 }
+```
 
-// access properties of one of the declared resources
-output foo[0].id as string
+**Access properties of one of the declared resources**
 
-// with conditions
+```
+var fooId = foo[0].id
+```
+
+**Loop with filtering**
+
+```
 for thing in things if (thing.exists):
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: thing.name
 }
+```
 
-// loop on properties
+**Loop on properties**
+
+```
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: 'foo'
   properties: {
-    listOfThings: [
-      for thing in things: {
-        value: thing.name
-      }
-    ]
+    listOfThings: [for thing in things: {
+      prop1: thing.name
+    }]
   }
 }
+```
 
-// with nested child resource
+**Support all modifiers of ARM template copy**
 
+```
+@batchSize(3)
+for thing in things:
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: thing.name
+}
+```
+
+**With nested child resource**
+
+```
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: 'blah'
 
@@ -46,3 +74,4 @@ resource foo 'microsoft.foo/bar@0000-00-00' = {
     name: thing.name
   }
 }
+```

@@ -1,20 +1,15 @@
-scenarios:
-  - create a set of resources
-    * resources must be accessible outside of the "loop" throughout the bicep file
-    * if we allow child resources inside of the parent, we must allow a resource loop there too
-    * should work with existing syntax as well (i.e. an array of existing storage accounts)
-  - return an array of values for a property in a resource
-  - allow you to loop by:
-   * loop over a set of numbers
-   * loop over an array
-   * loop over an array with an index I can reference
-  - combine loops and conditions
-    * filtering (I should be able to access the iterator)
-      - skipping items based on a condition == false
-  - looping with nested child resources
+SCENARIOS TO COVER:
 
+1. Create a set of resources given a list or a count
+2. Each resource in the set must be accessible to pull properties
+  or emit outputs
+3. Combine loops + conditions to filter out resources that would otherwise be created
+4. Given a list or count, return an array for resource properties that 
+  expect an array (e.g. subnets)
+5. Needs to work with "quirks" of ARM template copy like batchSize
+6. Syntax should work for nested child resources
 
-// assume a list of things
+// all examples assume the existence of a list of things to iterate over
 
 var things = [
   {
@@ -26,45 +21,3 @@ var things = [
     enabled: false
   }
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-resource "aws_security_group" "example" {
-  name        = "friendly_subnets"
-  description = "Allows access from friendly subnets"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = -1
-
-    # For each number in subnet_numbers, extend the CIDR prefix of the
-    # requested VPC to produce a subnet CIDR prefix.
-    # For the default value of subnet_numbers above and a VPC CIDR prefix
-    # of 10.1.0.0/16, this would produce:
-    #   ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
-    cidr_blocks = [
-      for num in var.subnet_numbers:
-      cidrsubnet(data.aws_vpc.example.cidr_block, 8, num)
-    ]
-  }
-}
-
-resource "aws_subnet" "example" {
-  for_each = var.subnet_numbers
-
-  vpc_id            = aws_vpc.example.id
-  availability_zone = each.key
-  cidr_block        = cidrsubnet(aws_vpc.example.cidr_block, 8, each.value)
-}

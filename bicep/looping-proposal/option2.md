@@ -1,5 +1,8 @@
-param numberOfThings int = 3
+# Option 1
 
+Assume the existence of a list of things:
+
+```
 var things = [
   {
     name: 'value'
@@ -10,38 +13,65 @@ var things = [
     enabled: false
   }
 ]
+```
 
-// function signature for decorator
-// @copies(count: int, iteratorSymbol: string, [batchSize: int])
+>**Note:** function signature for `@copies` decorator
+>
+>`@copies(count: int, iteratorSymbol: string, [batchSize: int])`
 
+
+**Simple loop for resources**
+
+```
 @copies(length(things), 'i')
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: things[i].name
 }
+```
 
-// access properties of one of the declared resources
-foo[0].id
+**Access properties of one of the declared resources**
 
-// with conditions for filtering
+```
+var fooId = foo[0].id
+```
+
+**Loop with filtering**
+
+```
 @copies(length(things), 'i')
 resource foo 'microsoft.foo/bar@0000-00-00' = if(things[i].enabled) {
   name: things[i].name
 }
+```
 
-// property iteration
+**Loop on properties**
+
+```
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: 'foo'
   properties: {
     someArray: [
       @copies(length(things), 'i')
       {
-        baz: things[i].name
+        prop1: things[i].name
       }
     ]
   }
 }
+```
 
-// with nested child resource
+**Support all modifiers of ARM template copy**
+
+```
+@copies(length(things), 'i', 3)
+resource foo 'microsoft.foo/bar@0000-00-00' = {
+  name: things[i].name
+}
+```
+
+**With nested child resource**
+
+```
 resource foo 'microsoft.foo/bar@0000-00-00' = {
   name: 'blah'
 
@@ -50,3 +80,4 @@ resource foo 'microsoft.foo/bar@0000-00-00' = {
     name: thing[i].name
   }
 }
+```

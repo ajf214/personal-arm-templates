@@ -1,0 +1,17 @@
+/***** APPENDIX *****/
+
+
+scenarios:
+  - create a set of resources
+    * resources must be accessible outside of the "loop" throughout the bicep file
+    * if we allow child resources inside of the parent, we must allow a resource loop there too
+    * should work with existing syntax as well (i.e. an array of existing storage accounts)
+  - return an array of values for a property in a resource
+  - allow you to loop by:
+   * loop over a set of numbers
+   * loop over an array
+   * loop over an array with an index I can reference
+  - combine loops and conditions
+    * filtering (I should be able to access the iterator)
+      - skipping items based on a condition == false
+  - looping with nested child resources

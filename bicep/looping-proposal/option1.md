@@ -1,4 +1,4 @@
-# Option 1
+# Option 1 - List comprehension style
 
 Assume the existence of a list of things:
 

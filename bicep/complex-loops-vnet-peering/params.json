@@ -1,0 +1,66 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnets_spec": {
+      "value": [
+        {
+          "addressSpace": "10.240.0.0/16",
+          "group": "vienna-test-westus2",
+          "name": "vienna-test-westus2-westus2",
+          "peerings": [
+            {
+              "peerSymbol": "cluster-peering",
+              "name": "westus2-01-to-westus2-02",
+              "target": "vienna-test-westus2-eastus2"
+            },
+            {
+              "peerSymbol": "pe-peering-01-to-pe1",
+              "isPrivateEndpointPeering": true,
+              "name": "westus2-01-to-westus2-01-pe1",
+              "target": "vienna-test-westus2-westus2-pe1"
+            },
+            {
+              "peerSymbol": "pe-peering-01-to-pe2",
+              "isPrivateEndpointPeering": true,
+              "name": "westus2-01-to-westus2-02-pe2",
+              "target": "vienna-test-westus2-westus2-pe2"
+            }
+          ],
+          "subnet": {
+            "addressSpace": "10.240.0.0/16",
+            "name": "subnet01"
+          }
+        },
+        {
+          "addressSpace": "10.240.1.0/16",
+          "group": "vienna-test-westus2",
+          "name": "vienna-test-westus2-westus2",
+          "peerings": [
+            {
+              "peerSymbol": "cluster-peering",
+              "name": "westus2-01-to-westus2-02",
+              "target": "vienna-test-westus2-eastus2"
+            },
+            {
+              "peerSymbol": "pe-peering-01-to-pe1",
+              "isPrivateEndpointPeering": true,
+              "name": "westus2-01-to-westus2-01-pe1",
+              "target": "vienna-test-westus2-westus2-pe1"
+            },
+            {
+              "peerSymbol": "pe-peering-01-to-pe2",
+              "isPrivateEndpointPeering": true,
+              "name": "westus2-01-to-westus2-02-pe2",
+              "target": "vienna-test-westus2-westus2-pe2"
+            }
+          ],
+          "subnet": {
+            "addressSpace": "10.240.0.0/16",
+            "name": "subnet01"
+          }
+        }
+      ]
+    }
+  }
+}
